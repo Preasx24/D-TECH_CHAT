@@ -44,6 +44,7 @@
             padding: 20px;
             background-color: #ffffff;
             overflow-y: auto;
+            overflow-x: hidden;
         }
 
         /* Chat messages */
@@ -144,10 +145,18 @@
                 const messageElement = document.createElement('div');
                 messageElement.classList.add('message', 'sent');
                 messageElement.textContent = message;
-                document.getElementById('chat-container').appendChild(messageElement);
+                const chatContainer = document.getElementById('chat-container');
+                chatContainer.appendChild(messageElement);
                 input.value = '';
                 input.focus();
+                chatContainer.scrollTop = chatContainer.scrollHeight; // Auto-scroll to bottom
             }
+        }
+
+        // Auto-scroll to bottom on page load if there are any messages
+        window.onload = function() {
+            const chatContainer = document.getElementById('chat-container');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
     </script>
 </body>
