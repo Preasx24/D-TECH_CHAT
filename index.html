@@ -137,27 +137,17 @@
         <p>Made by Preasx24 | D-TECH Systems</p>
     </footer>
 
-    <script>
-        function sendMessage() {
-            const input = document.getElementById('message-input');
-            const message = input.value.trim();
-            if (message) {
-                const messageElement = document.createElement('div');
-                messageElement.classList.add('message', 'sent');
-                messageElement.textContent = message;
-                const chatContainer = document.getElementById('chat-container');
-                chatContainer.appendChild(messageElement);
-                input.value = '';
-                input.focus();
-                chatContainer.scrollTop = chatContainer.scrollHeight; // Auto-scroll to bottom
-            }
-        }
-
-        // Auto-scroll to bottom on page load if there are any messages
-        window.onload = function() {
-            const chatContainer = document.getElementById('chat-container');
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
+    <!-- Tawk.to Widget -->
+    <script type="text/javascript">
+        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+        (function() {
+            var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+            s1.async = true;
+            s1.src = 'https://embed.tawk.to/66e9db8e83ab531891e816a6/1ad5298c9c81d82ed2ece915781f6f26a76be260';
+            s1.charset = 'UTF-8';
+            s1.setAttribute('crossorigin', '*');
+            s0.parentNode.insertBefore(s1, s0);
+        })();
     </script>
 </body>
 </html>
