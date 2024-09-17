@@ -12,122 +12,236 @@
             box-sizing: border-box;
         }
 
-        /* Hacker-style background */
+        /* Background and font */
         body {
             font-family: 'Courier New', Courier, monospace;
-            background: black;
-            color: #00FF00;
-            overflow: hidden;
+            background: #121212; /* Dark background */
+            color: #E0E0E0; /* Light gray text */
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
             height: 100vh;
-        }
-
-        /* Matrix-like animation */
-        .matrix {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            margin: 0;
             overflow: hidden;
         }
 
-        .matrix div {
-            position: absolute;
-            width: 10px;
-            height: 100%;
-            background: #00FF00;
-            animation: scroll 5s linear infinite;
-            opacity: 0.3;
-        }
-
-        @keyframes scroll {
-            0% {
-                transform: translateY(-100%);
-            }
-            100% {
-                transform: translateY(100%);
-            }
-        }
-
-        /* D-TECH Banner */
-        .banner {
-            position: relative;
+        /* Header */
+        .header {
+            background-color: #1E1E1E;
+            padding: 15px;
+            color: #FFD700; /* Gold color */
             text-align: center;
-            z-index: 2;
+            border-bottom: 1px solid #333;
         }
 
-        .banner h1 {
-            font-size: 4em;
-            letter-spacing: 0.1em;
-            color: #00FF00;
-            text-shadow: 0 0 5px #00FF00, 0 0 10px #00FF00;
+        .header h1 {
+            font-size: 2em;
+            margin: 0;
         }
 
-        .banner h2 {
-            font-size: 1.5em;
-            color: #00FF00;
-            text-shadow: 0 0 5px #00FF00, 0 0 10px #00FF00;
-        }
-
-        /* Chatbox Area */
-        .chat-container {
-            margin-top: 40px;
-            width: 80%;
-            height: 400px;
-            background-color: rgba(0, 0, 0, 0.8);
-            border: 2px solid #00FF00;
+        /* Settings Button */
+        .settings-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
             padding: 10px;
-            overflow: hidden;
+            border: 2px solid #FFD700;
+            border-radius: 5px;
+            background-color: #1E1E1E;
+            color: #FFD700;
+            font-size: 1em;
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 250px;
+            height: 100%;
+            background-color: #1E1E1E;
+            color: #E0E0E0;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .settings-panel.open {
+            transform: translateX(0);
+        }
+
+        .settings-panel h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        .settings-panel label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .settings-panel input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #FFD700;
+            border-radius: 5px;
+            background-color: #333;
+            color: #E0E0E0;
+        }
+
+        .settings-panel button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #FFD700;
+            border-radius: 5px;
+            background-color: #333;
+            color: #FFD700;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+            outline: none;
+        }
+
+        .settings-panel button:hover {
+            background-color: #444;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #1E1E1E;
+        }
+
+        /* Chat messages */
+        .message {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 70%;
+            color: #E0E0E0;
+            font-size: 1em;
+            line-height: 1.5;
+            box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); /* Gold shadow */
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background-color: #333333; /* Darker background for sent messages */
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background-color: #444444; /* Slightly lighter background for received messages */
+        }
+
+        /* Input Area */
+        .input-area {
+            background-color: #1E1E1E;
+            padding: 10px;
+            border-top: 1px solid #333;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #FFD700;
+            border-radius: 20px;
+            margin-right: 10px;
+            background-color: #333;
+            color: #E0E0E0;
+            font-size: 1em;
+            outline: none;
+        }
+
+        .input-area button {
+            padding: 10px;
+            border: 2px solid #FFD700;
+            border-radius: 20px;
+            background-color: #333;
+            color: #FFD700;
+            cursor: pointer;
+            font-size: 1em;
+            outline: none;
+        }
+
+        .input-area button:hover {
+            background-color: #444;
         }
 
         /* Footer */
         footer {
-            position: absolute;
-            bottom: 10px;
-            width: 100%;
+            background-color: #1E1E1E;
+            padding: 10px;
+            color: #FFD700;
             text-align: center;
-            color: #00FF00;
+            border-top: 1px solid #333;
         }
     </style>
 </head>
 <body>
-    <div class="matrix">
-        <div style="left: 10%; animation-duration: 5s;"></div>
-        <div style="left: 30%; animation-duration: 3s;"></div>
-        <div style="left: 50%; animation-duration: 7s;"></div>
-        <div style="left: 70%; animation-duration: 6s;"></div>
-        <div style="left: 90%; animation-duration: 4s;"></div>
+    <header class="header">
+        <h1>D-TECH Chat</h1>
+    </header>
+
+    <div class="settings-btn" onclick="toggleSettings()">Settings</div>
+
+    <div class="settings-panel" id="settings-panel">
+        <h2>Settings</h2>
+        <label for="theme-toggle">
+            <input type="checkbox" id="theme-toggle" onchange="toggleTheme()"> Dark Mode
+        </label>
+        <label for="profile-description">
+            Profile Description:
+            <input type="text" id="profile-description" placeholder="Set your profile description">
+        </label>
+        <button onclick="saveSettings()">Save</button>
     </div>
 
-    <!-- D-TECH Banner -->
-    <div class="banner">
-        <h1>D-TECH</h1>
-        <h2>Futuristic Chat Interface</h2>
+    <div class="chat-container">
+        <!-- Example messages -->
+        <div class="message sent">
+            Initiating chat protocol...
+        </div>
+        <div class="message received">
+            Connection established. How can I assist?
+        </div>
+        <!-- Add more messages here -->
     </div>
 
-    <!-- Chatbox Area -->
-    <div class="chat-container" id="chat-box">
-        <!-- Embed chat code here -->
+    <div class="input-area">
+        <input type="text" placeholder="Type a message...">
+        <button>Send</button>
     </div>
 
     <footer>
         <p>Made by Preasx24 | D-TECH Systems</p>
     </footer>
 
-    <!-- Tawk.to Embed Code -->
-    <script type="text/javascript">
-        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-        (function() {
-            var script = document.createElement("script"), firstScriptTag = document.getElementsByTagName("script")[0];
-            script.src = 'https://embed.tawk.to/66e9db8e83ab531891e816a6/DEFAULT';
-            script.async = true;
-            script.charset = 'UTF-8';
-            script.setAttribute('crossorigin', '*');
-            firstScriptTag.parentNode.insertBefore(script, firstScriptTag);
-        })();
+    <script>
+        // JavaScript for settings panel
+        function toggleSettings() {
+            const panel = document.getElementById('settings-panel');
+            panel.classList.toggle('open');
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+        }
+
+        function saveSettings() {
+            const description = document.getElementById('profile-description').value;
+            alert('Profile description saved: ' + description);
+            // Implement actual saving mechanism here
+        }
     </script>
 </body>
-</html>
+            </html>
