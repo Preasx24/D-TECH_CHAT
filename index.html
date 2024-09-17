@@ -14,99 +14,26 @@
 
         /* Background and font */
         body {
-            font-family: 'Courier New', Courier, monospace;
-            background: #121212; /* Dark background */
-            color: #E0E0E0; /* Light gray text */
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0; /* Light background */
             display: flex;
             flex-direction: column;
             height: 100vh;
             margin: 0;
-            overflow: hidden;
         }
 
         /* Header */
         .header {
-            background-color: #1E1E1E;
+            background-color: #0078d4; /* WhatsApp-like color */
             padding: 15px;
-            color: #FFD700; /* Gold color */
+            color: #ffffff;
             text-align: center;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid #ccc;
         }
 
         .header h1 {
-            font-size: 2em;
-            margin: 0;
-        }
-
-        /* Settings Button */
-        .settings-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            cursor: pointer;
-            padding: 10px;
-            border: 2px solid #FFD700;
-            border-radius: 5px;
-            background-color: #1E1E1E;
-            color: #FFD700;
-            font-size: 1em;
-        }
-
-        /* Settings Panel */
-        .settings-panel {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 250px;
-            height: 100%;
-            background-color: #1E1E1E;
-            color: #E0E0E0;
-            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .settings-panel.open {
-            transform: translateX(0);
-        }
-
-        .settings-panel h2 {
             font-size: 1.5em;
-            margin-bottom: 20px;
-        }
-
-        .settings-panel label {
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        .settings-panel input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #FFD700;
-            border-radius: 5px;
-            background-color: #333;
-            color: #E0E0E0;
-        }
-
-        .settings-panel button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #FFD700;
-            border-radius: 5px;
-            background-color: #333;
-            color: #FFD700;
-            cursor: pointer;
-            font-size: 1em;
-            margin-top: 10px;
-            outline: none;
-        }
-
-        .settings-panel button:hover {
-            background-color: #444;
+            margin: 0;
         }
 
         /* Chat Container */
@@ -115,37 +42,36 @@
             display: flex;
             flex-direction: column;
             padding: 20px;
+            background-color: #ffffff;
             overflow-y: auto;
-            background-color: #1E1E1E;
         }
 
         /* Chat messages */
         .message {
             margin: 10px 0;
-            padding: 15px;
+            padding: 10px;
             border-radius: 10px;
-            max-width: 70%;
-            color: #E0E0E0;
+            max-width: 75%;
             font-size: 1em;
             line-height: 1.5;
-            box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); /* Gold shadow */
+            position: relative;
         }
 
         .message.sent {
             align-self: flex-end;
-            background-color: #333333; /* Darker background for sent messages */
+            background-color: #dcf8c6; /* Light green for sent messages */
         }
 
         .message.received {
             align-self: flex-start;
-            background-color: #444444; /* Slightly lighter background for received messages */
+            background-color: #ffffff; /* White for received messages */
         }
 
         /* Input Area */
         .input-area {
-            background-color: #1E1E1E;
+            background-color: #ffffff;
             padding: 10px;
-            border-top: 1px solid #333;
+            border-top: 1px solid #ccc;
             display: flex;
             align-items: center;
         }
@@ -153,37 +79,35 @@
         .input-area input {
             flex: 1;
             padding: 10px;
-            border: 2px solid #FFD700;
+            border: 1px solid #ccc;
             border-radius: 20px;
             margin-right: 10px;
-            background-color: #333;
-            color: #E0E0E0;
             font-size: 1em;
             outline: none;
         }
 
         .input-area button {
             padding: 10px;
-            border: 2px solid #FFD700;
+            border: 1px solid #0078d4;
             border-radius: 20px;
-            background-color: #333;
-            color: #FFD700;
+            background-color: #0078d4;
+            color: #ffffff;
             cursor: pointer;
             font-size: 1em;
             outline: none;
         }
 
         .input-area button:hover {
-            background-color: #444;
+            background-color: #005a9e;
         }
 
         /* Footer */
         footer {
-            background-color: #1E1E1E;
+            background-color: #0078d4;
             padding: 10px;
-            color: #FFD700;
+            color: #ffffff;
             text-align: center;
-            border-top: 1px solid #333;
+            border-top: 1px solid #ccc;
         }
     </style>
 </head>
@@ -192,34 +116,20 @@
         <h1>D-TECH Chat</h1>
     </header>
 
-    <div class="settings-btn" onclick="toggleSettings()">Settings</div>
-
-    <div class="settings-panel" id="settings-panel">
-        <h2>Settings</h2>
-        <label for="theme-toggle">
-            <input type="checkbox" id="theme-toggle" onchange="toggleTheme()"> Dark Mode
-        </label>
-        <label for="profile-description">
-            Profile Description:
-            <input type="text" id="profile-description" placeholder="Set your profile description">
-        </label>
-        <button onclick="saveSettings()">Save</button>
-    </div>
-
-    <div class="chat-container">
+    <div class="chat-container" id="chat-container">
         <!-- Example messages -->
         <div class="message sent">
-            Initiating chat protocol...
+            Hello, how are you?
         </div>
         <div class="message received">
-            Connection established. How can I assist?
+            I'm good, thanks! How about you?
         </div>
         <!-- Add more messages here -->
     </div>
 
     <div class="input-area">
-        <input type="text" placeholder="Type a message...">
-        <button>Send</button>
+        <input type="text" id="message-input" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send</button>
     </div>
 
     <footer>
@@ -227,21 +137,18 @@
     </footer>
 
     <script>
-        // JavaScript for settings panel
-        function toggleSettings() {
-            const panel = document.getElementById('settings-panel');
-            panel.classList.toggle('open');
-        }
-
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-        }
-
-        function saveSettings() {
-            const description = document.getElementById('profile-description').value;
-            alert('Profile description saved: ' + description);
-            // Implement actual saving mechanism here
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            if (message) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message', 'sent');
+                messageElement.textContent = message;
+                document.getElementById('chat-container').appendChild(messageElement);
+                input.value = '';
+                input.focus();
+            }
         }
     </script>
 </body>
-            </html>
+</html>
