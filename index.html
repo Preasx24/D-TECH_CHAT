@@ -3,175 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-TECH Chat</title>
+    <title>D-TECH VIP Group</title>
     <style>
-        /* Basic reset */
-        * {
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: #fff;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
-
-        /* Background and font */
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f0f0f0; /* Light background */
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            margin: 0;
-        }
-
-        /* Header */
-        .header {
-            background-color: #0078d4; /* WhatsApp-like color */
-            padding: 15px;
-            color: #ffffff;
-            text-align: center;
-            border-bottom: 1px solid #ccc;
-        }
-
-        .header h1 {
-            font-size: 1.5em;
-            margin: 0;
-        }
-
-        /* Chat Container */
-        .chat-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
             padding: 20px;
-            background-color: #ffffff;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-
-        /* Chat messages */
-        .message {
-            margin: 10px 0;
-            padding: 10px;
+            background-color: #222;
             border-radius: 10px;
-            max-width: 75%;
-            font-size: 1em;
-            line-height: 1.5;
-            position: relative;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
-
-        .message.sent {
-            align-self: flex-end;
-            background-color: #dcf8c6; /* Light green for sent messages */
-        }
-
-        .message.received {
-            align-self: flex-start;
-            background-color: #ffffff; /* White for received messages */
-        }
-
-        /* Input Area */
-        .input-area {
-            background-color: #ffffff;
-            padding: 10px;
-            border-top: 1px solid #ccc;
-            display: flex;
-            align-items: center;
-        }
-
-        .input-area input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 20px;
-            margin-right: 10px;
-            font-size: 1em;
-            outline: none;
-        }
-
-        .input-area button {
-            padding: 10px;
-            border: 1px solid #0078d4;
-            border-radius: 20px;
-            background-color: #0078d4;
-            color: #ffffff;
-            cursor: pointer;
-            font-size: 1em;
-            outline: none;
-        }
-
-        .input-area button:hover {
-            background-color: #005a9e;
-        }
-
-        /* Footer */
-        footer {
-            background-color: #0078d4;
-            padding: 10px;
-            color: #ffffff;
+        h1 {
             text-align: center;
-            border-top: 1px solid #ccc;
+            color: #4CAF50;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        input[type="text"], input[type="password"], input[type="button"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+        }
+        .login-btn {
+            background-color: #4CAF50;
+            cursor: pointer;
+        }
+        .error {
+            color: red;
+            text-align: center;
+        }
+        .success {
+            color: green;
+            text-align: center;
+        }
+        .dot {
+            width: 20px;
+            height: 20px;
+            background-color: #ff0000;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        .admin-section {
+            display: none;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <h1>D-TECH Chat</h1>
-    </header>
 
-    <div class="chat-container" id="chat-container">
-        <!-- Example messages -->
-        <div class="message sent">
-            Hello, how are you?
+<div class="container">
+    <h1>D-TECH VIP Member Login</h1>
+    
+    <div id="loginForm">
+        <div class="form-group">
+            <input type="text" id="username" placeholder="Username" />
         </div>
-        <div class="message received">
-            I'm good, thanks! How about you?
+        <div class="form-group">
+            <input type="password" id="password" placeholder="Password" />
         </div>
-        <!-- Add more messages here -->
+        <div class="form-group">
+            <input type="button" class="login-btn" value="Login" onclick="validateLogin()" />
+        </div>
+        <div class="error" id="errorMessage"></div>
     </div>
 
-    <div class="input-area">
-        <input type="text" id="message-input" placeholder="Type a message...">
-        <button onclick="sendMessage()">Send</button>
+    <div id="vipContent" style="display:none;">
+        <div class="success" id="welcomeMessage"></div>
+        <div id="adminDot" class="dot" onclick="showAdminKeyPrompt()"></div>
     </div>
 
-    <footer>
-        <p>Made by Preasx24 | D-TECH Systems</p>
-    </footer>
+    <div class="admin-section" id="adminSection">
+        <div class="form-group">
+            <input type="password" id="adminKey" placeholder="Enter Admin Key" />
+        </div>
+        <div class="form-group">
+            <input type="button" value="Submit" onclick="checkAdminKey()" />
+        </div>
+        <div class="error" id="adminErrorMessage"></div>
+        <div id="adminContent" style="display:none;">
+            <textarea id="adminTextArea" placeholder="Add content for the VIP group" style="width:100%; height: 150px;"></textarea>
+            <input type="button" value="Save Content" onclick="saveContent()" />
+        </div>
+    </div>
+</div>
 
-    <!--Start of Tawk.to Script-->
-    <script type="text/javascript">
-        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-        (function(){
-            var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-            s1.async = true;
-            s1.src = 'https://embed.tawk.to/66e9f3054cbc4814f7d9a4b7/1i80tqjvk';
-            s1.charset = 'UTF-8';
-            s1.setAttribute('crossorigin', '*');
-            s0.parentNode.insertBefore(s1, s0);
-        })();
-    </script>
-    <!--End of Tawk.to Script-->
+<script>
+    const validCredentials = [
+        { username: "dtech", password: "12234" },
+        { username: "DTECH", password: "Terry" }
+    ];
 
-    <script>
-        function sendMessage() {
-            const input = document.getElementById('message-input');
-            const message = input.value.trim();
-            if (message) {
-                const messageElement = document.createElement('div');
-                messageElement.classList.add('message', 'sent');
-                messageElement.textContent = message;
-                const chatContainer = document.getElementById('chat-container');
-                chatContainer.appendChild(messageElement);
-                input.value = '';
-                input.focus();
-                chatContainer.scrollTop = chatContainer.scrollHeight; // Auto-scroll to bottom
-            }
+    function validateLogin() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const errorMessage = document.getElementById("errorMessage");
+
+        const validUser = validCredentials.find(cred => cred.username === username && cred.password === password);
+        
+        if (validUser) {
+            document.getElementById("loginForm").style.display = "none";
+            document.getElementById("vipContent").style.display = "block";
+            document.getElementById("welcomeMessage").innerText = `Welcome, ${username}!`;
+
+        } else {
+            errorMessage.innerText = "Invalid credentials. Please try again.";
         }
+    }
 
-        // Auto-scroll to bottom on page load if there are any messages
-        window.onload = function() {
-            const chatContainer = document.getElementById('chat-container');
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+    function showAdminKeyPrompt() {
+        document.getElementById("adminSection").style.display = "block";
+    }
+
+    function checkAdminKey() {
+        const adminKey = document.getElementById("adminKey").value;
+        const adminErrorMessage = document.getElementById("adminErrorMessage");
+
+        if (adminKey === "qwertyuiop") {
+            document.getElementById("adminSection").style.display = "none";
+            document.getElementById("adminContent").style.display = "block";
+        } else {
+            adminErrorMessage.innerText = "Invalid admin key. Access denied.";
         }
-    </script>
+    }
+
+    function saveContent() {
+        const adminTextArea = document.getElementById("adminTextArea");
+        alert("Content saved for VIP group: " + adminTextArea.value);
+        adminTextArea.value = "";  // Clear textarea
+    }
+</script>
+
 </body>
-    </html>
+</html>
