@@ -7,145 +7,132 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #111;
-            color: #fff;
+            background-color: #222;
+            color: white;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #222;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        .content {
+            width: 80%;
+            max-width: 800px;
         }
-        h1 {
-            text-align: center;
-            color: #4CAF50;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        input[type="text"], input[type="password"], input[type="button"] {
+        input[type="text"], input[type="password"], input[type="submit"] {
             width: 100%;
             padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #333;
+            margin: 10px 0;
+            border: 1px solid #555;
             border-radius: 5px;
             background-color: #333;
-            color: #fff;
+            color: white;
         }
-        .login-btn {
-            background-color: #4CAF50;
-            cursor: pointer;
+        .post-container {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #444;
+            background-color: #333;
         }
-        .error {
-            color: red;
-            text-align: center;
+        .post {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #444;
+            border-radius: 5px;
         }
-        .success {
-            color: green;
-            text-align: center;
-        }
-        .dot {
-            width: 20px;
-            height: 20px;
-            background-color: #ff0000;
+        .admin-dot {
+            width: 10px;
+            height: 10px;
+            background-color: red;
             border-radius: 50%;
             display: inline-block;
-            margin-left: 10px;
-            cursor: pointer;
-        }
-        .admin-section {
-            display: none;
-            margin-top: 20px;
+            margin: 10px;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>D-TECH VIP Member Login</h1>
-    
-    <div id="loginForm">
-        <div class="form-group">
-            <input type="text" id="username" placeholder="Username" />
-        </div>
-        <div class="form-group">
-            <input type="password" id="password" placeholder="Password" />
-        </div>
-        <div class="form-group">
-            <input type="button" class="login-btn" value="Login" onclick="validateLogin()" />
-        </div>
-        <div class="error" id="errorMessage"></div>
-    </div>
+    <div class="content">
+        <h2>Welcome to D-TECH VIP</h2>
 
-    <div id="vipContent" style="display:none;">
-        <div class="success" id="welcomeMessage"></div>
-        <div id="adminDot" class="dot" onclick="showAdminKeyPrompt()"></div>
-    </div>
+        <form id="login-form">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <input type="submit" value="Login">
+        </form>
 
-    <div class="admin-section" id="adminSection">
-        <div class="form-group">
-            <input type="password" id="adminKey" placeholder="Enter Admin Key" />
+        <div id="admin-section" style="display: none;">
+            <h3>Admin Panel</h3>
+            <div class="admin-dot"></div>
+            <textarea id="admin-post" rows="4" placeholder="Write a post..."></textarea>
+            <input type="submit" value="Post" id="submit-post">
         </div>
-        <div class="form-group">
-            <input type="button" value="Submit" onclick="checkAdminKey()" />
-        </div>
-        <div class="error" id="adminErrorMessage"></div>
-        <div id="adminContent" style="display:none;">
-            <textarea id="adminTextArea" placeholder="Add content for the VIP group" style="width:100%; height: 150px;"></textarea>
-            <input type="button" value="Save Content" onclick="saveContent()" />
+
+        <div id="post-display" class="post-container" style="display: none;">
+            <h3>Posts:</h3>
+            <div id="posts"></div>
         </div>
     </div>
-</div>
 
-<script>
-    const validCredentials = [
-        { username: "dtech", password: "12234" },
-        { username: "DTECH", password: "Terry" }
-    ];
+    <script>
+        const validCredentials = {
+            "dtech": "12234",
+            "DTECH": "Terry"
+        };
 
-    function validateLogin() {
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-        const errorMessage = document.getElementById("errorMessage");
+        const adminKey = "qwertyuiop";
 
-        const validUser = validCredentials.find(cred => cred.username === username && cred.password === password);
-        
-        if (validUser) {
-            document.getElementById("loginForm").style.display = "none";
-            document.getElementById("vipContent").style.display = "block";
-            document.getElementById("welcomeMessage").innerText = `Welcome, ${username}!`;
+        const posts = [];
 
-        } else {
-            errorMessage.innerText = "Invalid credentials. Please try again.";
+        document.getElementById('login-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Check credentials
+            if (validCredentials[username] && validCredentials[username] === password) {
+                // Show posts
+                showPosts();
+                
+                // Check if user is admin
+                if (username === "DTECH" && password === "Terry") {
+                    // Admin login, show admin panel
+                    document.getElementById('admin-section').style.display = 'block';
+                }
+            } else {
+                alert('Invalid credentials');
+            }
+        });
+
+        document.getElementById('submit-post').addEventListener('click', function () {
+            const adminPostContent = document.getElementById('admin-post').value;
+
+            // Only allow admin to post
+            if (adminPostContent && adminKey === "qwertyuiop") {
+                posts.push(adminPostContent);
+                document.getElementById('admin-post').value = ''; // Clear textarea
+                showPosts(); // Update posts display
+            } else {
+                alert('You need the admin key to post.');
+            }
+        });
+
+        function showPosts() {
+            const postDisplay = document.getElementById('posts');
+            postDisplay.innerHTML = ''; // Clear the display
+
+            posts.forEach((post, index) => {
+                const postElement = document.createElement('div');
+                postElement.classList.add('post');
+                postElement.textContent = post;
+                postDisplay.appendChild(postElement);
+            });
+
+            // Show post container
+            document.getElementById('post-display').style.display = 'block';
         }
-    }
-
-    function showAdminKeyPrompt() {
-        document.getElementById("adminSection").style.display = "block";
-    }
-
-    function checkAdminKey() {
-        const adminKey = document.getElementById("adminKey").value;
-        const adminErrorMessage = document.getElementById("adminErrorMessage");
-
-        if (adminKey === "qwertyuiop") {
-            document.getElementById("adminSection").style.display = "none";
-            document.getElementById("adminContent").style.display = "block";
-        } else {
-            adminErrorMessage.innerText = "Invalid admin key. Access denied.";
-        }
-    }
-
-    function saveContent() {
-        const adminTextArea = document.getElementById("adminTextArea");
-        alert("Content saved for VIP group: " + adminTextArea.value);
-        adminTextArea.value = "";  // Clear textarea
-    }
-</script>
+    </script>
 
 </body>
 </html>
