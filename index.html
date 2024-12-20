@@ -7,97 +7,124 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #1b1b1b;
-      color: #fff;
-      padding: 20px;
+      margin: 0;
+      padding: 0;
+      background-color: #1a1a1a;
+      color: white;
     }
-
-    #giveawayForm input, #giveawayForm button {
+    header {
+      text-align: center;
+      padding: 20px;
+      background-color: #333;
+    }
+    h1 {
+      margin: 0;
+      font-size: 36px;
+    }
+    .form-container {
+      padding: 20px;
+      background-color: #222;
+      max-width: 400px;
+      margin: 20px auto;
+      border-radius: 8px;
+    }
+    .form-container input {
       width: 100%;
       padding: 10px;
-      margin: 5px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      margin: 10px 0;
       background-color: #333;
-      color: #fff;
+      color: white;
+      border: 1px solid #555;
+      border-radius: 5px;
     }
-
+    .form-container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .form-container button:hover {
+      background-color: #218838;
+    }
     #leaderboard {
       margin-top: 20px;
+      text-align: center;
     }
-
-    #leaderboard ul {
-      list-style: none;
+    #leaderboardList {
+      list-style-type: none;
       padding: 0;
+      color: white;
     }
-
-    #leaderboard li {
-      background-color: #444;
-      padding: 10px;
-      margin: 5px 0;
-      border-radius: 5px;
+    #leaderboardList li {
+      padding: 5px;
+      border-bottom: 1px solid #444;
     }
   </style>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
 </head>
 <body>
 
-  <h1>D-TECH Giveaway</h1>
+  <header>
+    <h1>D-TECH Giveaway</h1>
+  </header>
 
-  <!-- Giveaway Entry Form -->
-  <form id="giveawayForm">
-    <input type="text" id="name" placeholder="Enter your name" required>
-    <input type="email" id="email" placeholder="Enter your email" required>
-    <input type="text" id="telegram" placeholder="Enter your Telegram username" required>
-    <button type="submit">Enter Giveaway</button>
-  </form>
-
-  <!-- Leaderboard Display -->
-  <div id="leaderboard">
-    <h2>Leaderboard</h2>
-    <ul id="leaderboardList"></ul>
+  <div class="form-container">
+    <form id="giveawayForm">
+      <input type="text" id="name" placeholder="Your Name" required>
+      <input type="email" id="email" placeholder="Your Email" required>
+      <input type="text" id="telegram" placeholder="Your Telegram Username" required>
+      <button type="submit">Enter Giveaway</button>
+    </form>
   </div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.16.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.16.0/firebase-database.js"></script>
+  <div id="leaderboard">
+    <h2>Leaderboard</h2>
+    <ul id="leaderboardList">
+      <!-- Leaderboard will populate here -->
+    </ul>
+  </div>
 
   <script>
-    // Firebase configuration (use your actual project details)
+    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyCck1-_nHBsIPI6Fazjge6zLeMj1vpe5oY",  // Replace with your Web API Key
-      authDomain: "dtech-3f596.firebaseapp.com",         // Replace with your Auth Domain
-      databaseURL: "https://dtech-3f596-default-rtdb.firebaseio.com", // Replace with your Database URL
-      projectId: "dtech-3f596",                          // Replace with your Project ID
-      storageBucket: "dtech-3f596.appspot.com",          // Replace with your Storage Bucket URL
-      messagingSenderId: "112830705909",                // Replace with your Messaging Sender ID
-      appId: "1:112830705909:web:12abcdef3456789"       // Replace with your App ID (from Firebase settings)
+      authDomain: "dtech-3f596.firebaseapp.com",  // Typically the project ID + firebaseapp.com
+      databaseURL: "https://dtech-3f596-default-rtdb.firebaseio.com",  // Your Firebase Realtime Database URL
+      projectId: "dtech-3f596",
+      storageBucket: "dtech-3f596.appspot.com",  // Usually project ID + appspot.com
+      messagingSenderId: "112830705909",
+      appId: "1:112830705909:web:d80f969f19c54f4a3195bc"
     };
 
     // Initialize Firebase
     const app = firebase.initializeApp(firebaseConfig);
     const database = firebase.database(app);
 
-    // Handle form submission
+    // Form submit event listener
     const form = document.getElementById("giveawayForm");
     form.addEventListener("submit", function(event) {
       event.preventDefault();  // Prevent form from refreshing the page
 
-      // Capture form values
       const name = document.getElementById("name").value;
       const email = document.getElementById("email").value;
       const telegram = document.getElementById("telegram").value;
 
-      // Push user data to Firebase Realtime Database
-      const newEntryRef = firebase.database().ref("giveawayEntries").push();
+      // Save data to Firebase
+      const newEntryRef = database.ref("giveawayEntries").push();
       newEntryRef.set({
         name: name,
         email: email,
         telegram: telegram,
-        points: 0  // Default points set to 0
+        points: 0  // Initial points
       });
 
       alert("Thanks for entering the giveaway!");
-      form.reset();
+      form.reset();  // Reset the form
+      updateLeaderboard();  // Update leaderboard after entry
     });
 
     // Function to update the leaderboard
@@ -105,56 +132,24 @@
       const leaderboardList = document.getElementById("leaderboardList");
       leaderboardList.innerHTML = ""; // Clear existing list
 
-      // Fetch data from Firebase
-      firebase.database().ref("giveawayEntries").orderByChild("points").once("value", snapshot => {
+      database.ref("giveawayEntries").orderByChild("points").once("value", snapshot => {
         const entries = snapshot.val();
-        const sortedEntries = Object.values(entries).sort((a, b) => b.points - a.points); // Sort by points in descending order
-
-        // Display each entry in the leaderboard
-        sortedEntries.forEach(entry => {
-          const listItem = document.createElement("li");
-          listItem.textContent = `${entry.name} (@${entry.telegram}) - ${entry.points} points`;
-          leaderboardList.appendChild(listItem);
-        });
-      });
-    }
-
-    // Update the leaderboard when the page loads
-    window.onload = updateLeaderboard;
-
-    // Function to add points to a user (this can be used for adding points via referrals or completing tasks)
-    function addPoints(telegramUsername, pointsToAdd) {
-      const entriesRef = firebase.database().ref("giveawayEntries");
-
-      // Find user by Telegram username
-      entriesRef.orderByChild("telegram").equalTo(telegramUsername).once("value", snapshot => {
-        const user = snapshot.val();
-        if (user) {
-          const userId = Object.keys(user)[0]; // Get the user key
-          const userRef = firebase.database().ref(`giveawayEntries/${userId}`);
-
-          // Update the user's points
-          userRef.update({
-            points: user[userId].points + pointsToAdd
-          }).then(() => {
-            updateLeaderboard(); // Refresh leaderboard after adding points
+        if (entries) {
+          const sortedEntries = Object.values(entries).sort((a, b) => b.points - a.points);
+          sortedEntries.forEach(entry => {
+            const listItem = document.createElement("li");
+            listItem.textContent = `${entry.name} (@${entry.telegram}) - ${entry.points} points`;
+            leaderboardList.appendChild(listItem);
           });
         } else {
-          console.log("User not found!");
+          leaderboardList.innerHTML = "<li>No entries yet.</li>";
         }
       });
     }
 
-    // Function to pick the winner based on the highest points
-    function pickWinner() {
-      firebase.database().ref("giveawayEntries").orderByChild("points").once("value", snapshot => {
-        const entries = snapshot.val();
-        const sortedEntries = Object.values(entries).sort((a, b) => b.points - a.points);
-        const winner = sortedEntries[0]; // Person with the most points
-
-        alert(`Congratulations, ${winner.name} (@${winner.telegram})! You've won the giveaway.`);
-      });
-    }
+    // Initial leaderboard load
+    updateLeaderboard();
   </script>
+
 </body>
 </html>
