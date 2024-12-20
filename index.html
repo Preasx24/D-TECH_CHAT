@@ -1,138 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-TECH VIP Group</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #222;
-            color: white;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .content {
-            width: 80%;
-            max-width: 800px;
-        }
-        input[type="text"], input[type="password"], input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #555;
-            border-radius: 5px;
-            background-color: #333;
-            color: white;
-        }
-        .post-container {
-            margin-top: 20px;
-            padding: 20px;
-            border: 1px solid #444;
-            background-color: #333;
-        }
-        .post {
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: #444;
-            border-radius: 5px;
-        }
-        .admin-dot {
-            width: 10px;
-            height: 10px;
-            background-color: red;
-            border-radius: 50%;
-            display: inline-block;
-            margin: 10px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D-TECH Giveaway</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1b1b1b;
+      color: #fff;
+      padding: 20px;
+    }
+
+    #giveawayForm input, #giveawayForm button {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #333;
+      color: #fff;
+    }
+
+    #leaderboard {
+      margin-top: 20px;
+    }
+
+    #leaderboard ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    #leaderboard li {
+      background-color: #444;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="content">
-        <h2>Welcome to D-TECH VIP</h2>
+  <h1>D-TECH Giveaway</h1>
 
-        <form id="login-form">
-            <input type="text" id="username" placeholder="Username" required>
-            <input type="password" id="password" placeholder="Password" required>
-            <input type="submit" value="Login">
-        </form>
+  <!-- Giveaway Entry Form -->
+  <form id="giveawayForm">
+    <input type="text" id="name" placeholder="Enter your name" required>
+    <input type="email" id="email" placeholder="Enter your email" required>
+    <input type="text" id="telegram" placeholder="Enter your Telegram username" required>
+    <button type="submit">Enter Giveaway</button>
+  </form>
 
-        <div id="admin-section" style="display: none;">
-            <h3>Admin Panel</h3>
-            <div class="admin-dot"></div>
-            <textarea id="admin-post" rows="4" placeholder="Write a post..."></textarea>
-            <input type="submit" value="Post" id="submit-post">
-        </div>
+  <!-- Leaderboard Display -->
+  <div id="leaderboard">
+    <h2>Leaderboard</h2>
+    <ul id="leaderboardList"></ul>
+  </div>
 
-        <div id="post-display" class="post-container" style="display: none;">
-            <h3>Posts:</h3>
-            <div id="posts"></div>
-        </div>
-    </div>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.16.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.16.0/firebase-database.js"></script>
 
-    <script>
-        const validCredentials = {
-            "dtech": "12234",
-            "DTECH": "Terry"
-        };
+  <script>
+    // Firebase configuration (use your actual project details)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCck1-_nHBsIPI6Fazjge6zLeMj1vpe5oY",  // Replace with your Web API Key
+      authDomain: "dtech-3f596.firebaseapp.com",         // Replace with your Auth Domain
+      databaseURL: "https://dtech-3f596-default-rtdb.firebaseio.com", // Replace with your Database URL
+      projectId: "dtech-3f596",                          // Replace with your Project ID
+      storageBucket: "dtech-3f596.appspot.com",          // Replace with your Storage Bucket URL
+      messagingSenderId: "112830705909",                // Replace with your Messaging Sender ID
+      appId: "1:112830705909:web:12abcdef3456789"       // Replace with your App ID (from Firebase settings)
+    };
 
-        const adminKey = "qwertyuiop";
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database(app);
 
-        const posts = [];
+    // Handle form submission
+    const form = document.getElementById("giveawayForm");
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();  // Prevent form from refreshing the page
 
-        document.getElementById('login-form').addEventListener('submit', function (event) {
-            event.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            // Check credentials
-            if (validCredentials[username] && validCredentials[username] === password) {
-                // Show posts
-                showPosts();
-                
-                // Check if user is admin
-                if (username === "DTECH" && password === "Terry") {
-                    // Admin login, show admin panel
-                    document.getElementById('admin-section').style.display = 'block';
-                }
-            } else {
-                alert('Invalid credentials');
-            }
+      // Capture form values
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const telegram = document.getElementById("telegram").value;
+
+      // Push user data to Firebase Realtime Database
+      const newEntryRef = firebase.database().ref("giveawayEntries").push();
+      newEntryRef.set({
+        name: name,
+        email: email,
+        telegram: telegram,
+        points: 0  // Default points set to 0
+      });
+
+      alert("Thanks for entering the giveaway!");
+      form.reset();
+    });
+
+    // Function to update the leaderboard
+    function updateLeaderboard() {
+      const leaderboardList = document.getElementById("leaderboardList");
+      leaderboardList.innerHTML = ""; // Clear existing list
+
+      // Fetch data from Firebase
+      firebase.database().ref("giveawayEntries").orderByChild("points").once("value", snapshot => {
+        const entries = snapshot.val();
+        const sortedEntries = Object.values(entries).sort((a, b) => b.points - a.points); // Sort by points in descending order
+
+        // Display each entry in the leaderboard
+        sortedEntries.forEach(entry => {
+          const listItem = document.createElement("li");
+          listItem.textContent = `${entry.name} (@${entry.telegram}) - ${entry.points} points`;
+          leaderboardList.appendChild(listItem);
         });
+      });
+    }
 
-        document.getElementById('submit-post').addEventListener('click', function () {
-            const adminPostContent = document.getElementById('admin-post').value;
+    // Update the leaderboard when the page loads
+    window.onload = updateLeaderboard;
 
-            // Only allow admin to post
-            if (adminPostContent && adminKey === "qwertyuiop") {
-                posts.push(adminPostContent);
-                document.getElementById('admin-post').value = ''; // Clear textarea
-                showPosts(); // Update posts display
-            } else {
-                alert('You need the admin key to post.');
-            }
-        });
+    // Function to add points to a user (this can be used for adding points via referrals or completing tasks)
+    function addPoints(telegramUsername, pointsToAdd) {
+      const entriesRef = firebase.database().ref("giveawayEntries");
 
-        function showPosts() {
-            const postDisplay = document.getElementById('posts');
-            postDisplay.innerHTML = ''; // Clear the display
+      // Find user by Telegram username
+      entriesRef.orderByChild("telegram").equalTo(telegramUsername).once("value", snapshot => {
+        const user = snapshot.val();
+        if (user) {
+          const userId = Object.keys(user)[0]; // Get the user key
+          const userRef = firebase.database().ref(`giveawayEntries/${userId}`);
 
-            posts.forEach((post, index) => {
-                const postElement = document.createElement('div');
-                postElement.classList.add('post');
-                postElement.textContent = post;
-                postDisplay.appendChild(postElement);
-            });
-
-            // Show post container
-            document.getElementById('post-display').style.display = 'block';
+          // Update the user's points
+          userRef.update({
+            points: user[userId].points + pointsToAdd
+          }).then(() => {
+            updateLeaderboard(); // Refresh leaderboard after adding points
+          });
+        } else {
+          console.log("User not found!");
         }
-    </script>
+      });
+    }
 
+    // Function to pick the winner based on the highest points
+    function pickWinner() {
+      firebase.database().ref("giveawayEntries").orderByChild("points").once("value", snapshot => {
+        const entries = snapshot.val();
+        const sortedEntries = Object.values(entries).sort((a, b) => b.points - a.points);
+        const winner = sortedEntries[0]; // Person with the most points
+
+        alert(`Congratulations, ${winner.name} (@${winner.telegram})! You've won the giveaway.`);
+      });
+    }
+  </script>
 </body>
 </html>
