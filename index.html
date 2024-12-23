@@ -3,181 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-TECH Web Builder</title>
+    <title>Website Builder</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
             padding: 20px;
         }
 
-        #blankPage {
-            height: 500px;
-            background-color: #f4f4f4;
-            border: 1px solid #ccc;
-            position: relative;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
             padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
         }
 
         .section {
-            border: 2px dashed #bbb;
-            margin: 10px;
-            padding: 20px;
-            min-height: 100px;
-            text-align: center;
-            cursor: pointer;
+            margin-bottom: 20px;
         }
 
-        .options {
-            display: none;
-            position: absolute;
-            background-color: white;
+        .section label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .section select, .section input, .section button {
+            width: 100%;
             padding: 10px;
+            margin-bottom: 10px;
+            font-size: 16px;
             border: 1px solid #ccc;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 10;
+            border-radius: 5px;
         }
 
-        .output {
-            background-color: #222;
-            color: #00ff00;
-            padding: 20px;
-            margin-top: 20px;
-            white-space: pre-wrap;
-            font-family: monospace;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .btn {
-            padding: 10px;
-            background-color: #007bff;
+        .section button {
+            background-color: #4CAF50;
             color: white;
             cursor: pointer;
-            font-size: 16px;
         }
 
-        .option-btn {
-            margin: 5px;
+        .section button:hover {
+            background-color: #45a049;
         }
 
-        #htmlCodeDisplay {
+        .section .preview {
             margin-top: 20px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
+        
+        .preview h2 {
+            color: #4CAF50;
+        }
+        
     </style>
 </head>
 <body>
 
-<h1>D-TECH Web Builder</h1>
-<p>Click on any section below to add content. Your page will be updated and the HTML code will be shown dynamically.</p>
+<div class="container">
+    <h1>Website Builder - First Page</h1>
+    
+    <form id="builderForm">
+        
+        <!-- Logo Section -->
+        <div class="section">
+            <label for="logo">Choose a Logo:</label>
+            <input type="file" id="logo" name="logo">
+        </div>
 
-<!-- Blank Page with Clickable Sections -->
-<div id="blankPage">
-    <div class="section" id="headerSection" onclick="showOptions('header')">
-        <h2>Click here to add content to Header</h2>
-    </div>
-    <div class="section" id="bodySection" onclick="showOptions('body')">
-        <h2>Click here to add content to Body</h2>
-    </div>
-    <div class="section" id="footerSection" onclick="showOptions('footer')">
-        <h2>Click here to add content to Footer</h2>
-    </div>
+        <!-- Background Color -->
+        <div class="section">
+            <label for="bgColor">Choose Background Color:</label>
+            <input type="color" id="bgColor" name="bgColor">
+        </div>
 
-    <!-- Options Dropdown -->
-    <div id="optionsMenu" class="options">
-        <h3>Select Content to Add:</h3>
-        <button class="btn option-btn" onclick="addText()">Add Text</button>
-        <button class="btn option-btn" onclick="addImage()">Add Image</button>
-        <button class="btn option-btn" onclick="addLink()">Add Link</button>
-        <button class="btn option-btn" onclick="addColor()">Add Background Color</button>
-    </div>
-</div>
+        <!-- Header Section -->
+        <div class="section">
+            <label for="headerType">Choose Header Type:</label>
+            <select id="headerType" name="headerType">
+                <option value="simple">Simple</option>
+                <option value="image">Image with Title</option>
+                <option value="video">Video Header</option>
+            </select>
+        </div>
 
-<!-- Output HTML Code -->
-<div id="htmlCodeDisplay">
-    <h3>Generated HTML Code:</h3>
-    <div id="outputCode" class="output"></div>
+        <!-- Button Customization -->
+        <div class="section">
+            <label for="buttonText">Button Text:</label>
+            <input type="text" id="buttonText" name="buttonText" placeholder="Enter button text">
+            <label for="buttonLink">Button Link:</label>
+            <input type="url" id="buttonLink" name="buttonLink" placeholder="Enter button link">
+        </div>
+
+        <!-- Add Section -->
+        <div class="section">
+            <label for="addSection">Add New Section:</label>
+            <select id="addSection" name="addSection">
+                <option value="text">Text Section</option>
+                <option value="image">Image Section</option>
+                <option value="video">Video Section</option>
+                <option value="testimonial">Testimonial Section</option>
+                <option value="countdown">Countdown Timer</option>
+            </select>
+        </div>
+
+        <!-- Preview Button -->
+        <div class="section">
+            <button type="button" id="previewButton">Preview HTML</button>
+        </div>
+
+        <!-- Preview Section -->
+        <div class="section preview" id="previewSection">
+            <h2>Preview HTML</h2>
+            <pre id="htmlPreview"></pre>
+        </div>
+    </form>
 </div>
 
 <script>
-    let htmlCode = {
-        header: '',
-        body: '',
-        footer: ''
-    };
+    // Event listener for the preview button
+    document.getElementById('previewButton').addEventListener('click', function() {
+        const logo = document.getElementById('logo').files[0];
+        const bgColor = document.getElementById('bgColor').value;
+        const headerType = document.getElementById('headerType').value;
+        const buttonText = document.getElementById('buttonText').value;
+        const buttonLink = document.getElementById('buttonLink').value;
+        const addSection = document.getElementById('addSection').value;
 
-    let currentSection = '';
+        let htmlCode = `<html>\n<head>\n<title>Custom Website</title>\n</head>\n<body style="background-color: ${bgColor};">`;
 
-    // Show options based on clicked section
-    function showOptions(section) {
-        currentSection = section;
-        document.getElementById('optionsMenu').style.display = 'block';
-    }
-
-    // Hide the options menu after an option is selected
-    function hideOptions() {
-        document.getElementById('optionsMenu').style.display = 'none';
-    }
-
-    // Add text to the selected section
-    function addText() {
-        let userText = prompt("Enter your text:");
-        if (userText) {
-            let textHtml = `<p>${userText}</p>`;
-            htmlCode[currentSection] += textHtml;
-            updateSectionContent();
+        // Add Logo Section
+        if (logo) {
+            htmlCode += `\n    <header>\n        <img src="${URL.createObjectURL(logo)}" alt="Logo" style="max-width: 200px;">\n    </header>`;
         }
-        hideOptions();
-    }
 
-    // Add an image to the selected section
-    function addImage() {
-        let imgUrl = prompt("Enter the image URL:");
-        if (imgUrl) {
-            let imageHtml = `<img src="${imgUrl}" alt="image" style="max-width:100%;">`;
-            htmlCode[currentSection] += imageHtml;
-            updateSectionContent();
+        // Add Header Type
+        if (headerType === 'simple') {
+            htmlCode += `\n    <h1>Welcome to My Website</h1>`;
+        } else if (headerType === 'image') {
+            htmlCode += `\n    <header>\n        <img src="header-image.jpg" alt="Header Image">\n        <h1>Welcome to My Website</h1>\n    </header>`;
+        } else if (headerType === 'video') {
+            htmlCode += `\n    <header>\n        <video src="header-video.mp4" autoplay muted loop></video>\n        <h1>Welcome to My Website</h1>\n    </header>`;
         }
-        hideOptions();
-    }
 
-    // Add a link to the selected section
-    function addLink() {
-        let linkUrl = prompt("Enter the link URL:");
-        let linkText = prompt("Enter link text:");
-        if (linkUrl && linkText) {
-            let linkHtml = `<a href="${linkUrl}" target="_blank">${linkText}</a>`;
-            htmlCode[currentSection] += linkHtml;
-            updateSectionContent();
+        // Add Button
+        if (buttonText && buttonLink) {
+            htmlCode += `\n    <button onclick="window.location.href='${buttonLink}'">${buttonText}</button>`;
         }
-        hideOptions();
-    }
 
-    // Add a background color to the selected section
-    function addColor() {
-        let color = prompt("Enter a color (e.g., #ff5733):");
-        if (color) {
-            let colorHtml = `<div style="background-color:${color}; padding:20px;">Section Background Color</div>`;
-            htmlCode[currentSection] += colorHtml;
-            updateSectionContent();
+        // Add Additional Section
+        if (addSection === 'text') {
+            htmlCode += `\n    <section><h2>Text Section</h2><p>This is a custom text section.</p></section>`;
+        } else if (addSection === 'image') {
+            htmlCode += `\n    <section><h2>Image Section</h2><img src="image.jpg" alt="Custom Image" style="width: 100%;"></section>`;
+        } else if (addSection === 'video') {
+            htmlCode += `\n    <section><h2>Video Section</h2><video src="video.mp4" controls></video></section>`;
+        } else if (addSection === 'testimonial') {
+            htmlCode += `\n    <section><h2>Testimonial Section</h2><p>"This is an amazing website!" - User</p></section>`;
+        } else if (addSection === 'countdown') {
+            htmlCode += `\n    <section><h2>Countdown Timer</h2><div id="countdown"></div></section>`;
         }
-        hideOptions();
-    }
 
-    // Update the HTML content in the section and display it
-    function updateSectionContent() {
-        let section = document.getElementById(currentSection + 'Section');
-        section.innerHTML = htmlCode[currentSection];
-        updateHTMLDisplay();
-    }
+        // Close HTML Tag
+        htmlCode += `\n</body>\n</html>`;
 
-    // Update the HTML code display
-    function updateHTMLDisplay() {
-        let outputCode = '';
-        for (let section in htmlCode) {
-            outputCode += `<h3>${section.charAt(0).toUpperCase() + section.slice(1)} Section:</h3>\n` + htmlCode[section] + '\n\n';
-        }
-        document.getElementById('outputCode').textContent = outputCode;
-    }
+        // Show HTML Code in Preview
+        document.getElementById('htmlPreview').textContent = htmlCode;
+    });
 </script>
 
 </body>
