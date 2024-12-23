@@ -3,132 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-TECH Giveaway</title>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <title>D-TECH Web Builder - Interactive Page</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: white;
-            text-align: center;
             padding: 20px;
         }
-        h1 {
-            color: #00FF00;
-        }
-        input, button {
-            padding: 10px;
-            margin: 5px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #333;
-            background-color: #333;
-            color: white;
-        }
-        button {
-            background-color: #00FF00;
+        .section {
+            padding: 20px;
+            border: 1px dashed #aaa;
+            margin-bottom: 20px;
             cursor: pointer;
         }
-        .leaderboard {
-            margin-top: 20px;
-            text-align: left;
-            max-width: 400px;
-            margin: 20px auto;
-        }
-        .entry {
+        #outputCode {
             background-color: #222;
-            margin: 10px 0;
-            padding: 10px;
+            color: #00ff00;
+            padding: 20px;
             border-radius: 5px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-width: 100%;
+            overflow-x: auto;
+            font-family: monospace;
+            height: 200px;
+            overflow-y: auto;
+        }
+        select, input[type="text"], button {
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
+    <header>
+        <h1>D-TECH Web Builder - Customizable Template</h1>
+        <p>Select parts of the page to customize and view your HTML code.</p>
+    </header>
 
-    <h1>D-TECH Giveaway</h1>
-
-    <div>
-        <input type="text" id="name" placeholder="Enter your Name" />
-        <input type="text" id="telegram" placeholder="Enter your Telegram Username" />
-        <button onclick="submitEntry()">Submit Entry</button>
+    <!-- Base Plant Page -->
+    <div class="section" id="headerSection" onclick="customizeSection('header')">
+        <h2>Header</h2>
+        <p>Click here to customize the header.</p>
     </div>
 
-    <div class="leaderboard" id="leaderboard">
-        <h2>Leaderboard</h2>
-        <!-- Leaderboard Entries will appear here -->
+    <div class="section" id="contentSection" onclick="customizeSection('content')">
+        <h2>Main Content</h2>
+        <p>Click here to customize the content.</p>
     </div>
+
+    <div class="section" id="footerSection" onclick="customizeSection('footer')">
+        <h2>Footer</h2>
+        <p>Click here to customize the footer.</p>
+    </div>
+
+    <!-- Customization Form -->
+    <div id="customizationForm" style="display: none;">
+        <h3>Customize Section</h3>
+        <div id="options"></div>
+        <button onclick="applyChanges()">Apply Customization</button>
+    </div>
+
+    <!-- HTML Code Output -->
+    <h3>Generated HTML Code:</h3>
+    <div id="outputCode"></div>
+
+    <!-- Copy to Clipboard Button -->
+    <button onclick="copyCode()">Copy Code</button>
 
     <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCck1-_nHBsIPI6Fazjge6zLeMj1vpe5oY",
-            authDomain: "dtech-3f596.firebaseapp.com",
-            databaseURL: "https://dtech-3f596-default-rtdb.firebaseio.com",
-            projectId: "dtech-3f596",
-            storageBucket: "dtech-3f596.appspot.com",
-            messagingSenderId: "112830705909",
-            appId: "1:112830705909:web:d80f969f19c54f4a3195bc"
+        let currentSection = '';
+        let htmlCode = {
+            header: `<header><h1>My Website Header</h1></header>`,
+            content: `<div><p>Welcome to the main content area!</p></div>`,
+            footer: `<footer><p>Footer Information</p></footer>`
         };
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.database(app);
+        function customizeSection(section) {
+            currentSection = section;
+            const form = document.getElementById('customizationForm');
+            const options = document.getElementById('options');
 
-        // Submit entry to Firebase
-        function submitEntry() {
-            const name = document.getElementById('name').value;
-            const telegram = document.getElementById('telegram').value;
-            
-            if (name && telegram) {
-                const points = Math.floor(Math.random() * 100) + 1;  // Assigning random points for now
+            // Show the customization form
+            form.style.display = 'block';
 
-                // Push data to Firebase
-                const newEntryRef = database.ref('giveawayEntries').push();
-                newEntryRef.set({
-                    name: name,
-                    telegram: telegram,
-                    points: points
-                }).then(() => {
-                    alert("Entry submitted successfully!");
-                    updateLeaderboard();
-                }).catch(error => {
-                    console.error("Error submitting entry: ", error);
-                });
-            } else {
-                alert("Please fill out both fields.");
+            // Reset options for the section
+            options.innerHTML = '';
+
+            if (section === 'header') {
+                options.innerHTML = `
+                    <label for="headerText">Header Text: </label>
+                    <input type="text" id="headerText" placeholder="Enter custom header text" />
+                `;
+            } else if (section === 'content') {
+                options.innerHTML = `
+                    <label for="contentText">Content Text: </label>
+                    <input type="text" id="contentText" placeholder="Enter custom content text" />
+                    <label for="contentImage">Image URL: </label>
+                    <input type="text" id="contentImage" placeholder="Enter image URL" />
+                `;
+            } else if (section === 'footer') {
+                options.innerHTML = `
+                    <label for="footerText">Footer Text: </label>
+                    <input type="text" id="footerText" placeholder="Enter custom footer text" />
+                `;
             }
         }
 
-        // Update leaderboard from Firebase
-        function updateLeaderboard() {
-            const leaderboardRef = database.ref('giveawayEntries');
-            
-            leaderboardRef.orderByChild('points').once('value', (snapshot) => {
-                const data = snapshot.val();
-                const leaderboardDiv = document.getElementById('leaderboard');
-                leaderboardDiv.innerHTML = "<h2>Leaderboard</h2>"; // Clear existing leaderboard
+        function applyChanges() {
+            if (currentSection === 'header') {
+                const headerText = document.getElementById('headerText').value;
+                htmlCode.header = `<header><h1>${headerText ? headerText : 'My Website Header'}</h1></header>`;
+            } else if (currentSection === 'content') {
+                const contentText = document.getElementById('contentText').value;
+                const contentImage = document.getElementById('contentImage').value;
+                htmlCode.content = `
+                    <div>
+                        <p>${contentText ? contentText : 'Welcome to the main content area!'}</p>
+                        ${contentImage ? `<img src="${contentImage}" alt="Content Image" />` : ''}
+                    </div>
+                `;
+            } else if (currentSection === 'footer') {
+                const footerText = document.getElementById('footerText').value;
+                htmlCode.footer = `<footer><p>${footerText ? footerText : 'Footer Information'}</p></footer>`;
+            }
 
-                // If no data exists
-                if (!data) {
-                    leaderboardDiv.innerHTML += "<p>No entries yet.</p>";
-                    return;
-                }
-
-                const sortedEntries = Object.values(data).sort((a, b) => b.points - a.points);
-
-                sortedEntries.forEach(entry => {
-                    const entryDiv = document.createElement('div');
-                    entryDiv.classList.add('entry');
-                    entryDiv.innerHTML = `<strong>${entry.name}</strong> (Telegram: ${entry.telegram}) - Points: ${entry.points}`;
-                    leaderboardDiv.appendChild(entryDiv);
-                });
-            });
+            // Display the generated HTML code
+            updateCodePreview();
         }
 
-        // Call to load the leaderboard initially
-        updateLeaderboard();
-    </script>
+        function updateCodePreview() {
+            let fullHtml = `${htmlCode.header}\n${htmlCode.content}\n${htmlCode.footer}`;
+            document.getElementById('outputCode').textContent = fullHtml;
+        }
 
+        function copyCode() {
+            const codeToCopy = document.getElementById('outputCode').textContent;
+            navigator.clipboard.writeText(codeToCopy).then(() => {
+                alert('HTML code copied to clipboard!');
+            }).catch(err => {
+                console.error('Error copying code: ', err);
+            });
+        }
+    </script>
 </body>
 </html>
