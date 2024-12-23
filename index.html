@@ -3,24 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-TECH Advanced Web Builder</title>
+    <title>D-TECH Web Builder</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
         }
-        .section {
-            padding: 20px;
-            border: 1px dashed #aaa;
-            margin-bottom: 20px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .draggable {
-            border: 1px dashed #333;
-            margin: 10px;
-            padding: 10px;
-            cursor: move;
+        #blankPage {
+            height: 300px;
+            background-color: #f0f0f0;
+            border: 1px dashed #ccc;
+            position: relative;
         }
         .options {
             margin-top: 20px;
@@ -35,20 +28,8 @@
             max-height: 400px;
             overflow-y: auto;
         }
-        select, input[type="text"], button {
-            padding: 10px;
+        .btn {
             margin-top: 10px;
-            font-size: 16px;
-        }
-        #doneButton {
-            margin-top: 20px;
-            background-color: #28a745;
-            color: white;
-            padding: 10px 20px;
-            cursor: pointer;
-        }
-        .addElementBtn {
-            margin-top: 20px;
             padding: 10px;
             background-color: #007bff;
             color: white;
@@ -58,104 +39,79 @@
     </style>
 </head>
 <body>
-    <header>
-        <h1>D-TECH Advanced Web Builder</h1>
-        <p>Build your webpage, drag and drop sections, and customize in real-time.</p>
-    </header>
 
-    <!-- Section Containers (Drag-and-Drop Areas) -->
-    <div id="sectionsContainer">
-        <div class="section" id="headerSection">
-            <h2>Header</h2>
-            <div class="draggable" draggable="true" id="draggableHeader">Header Content</div>
-        </div>
+    <h1>D-TECH Web Builder</h1>
+    <p>Click on an area to customize your page.</p>
 
-        <div class="section" id="contentSection">
-            <h2>Main Content</h2>
-            <div class="draggable" draggable="true" id="draggableContent">Main Content Area</div>
-        </div>
-
-        <div class="section" id="footerSection">
-            <h2>Footer</h2>
-            <div class="draggable" draggable="true" id="draggableFooter">Footer Content</div>
-        </div>
+    <!-- Blank page area -->
+    <div id="blankPage" onclick="showOptions()">
+        <h2>Click here to add content to your page</h2>
     </div>
 
-    <!-- Add More Elements -->
-    <button class="addElementBtn" onclick="addElement('header')">Add Header</button>
-    <button class="addElementBtn" onclick="addElement('content')">Add Content</button>
-    <button class="addElementBtn" onclick="addElement('footer')">Add Footer</button>
-
-    <!-- Customization Panel -->
-    <div id="customizationPanel" class="options" style="display: none;">
-        <h3>Customize Section</h3>
-        <div id="options"></div>
-        <button onclick="applyChanges()">Apply Customization</button>
+    <!-- Options that will appear when a section is clicked -->
+    <div id="options" class="options" style="display:none;">
+        <h3>Select what to add:</h3>
+        <button class="btn" onclick="addText()">Add Text</button>
+        <button class="btn" onclick="addImage()">Add Image</button>
+        <button class="btn" onclick="addLink()">Add Link</button>
     </div>
 
-    <!-- Final HTML Output -->
+    <!-- Output HTML -->
     <h3>Generated HTML Code:</h3>
     <div id="outputCode" class="output"></div>
 
-    <!-- Done Button -->
-    <button id="doneButton" onclick="showFinalCode()">Done</button>
-
     <script>
-        let htmlCode = {
-            header: `<header><h1>Default Header</h1></header>`,
-            content: `<div><p>Default Main Content</p></div>`,
-            footer: `<footer><p>Default Footer</p></footer>`
-        };
+        let htmlCode = '';
 
-        let sectionElements = {
-            header: [],
-            content: [],
-            footer: []
-        };
-
-        function addElement(sectionType) {
-            const newElement = document.createElement('div');
-            newElement.classList.add('draggable');
-            newElement.setAttribute('draggable', 'true');
-            newElement.textContent = `${sectionType.charAt(0).toUpperCase() + sectionType.slice(1)} Content`;
-
-            newElement.addEventListener('dragstart', handleDragStart);
-            newElement.addEventListener('dragend', handleDragEnd);
-
-            sectionElements[sectionType].push(newElement);
-            document.getElementById(`${sectionType}Section`).appendChild(newElement);
-            updateHTMLCode();
+        // Show the options when the user clicks on the blank page
+        function showOptions() {
+            document.getElementById('options').style.display = 'block';
         }
 
-        function handleDragStart(e) {
-            e.dataTransfer.setData('text', e.target.id);
+        // Add text to the page
+        function addText() {
+            let text = prompt("Enter your text:");
+            if (text) {
+                let textElement = `<p>${text}</p>`;
+                htmlCode += textElement;
+                updateHTML();
+            }
+            hideOptions();
         }
 
-        function handleDragEnd(e) {
-            e.target.style.opacity = '';
+        // Add image to the page
+        function addImage() {
+            let imgUrl = prompt("Enter image URL:");
+            if (imgUrl) {
+                let imageElement = `<img src="${imgUrl}" alt="image" style="max-width:100%;">`;
+                htmlCode += imageElement;
+                updateHTML();
+            }
+            hideOptions();
         }
 
-        function applyChanges() {
-            const headerText = document.getElementById('headerText')?.value || 'Default Header';
-            const contentText = document.getElementById('contentText')?.value || 'Default Content';
-            const footerText = document.getElementById('footerText')?.value || 'Default Footer';
-
-            htmlCode.header = `<header><h1>${headerText}</h1></header>`;
-            htmlCode.content = `<div><p>${contentText}</p></div>`;
-            htmlCode.footer = `<footer><p>${footerText}</p></footer>`;
-
-            updateHTMLCode();
+        // Add link to the page
+        function addLink() {
+            let linkUrl = prompt("Enter the link URL:");
+            let linkText = prompt("Enter link text:");
+            if (linkUrl && linkText) {
+                let linkElement = `<a href="${linkUrl}" target="_blank">${linkText}</a>`;
+                htmlCode += linkElement;
+                updateHTML();
+            }
+            hideOptions();
         }
 
-        function showFinalCode() {
-            const finalCode = `${htmlCode.header}\n${htmlCode.content}\n${htmlCode.footer}`;
-            document.getElementById('outputCode').textContent = finalCode;
+        // Hide the options after an action is taken
+        function hideOptions() {
+            document.getElementById('options').style.display = 'none';
         }
 
-        function updateHTMLCode() {
-            let fullHtml = `${htmlCode.header}\n${htmlCode.content}\n${htmlCode.footer}`;
-            document.getElementById('outputCode').textContent = fullHtml;
+        // Update the HTML code output
+        function updateHTML() {
+            document.getElementById('outputCode').textContent = htmlCode;
         }
     </script>
+
 </body>
 </html>
