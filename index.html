@@ -9,15 +9,34 @@
             font-family: Arial, sans-serif;
             padding: 20px;
         }
+
         #blankPage {
-            height: 300px;
-            background-color: #f0f0f0;
-            border: 1px dashed #ccc;
+            height: 500px;
+            background-color: #f4f4f4;
+            border: 1px solid #ccc;
             position: relative;
+            padding: 20px;
         }
+
+        .section {
+            border: 2px dashed #bbb;
+            margin: 10px;
+            padding: 20px;
+            min-height: 100px;
+            text-align: center;
+            cursor: pointer;
+        }
+
         .options {
-            margin-top: 20px;
+            display: none;
+            position: absolute;
+            background-color: white;
+            padding: 10px;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 10;
         }
+
         .output {
             background-color: #222;
             color: #00ff00;
@@ -25,93 +44,141 @@
             margin-top: 20px;
             white-space: pre-wrap;
             font-family: monospace;
-            max-height: 400px;
+            max-height: 300px;
             overflow-y: auto;
         }
+
         .btn {
-            margin-top: 10px;
             padding: 10px;
             background-color: #007bff;
             color: white;
             cursor: pointer;
             font-size: 16px;
         }
+
+        .option-btn {
+            margin: 5px;
+        }
+
+        #htmlCodeDisplay {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
 
-    <h1>D-TECH Web Builder</h1>
-    <p>Click on an area to customize your page.</p>
+<h1>D-TECH Web Builder</h1>
+<p>Click on any section below to add content. Your page will be updated and the HTML code will be shown dynamically.</p>
 
-    <!-- Blank page area -->
-    <div id="blankPage" onclick="showOptions()">
-        <h2>Click here to add content to your page</h2>
+<!-- Blank Page with Clickable Sections -->
+<div id="blankPage">
+    <div class="section" id="headerSection" onclick="showOptions('header')">
+        <h2>Click here to add content to Header</h2>
+    </div>
+    <div class="section" id="bodySection" onclick="showOptions('body')">
+        <h2>Click here to add content to Body</h2>
+    </div>
+    <div class="section" id="footerSection" onclick="showOptions('footer')">
+        <h2>Click here to add content to Footer</h2>
     </div>
 
-    <!-- Options that will appear when a section is clicked -->
-    <div id="options" class="options" style="display:none;">
-        <h3>Select what to add:</h3>
-        <button class="btn" onclick="addText()">Add Text</button>
-        <button class="btn" onclick="addImage()">Add Image</button>
-        <button class="btn" onclick="addLink()">Add Link</button>
+    <!-- Options Dropdown -->
+    <div id="optionsMenu" class="options">
+        <h3>Select Content to Add:</h3>
+        <button class="btn option-btn" onclick="addText()">Add Text</button>
+        <button class="btn option-btn" onclick="addImage()">Add Image</button>
+        <button class="btn option-btn" onclick="addLink()">Add Link</button>
+        <button class="btn option-btn" onclick="addColor()">Add Background Color</button>
     </div>
+</div>
 
-    <!-- Output HTML -->
+<!-- Output HTML Code -->
+<div id="htmlCodeDisplay">
     <h3>Generated HTML Code:</h3>
     <div id="outputCode" class="output"></div>
+</div>
 
-    <script>
-        let htmlCode = '';
+<script>
+    let htmlCode = {
+        header: '',
+        body: '',
+        footer: ''
+    };
 
-        // Show the options when the user clicks on the blank page
-        function showOptions() {
-            document.getElementById('options').style.display = 'block';
+    let currentSection = '';
+
+    // Show options based on clicked section
+    function showOptions(section) {
+        currentSection = section;
+        document.getElementById('optionsMenu').style.display = 'block';
+    }
+
+    // Hide the options menu after an option is selected
+    function hideOptions() {
+        document.getElementById('optionsMenu').style.display = 'none';
+    }
+
+    // Add text to the selected section
+    function addText() {
+        let userText = prompt("Enter your text:");
+        if (userText) {
+            let textHtml = `<p>${userText}</p>`;
+            htmlCode[currentSection] += textHtml;
+            updateSectionContent();
         }
+        hideOptions();
+    }
 
-        // Add text to the page
-        function addText() {
-            let text = prompt("Enter your text:");
-            if (text) {
-                let textElement = `<p>${text}</p>`;
-                htmlCode += textElement;
-                updateHTML();
-            }
-            hideOptions();
+    // Add an image to the selected section
+    function addImage() {
+        let imgUrl = prompt("Enter the image URL:");
+        if (imgUrl) {
+            let imageHtml = `<img src="${imgUrl}" alt="image" style="max-width:100%;">`;
+            htmlCode[currentSection] += imageHtml;
+            updateSectionContent();
         }
+        hideOptions();
+    }
 
-        // Add image to the page
-        function addImage() {
-            let imgUrl = prompt("Enter image URL:");
-            if (imgUrl) {
-                let imageElement = `<img src="${imgUrl}" alt="image" style="max-width:100%;">`;
-                htmlCode += imageElement;
-                updateHTML();
-            }
-            hideOptions();
+    // Add a link to the selected section
+    function addLink() {
+        let linkUrl = prompt("Enter the link URL:");
+        let linkText = prompt("Enter link text:");
+        if (linkUrl && linkText) {
+            let linkHtml = `<a href="${linkUrl}" target="_blank">${linkText}</a>`;
+            htmlCode[currentSection] += linkHtml;
+            updateSectionContent();
         }
+        hideOptions();
+    }
 
-        // Add link to the page
-        function addLink() {
-            let linkUrl = prompt("Enter the link URL:");
-            let linkText = prompt("Enter link text:");
-            if (linkUrl && linkText) {
-                let linkElement = `<a href="${linkUrl}" target="_blank">${linkText}</a>`;
-                htmlCode += linkElement;
-                updateHTML();
-            }
-            hideOptions();
+    // Add a background color to the selected section
+    function addColor() {
+        let color = prompt("Enter a color (e.g., #ff5733):");
+        if (color) {
+            let colorHtml = `<div style="background-color:${color}; padding:20px;">Section Background Color</div>`;
+            htmlCode[currentSection] += colorHtml;
+            updateSectionContent();
         }
+        hideOptions();
+    }
 
-        // Hide the options after an action is taken
-        function hideOptions() {
-            document.getElementById('options').style.display = 'none';
-        }
+    // Update the HTML content in the section and display it
+    function updateSectionContent() {
+        let section = document.getElementById(currentSection + 'Section');
+        section.innerHTML = htmlCode[currentSection];
+        updateHTMLDisplay();
+    }
 
-        // Update the HTML code output
-        function updateHTML() {
-            document.getElementById('outputCode').textContent = htmlCode;
+    // Update the HTML code display
+    function updateHTMLDisplay() {
+        let outputCode = '';
+        for (let section in htmlCode) {
+            outputCode += `<h3>${section.charAt(0).toUpperCase() + section.slice(1)} Section:</h3>\n` + htmlCode[section] + '\n\n';
         }
-    </script>
+        document.getElementById('outputCode').textContent = outputCode;
+    }
+</script>
 
 </body>
 </html>
