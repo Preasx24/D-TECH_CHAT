@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-TECH Web Builder - Interactive Page</title>
+    <title>D-TECH Advanced Web Builder</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,19 +14,25 @@
             border: 1px dashed #aaa;
             margin-bottom: 20px;
             cursor: pointer;
+            border-radius: 5px;
         }
-        #outputCode {
+        .draggable {
+            border: 1px dashed #333;
+            margin: 10px;
+            padding: 10px;
+            cursor: move;
+        }
+        .options {
+            margin-top: 20px;
+        }
+        .output {
             background-color: #222;
             color: #00ff00;
             padding: 20px;
-            border-radius: 5px;
             margin-top: 20px;
             white-space: pre-wrap;
-            word-wrap: break-word;
-            max-width: 100%;
-            overflow-x: auto;
             font-family: monospace;
-            height: 200px;
+            max-height: 400px;
             overflow-y: auto;
         }
         select, input[type="text"], button {
@@ -34,117 +40,121 @@
             margin-top: 10px;
             font-size: 16px;
         }
+        #doneButton {
+            margin-top: 20px;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .addElementBtn {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>D-TECH Web Builder - Customizable Template</h1>
-        <p>Select parts of the page to customize and view your HTML code.</p>
+        <h1>D-TECH Advanced Web Builder</h1>
+        <p>Build your webpage, drag and drop sections, and customize in real-time.</p>
     </header>
 
-    <!-- Base Plant Page -->
-    <div class="section" id="headerSection" onclick="customizeSection('header')">
-        <h2>Header</h2>
-        <p>Click here to customize the header.</p>
+    <!-- Section Containers (Drag-and-Drop Areas) -->
+    <div id="sectionsContainer">
+        <div class="section" id="headerSection">
+            <h2>Header</h2>
+            <div class="draggable" draggable="true" id="draggableHeader">Header Content</div>
+        </div>
+
+        <div class="section" id="contentSection">
+            <h2>Main Content</h2>
+            <div class="draggable" draggable="true" id="draggableContent">Main Content Area</div>
+        </div>
+
+        <div class="section" id="footerSection">
+            <h2>Footer</h2>
+            <div class="draggable" draggable="true" id="draggableFooter">Footer Content</div>
+        </div>
     </div>
 
-    <div class="section" id="contentSection" onclick="customizeSection('content')">
-        <h2>Main Content</h2>
-        <p>Click here to customize the content.</p>
-    </div>
+    <!-- Add More Elements -->
+    <button class="addElementBtn" onclick="addElement('header')">Add Header</button>
+    <button class="addElementBtn" onclick="addElement('content')">Add Content</button>
+    <button class="addElementBtn" onclick="addElement('footer')">Add Footer</button>
 
-    <div class="section" id="footerSection" onclick="customizeSection('footer')">
-        <h2>Footer</h2>
-        <p>Click here to customize the footer.</p>
-    </div>
-
-    <!-- Customization Form -->
-    <div id="customizationForm" style="display: none;">
+    <!-- Customization Panel -->
+    <div id="customizationPanel" class="options" style="display: none;">
         <h3>Customize Section</h3>
         <div id="options"></div>
         <button onclick="applyChanges()">Apply Customization</button>
     </div>
 
-    <!-- HTML Code Output -->
+    <!-- Final HTML Output -->
     <h3>Generated HTML Code:</h3>
-    <div id="outputCode"></div>
+    <div id="outputCode" class="output"></div>
 
-    <!-- Copy to Clipboard Button -->
-    <button onclick="copyCode()">Copy Code</button>
+    <!-- Done Button -->
+    <button id="doneButton" onclick="showFinalCode()">Done</button>
 
     <script>
-        let currentSection = '';
         let htmlCode = {
-            header: `<header><h1>My Website Header</h1></header>`,
-            content: `<div><p>Welcome to the main content area!</p></div>`,
-            footer: `<footer><p>Footer Information</p></footer>`
+            header: `<header><h1>Default Header</h1></header>`,
+            content: `<div><p>Default Main Content</p></div>`,
+            footer: `<footer><p>Default Footer</p></footer>`
         };
 
-        function customizeSection(section) {
-            currentSection = section;
-            const form = document.getElementById('customizationForm');
-            const options = document.getElementById('options');
+        let sectionElements = {
+            header: [],
+            content: [],
+            footer: []
+        };
 
-            // Show the customization form
-            form.style.display = 'block';
+        function addElement(sectionType) {
+            const newElement = document.createElement('div');
+            newElement.classList.add('draggable');
+            newElement.setAttribute('draggable', 'true');
+            newElement.textContent = `${sectionType.charAt(0).toUpperCase() + sectionType.slice(1)} Content`;
 
-            // Reset options for the section
-            options.innerHTML = '';
+            newElement.addEventListener('dragstart', handleDragStart);
+            newElement.addEventListener('dragend', handleDragEnd);
 
-            if (section === 'header') {
-                options.innerHTML = `
-                    <label for="headerText">Header Text: </label>
-                    <input type="text" id="headerText" placeholder="Enter custom header text" />
-                `;
-            } else if (section === 'content') {
-                options.innerHTML = `
-                    <label for="contentText">Content Text: </label>
-                    <input type="text" id="contentText" placeholder="Enter custom content text" />
-                    <label for="contentImage">Image URL: </label>
-                    <input type="text" id="contentImage" placeholder="Enter image URL" />
-                `;
-            } else if (section === 'footer') {
-                options.innerHTML = `
-                    <label for="footerText">Footer Text: </label>
-                    <input type="text" id="footerText" placeholder="Enter custom footer text" />
-                `;
-            }
+            sectionElements[sectionType].push(newElement);
+            document.getElementById(`${sectionType}Section`).appendChild(newElement);
+            updateHTMLCode();
+        }
+
+        function handleDragStart(e) {
+            e.dataTransfer.setData('text', e.target.id);
+        }
+
+        function handleDragEnd(e) {
+            e.target.style.opacity = '';
         }
 
         function applyChanges() {
-            if (currentSection === 'header') {
-                const headerText = document.getElementById('headerText').value;
-                htmlCode.header = `<header><h1>${headerText ? headerText : 'My Website Header'}</h1></header>`;
-            } else if (currentSection === 'content') {
-                const contentText = document.getElementById('contentText').value;
-                const contentImage = document.getElementById('contentImage').value;
-                htmlCode.content = `
-                    <div>
-                        <p>${contentText ? contentText : 'Welcome to the main content area!'}</p>
-                        ${contentImage ? `<img src="${contentImage}" alt="Content Image" />` : ''}
-                    </div>
-                `;
-            } else if (currentSection === 'footer') {
-                const footerText = document.getElementById('footerText').value;
-                htmlCode.footer = `<footer><p>${footerText ? footerText : 'Footer Information'}</p></footer>`;
-            }
+            const headerText = document.getElementById('headerText')?.value || 'Default Header';
+            const contentText = document.getElementById('contentText')?.value || 'Default Content';
+            const footerText = document.getElementById('footerText')?.value || 'Default Footer';
 
-            // Display the generated HTML code
-            updateCodePreview();
+            htmlCode.header = `<header><h1>${headerText}</h1></header>`;
+            htmlCode.content = `<div><p>${contentText}</p></div>`;
+            htmlCode.footer = `<footer><p>${footerText}</p></footer>`;
+
+            updateHTMLCode();
         }
 
-        function updateCodePreview() {
+        function showFinalCode() {
+            const finalCode = `${htmlCode.header}\n${htmlCode.content}\n${htmlCode.footer}`;
+            document.getElementById('outputCode').textContent = finalCode;
+        }
+
+        function updateHTMLCode() {
             let fullHtml = `${htmlCode.header}\n${htmlCode.content}\n${htmlCode.footer}`;
             document.getElementById('outputCode').textContent = fullHtml;
-        }
-
-        function copyCode() {
-            const codeToCopy = document.getElementById('outputCode').textContent;
-            navigator.clipboard.writeText(codeToCopy).then(() => {
-                alert('HTML code copied to clipboard!');
-            }).catch(err => {
-                console.error('Error copying code: ', err);
-            });
         }
     </script>
 </body>
