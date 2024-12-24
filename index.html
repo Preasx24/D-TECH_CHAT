@@ -3,184 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Builder</title>
+    <title>D-TECH Website Builder</title>
     <style>
+        /* Basic page setup */
         body {
+            margin: 0;
+            padding: 0;
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        /* Canvas styled as A4 */
+        #canvas {
+            width: 210mm;
+            height: 297mm;
+            border: 2px dashed #ccc;
+            background-color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .section {
-            margin-bottom: 20px;
-        }
-
-        .section label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .section select, .section input, .section button {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            font-size: 16px;
+        /* Dropdown menu styles */
+        .dropdown {
+            position: absolute;
+            display: none;
+            background-color: #fff;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
         }
 
-        .section button {
-            background-color: #4CAF50;
-            color: white;
+        .dropdown button {
+            background: none;
+            border: none;
+            padding: 8px 16px;
+            width: 100%;
+            text-align: left;
             cursor: pointer;
         }
 
-        .section button:hover {
-            background-color: #45a049;
+        .dropdown button:hover {
+            background-color: #f0f0f0;
         }
 
-        .section .preview {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #f1f1f1;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+        /* Components styling */
+        .component {
+            position: absolute;
+            border: 1px dashed #aaa;
+            padding: 8px;
+            background-color: #f9f9f9;
         }
-        
-        .preview h2 {
-            color: #4CAF50;
+
+        .component:hover {
+            border-color: #4CAF50;
         }
-        
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Website Builder - First Page</h1>
-    
-    <form id="builderForm">
-        
-        <!-- Logo Section -->
-        <div class="section">
-            <label for="logo">Choose a Logo:</label>
-            <input type="file" id="logo" name="logo">
-        </div>
+    <!-- A4 Canvas -->
+    <div id="canvas"></div>
 
-        <!-- Background Color -->
-        <div class="section">
-            <label for="bgColor">Choose Background Color:</label>
-            <input type="color" id="bgColor" name="bgColor">
-        </div>
+    <!-- Dropdown Menu -->
+    <div class="dropdown" id="dropdown">
+        <button onclick="addComponent('header')">Add Header</button>
+        <button onclick="addComponent('navbar')">Add Navbar</button>
+        <button onclick="addComponent('footer')">Add Footer</button>
+        <button onclick="addComponent('text')">Add Text</button>
+        <button onclick="addComponent('form')">Add Form</button>
+    </div>
 
-        <!-- Header Section -->
-        <div class="section">
-            <label for="headerType">Choose Header Type:</label>
-            <select id="headerType" name="headerType">
-                <option value="simple">Simple</option>
-                <option value="image">Image with Title</option>
-                <option value="video">Video Header</option>
-            </select>
-        </div>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const dropdown = document.getElementById('dropdown');
+        let clickX = 0;
+        let clickY = 0;
 
-        <!-- Button Customization -->
-        <div class="section">
-            <label for="buttonText">Button Text:</label>
-            <input type="text" id="buttonText" name="buttonText" placeholder="Enter button text">
-            <label for="buttonLink">Button Link:</label>
-            <input type="url" id="buttonLink" name="buttonLink" placeholder="Enter button link">
-        </div>
+        // Show dropdown menu on right-click
+        canvas.addEventListener('contextmenu', (event) => {
+            event.preventDefault();
+            clickX = event.offsetX;
+            clickY = event.offsetY;
+            dropdown.style.top = `${event.clientY}px`;
+            dropdown.style.left = `${event.clientX}px`;
+            dropdown.style.display = 'block';
+        });
 
-        <!-- Add Section -->
-        <div class="section">
-            <label for="addSection">Add New Section:</label>
-            <select id="addSection" name="addSection">
-                <option value="text">Text Section</option>
-                <option value="image">Image Section</option>
-                <option value="video">Video Section</option>
-                <option value="testimonial">Testimonial Section</option>
-                <option value="countdown">Countdown Timer</option>
-            </select>
-        </div>
+        // Hide dropdown when clicking elsewhere
+        document.addEventListener('click', () => {
+            dropdown.style.display = 'none';
+        });
 
-        <!-- Preview Button -->
-        <div class="section">
-            <button type="button" id="previewButton">Preview HTML</button>
-        </div>
+        // Add components dynamically
+        function addComponent(type) {
+            const component = document.createElement('div');
+            component.classList.add('component');
+            component.style.top = `${clickY}px`;
+            component.style.left = `${clickX}px`;
 
-        <!-- Preview Section -->
-        <div class="section preview" id="previewSection">
-            <h2>Preview HTML</h2>
-            <pre id="htmlPreview"></pre>
-        </div>
-    </form>
-</div>
+            switch (type) {
+                case 'header':
+                    component.innerHTML = '<h1>Header Section</h1>';
+                    component.style.width = '100%';
+                    component.style.background = '#4CAF50';
+                    component.style.color = 'white';
+                    break;
+                case 'navbar':
+                    component.innerHTML = `
+                        <nav style="background: #333; color: white; padding: 10px;">
+                            Navbar - Home | About | Contact
+                        </nav>`;
+                    component.style.width = '100%';
+                    break;
+                case 'footer':
+                    component.innerHTML = '<footer>Footer Section</footer>';
+                    component.style.width = '100%';
+                    component.style.background = '#ddd';
+                    break;
+                case 'text':
+                    component.innerHTML = '<p>Sample Text Content</p>';
+                    component.style.width = '50%';
+                    break;
+                case 'form':
+                    component.innerHTML = `
+                        <form>
+                            <label>Name:</label><br>
+                            <input type="text"><br>
+                            <label>Email:</label><br>
+                            <input type="email"><br>
+                            <button>Submit</button>
+                        </form>`;
+                    component.style.width = '60%';
+                    break;
+            }
 
-<script>
-    // Event listener for the preview button
-    document.getElementById('previewButton').addEventListener('click', function() {
-        const logo = document.getElementById('logo').files[0];
-        const bgColor = document.getElementById('bgColor').value;
-        const headerType = document.getElementById('headerType').value;
-        const buttonText = document.getElementById('buttonText').value;
-        const buttonLink = document.getElementById('buttonLink').value;
-        const addSection = document.getElementById('addSection').value;
+            // Allow moving components
+            component.draggable = true;
+            component.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', null);
+                component.dataset.offsetX = e.offsetX;
+                component.dataset.offsetY = e.offsetY;
+            });
 
-        let htmlCode = `<html>\n<head>\n<title>Custom Website</title>\n</head>\n<body style="background-color: ${bgColor};">`;
-
-        // Add Logo Section
-        if (logo) {
-            htmlCode += `\n    <header>\n        <img src="${URL.createObjectURL(logo)}" alt="Logo" style="max-width: 200px;">\n    </header>`;
+            canvas.appendChild(component);
         }
 
-        // Add Header Type
-        if (headerType === 'simple') {
-            htmlCode += `\n    <h1>Welcome to My Website</h1>`;
-        } else if (headerType === 'image') {
-            htmlCode += `\n    <header>\n        <img src="header-image.jpg" alt="Header Image">\n        <h1>Welcome to My Website</h1>\n    </header>`;
-        } else if (headerType === 'video') {
-            htmlCode += `\n    <header>\n        <video src="header-video.mp4" autoplay muted loop></video>\n        <h1>Welcome to My Website</h1>\n    </header>`;
-        }
+        // Enable drag-and-drop for components
+        canvas.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
 
-        // Add Button
-        if (buttonText && buttonLink) {
-            htmlCode += `\n    <button onclick="window.location.href='${buttonLink}'">${buttonText}</button>`;
-        }
-
-        // Add Additional Section
-        if (addSection === 'text') {
-            htmlCode += `\n    <section><h2>Text Section</h2><p>This is a custom text section.</p></section>`;
-        } else if (addSection === 'image') {
-            htmlCode += `\n    <section><h2>Image Section</h2><img src="image.jpg" alt="Custom Image" style="width: 100%;"></section>`;
-        } else if (addSection === 'video') {
-            htmlCode += `\n    <section><h2>Video Section</h2><video src="video.mp4" controls></video></section>`;
-        } else if (addSection === 'testimonial') {
-            htmlCode += `\n    <section><h2>Testimonial Section</h2><p>"This is an amazing website!" - User</p></section>`;
-        } else if (addSection === 'countdown') {
-            htmlCode += `\n    <section><h2>Countdown Timer</h2><div id="countdown"></div></section>`;
-        }
-
-        // Close HTML Tag
-        htmlCode += `\n</body>\n</html>`;
-
-        // Show HTML Code in Preview
-        document.getElementById('htmlPreview').textContent = htmlCode;
-    });
-</script>
+        canvas.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const draggedComponent = document.querySelector('.component[draggable="true"]:hover');
+            if (draggedComponent) {
+                draggedComponent.style.left = `${e.offsetX - draggedComponent.dataset.offsetX}px`;
+                draggedComponent.style.top = `${e.offsetY - draggedComponent.dataset.offsetY}px`;
+            }
+        });
+    </script>
 
 </body>
 </html>
