@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-TECH CC Validator + BIN Checker</title>
+    <title>D-TECH  Validator + BIN Checker</title>
     <style>
         /* === D-TECH THEME CSS === */
         body {
@@ -182,12 +182,14 @@
             return cvc.length === 3;
         }
 
-        // BIN Checker
+        // BIN Checker with CORS Proxy
         async function fetchBINData(bin) {
             try {
-                const response = await fetch(`https://lookup.binlist.net/${bin}`);
+                const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://lookup.binlist.net/' + bin)}`);
                 if (!response.ok) throw new Error('Failed to fetch BIN data');
-                const data = await response.json();
+
+                const result = await response.json();
+                const data = JSON.parse(result.contents);
 
                 document.getElementById('bin-info').innerHTML = `
                     🌍 Country: ${data.country?.name || 'Unknown'}<br>
@@ -195,7 +197,8 @@
                     🛡️ Card Level: ${data.brand || 'Unknown'}<br>
                 `;
             } catch (error) {
-                document.getElementById('bin-info').innerHTML = '❌ Error fetching BIN data.';
+                document.getElementById('bin-info').innerHTML = '❌ Error fetching BIN data. Please try again.';
+                console.error(error);
             }
         }
     </script>
