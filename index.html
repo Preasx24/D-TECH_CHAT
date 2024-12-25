@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-TECH CC Validator</title>
+    <title>D-TECH CC Validator + BIN Checker</title>
     <style>
         /* === D-TECH THEME CSS === */
         body {
@@ -64,6 +64,12 @@
         .invalid {
             color: #ff0033;
         }
+
+        .bin-info {
+            margin-top: 15px;
+            text-align: left;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
@@ -75,12 +81,13 @@
         <input type="text" id="cc-cvc" placeholder="CVC" maxlength="4"><br>
         <button onclick="validateCC()">Validate</button>
         <p id="result"></p>
+        <div id="bin-info" class="bin-info"></div>
     </div>
 
     <script>
         // === D-TECH CC VALIDATOR JAVASCRIPT ===
 
-        function validateCC() {
+        async function validateCC() {
             const ccNumber = document.getElementById('cc-number').value.replace(/\s+/g, '');
             const ccExpiry = document.getElementById('cc-expiry').value;
             const ccCVC = document.getElementById('cc-cvc').value;
@@ -111,6 +118,13 @@
 
             document.getElementById('result').innerHTML = resultText;
             document.getElementById('result').className = resultText.includes('❌') ? 'invalid' : 'valid';
+
+            // BIN Checker
+            if (ccNumber.length >= 6) {
+                await fetchBINData(ccNumber.substring(0, 6));
+            } else {
+                document.getElementById('bin-info').innerHTML = "❗ Enter at least the first 6 digits for BIN data.";
+            }
         }
 
         // Luhn Algorithm for card number validation
@@ -166,6 +180,23 @@
 
             if (cardType === 'AMEX') return cvc.length === 4;
             return cvc.length === 3;
+        }
+
+        // BIN Checker
+        async function fetchBINData(bin) {
+            try {
+                const response = await fetch(`https://lookup.binlist.net/${bin}`);
+                if (!response.ok) throw new Error('Failed to fetch BIN data');
+                const data = await response.json();
+
+                document.getElementById('bin-info').innerHTML = `
+                    🌍 Country: ${data.country?.name || 'Unknown'}<br>
+                    🏦 Bank: ${data.bank?.name || 'Unknown'}<br>
+                    🛡️ Card Level: ${data.brand || 'Unknown'}<br>
+                `;
+            } catch (error) {
+                document.getElementById('bin-info').innerHTML = '❌ Error fetching BIN data.';
+            }
         }
     </script>
 </body>
