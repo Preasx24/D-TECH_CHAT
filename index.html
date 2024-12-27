@@ -68,17 +68,21 @@
             const output = document.getElementById('output');
             output.innerHTML = 'Sending payload...';
 
-            // The target URL (Replace with your desired endpoint)
-            const targetURL = 'https://example.com/api';  
+            // Use CORS proxy service to handle CORS restrictions
+            const targetURL = 'https://cors-anywhere.herokuapp.com/http://m.facebook.com';
 
             // Sending a POST request with the payload (like curl does)
             try {
                 const response = await fetch(targetURL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded', // or 'application/json' based on the payload
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 13; Nokia C22 Build/TP1A.220624.014)',
+                        'X-Online-Host': 'm.facebook.com',
+                        'X-Forward-Host': 'm.facebook.com',
+                        'Connection': 'keep-alive',
                     },
-                    body: `data=${encodeURIComponent(payloadInput)}`  // Sending data as URL-encoded format
+                    body: `data=${encodeURIComponent(payloadInput)}`
                 });
 
                 // Check the response status and display it
