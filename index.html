@@ -3,212 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-TECH CC Validator + BIN Checker</title>
+    <title>Voucher Generator</title>
     <style>
-        /* === D-TECH ENHANCED THEME === */
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
-            color: #00ffcc;
+            font-family: Arial, sans-serif;
+            background-color: #2c3e50;
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
         }
-
         .container {
-            background: #1a1a1a;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 0 15px #00ffcc;
-            text-align: center;
+            background-color: #34495e;
+            padding: 20px;
+            border-radius: 8px;
             width: 400px;
         }
-
         h1 {
-            margin-bottom: 10px;
+            text-align: center;
+            color: #ecf0f1;
         }
-
-        .logo {
-            margin-bottom: 15px;
-            height: 50px;
-        }
-
-        input {
-            width: 85%;
+        input, button {
+            width: 100%;
             padding: 10px;
             margin: 10px 0;
-            border: none;
-            border-radius: 5px;
-            text-align: center;
+            font-size: 16px;
         }
-
-        input#cc-cvc {
-            -webkit-text-security: disc; /* Mask CVC */
-        }
-
         button {
-            background-color: #00ffcc;
-            color: #0d0d0d;
-            font-weight: bold;
+            background-color: #16a085;
             border: none;
-            padding: 10px 25px;
-            border-radius: 5px;
-            margin-top: 10px;
             cursor: pointer;
         }
-
         button:hover {
-            background-color: #00997a;
+            background-color: #1abc9c;
         }
-
-        #result {
-            margin-top: 15px;
+        .voucher-output {
+            font-size: 18px;
             font-weight: bold;
-        }
-
-        .valid {
-            color: #00ff00;
-        }
-
-        .invalid {
-            color: #ff0033;
-        }
-
-        .bin-info {
-            margin-top: 15px;
-            text-align: left;
-            font-size: 0.9em;
-        }
-
-        .copy-btn {
-            margin-top: 10px;
-            font-size: 0.8em;
-            cursor: pointer;
-            color: #00997a;
-            text-decoration: underline;
+            word-wrap: break-word;
+            text-align: center;
+            margin-top: 20px;
+            background-color: #2ecc71;
+            padding: 10px;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>D-TECH Validator</h1>
-        <img id="card-logo" class="logo" src="" alt="Card Logo" style="display:none;">
-        <p>Enter card details to validate:</p>
-        <input type="text" id="cc-number" placeholder="Card Number" maxlength="19" oninput="formatCardNumber(this)"><br>
-        <input type="text" id="cc-expiry" placeholder="MM/YY" maxlength="5"><br>
-        <input type="password" id="cc-cvc" placeholder="CVC" maxlength="4"><br>
-        <button onclick="validateCC()">Validate</button>
-        <p id="result"></p>
-        <div id="bin-info" class="bin-info"></div>
-        <p id="copy-bin" class="copy-btn" onclick="copyBIN()">Copy BIN Info</p>
-    </div>
 
-    <script>
-        // === Real-time Card Number Formatting ===
-        function formatCardNumber(input) {
-            input.value = input.value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 ');
-            if (input.value.replace(/\s/g, '').length >= 6) {
-                fetchBINData(input.value.replace(/\s/g, '').substring(0, 6));
-            }
+<div class="container">
+    <h1>Voucher Generator</h1>
+    <select id="voucherAmount" placeholder="Select Voucher Amount">
+        <option value="10">Voucher Value: 10</option>
+        <option value="30">Voucher Value: 30</option>
+    </select>
+    <button onclick="generateVoucher()">Generate Voucher</button>
+    <div id="voucherOutput" class="voucher-output" style="display: none;"></div>
+</div>
+
+<script>
+    function generateVoucher() {
+        const amount = document.getElementById("voucherAmount").value;
+        
+        // Random numbers for the first, second, and fourth sections
+        let firstSection = generateRandomNumber();
+        let secondSection = generateRandomNumber();
+        let fourthSection = generateRandomNumber();
+        
+        let thirdSection = '';
+
+        // Generate third section based on voucher amount
+        if (amount == "10") {
+            // Generate 2 or 3 odd numbers for the third section
+            thirdSection = generateOddNumbers();
+        } else if (amount == "30") {
+            // Generate 2 or 3 even numbers followed by 1 odd number for the third section
+            thirdSection = generateEvenOddNumbers();
         }
 
-        // === Validate Card Details ===
-        async function validateCC() {
-            const ccNumber = document.getElementById('cc-number').value.replace(/\s+/g, '');
-            const ccExpiry = document.getElementById('cc-expiry').value;
-            const ccCVC = document.getElementById('cc-cvc').value;
+        const voucherCode = `${firstSection}-${secondSection}-${thirdSection}-${fourthSection}`;
+        document.getElementById("voucherOutput").textContent = `Generated Voucher: ${voucherCode}`;
+        document.getElementById("voucherOutput").style.display = "block";
+    }
 
-            let resultText = '';
+    // Function to generate a random 4-digit number
+    function generateRandomNumber() {
+        return Math.floor(Math.random() * 10000);  // Generates a random number between 0 and 9999
+    }
 
-            if (!/^\d+$/.test(ccNumber) || !luhnCheck(ccNumber)) {
-                resultText += "❌ Invalid Card Number.<br>";
-            } else {
-                resultText += "✅ Valid Card Number.<br>";
-                resultText += `🪪 Card Type: ${getCardType(ccNumber)}<br>`;
-            }
-
-            if (!validateExpiry(ccExpiry)) {
-                resultText += "❌ Invalid Expiry Date.<br>";
-            } else {
-                resultText += "✅ Valid Expiry Date.<br>";
-            }
-
-            if (!validateCVC(ccCVC, getCardType(ccNumber))) {
-                resultText += "❌ Invalid CVC Code.<br>";
-            } else {
-                resultText += "✅ Valid CVC Code.<br>";
-            }
-
-            document.getElementById('result').innerHTML = resultText;
-            document.getElementById('result').className = resultText.includes('❌') ? 'invalid' : 'valid';
+    function generateOddNumbers() {
+        const oddNumbers = [1, 3, 5, 7, 9];
+        let code = '';
+        const count = 2 + Math.floor(Math.random() * 2); // 2 or 3 odd numbers
+        for (let i = 0; i < count; i++) {
+            code += oddNumbers[Math.floor(Math.random() * oddNumbers.length)];
         }
+        return code;
+    }
 
-        // === Luhn Check ===
-        function luhnCheck(num) {
-            let sum = 0;
-            let alternate = false;
-            for (let i = num.length - 1; i >= 0; i--) {
-                let n = parseInt(num.charAt(i), 10);
-                if (alternate) {
-                    n *= 2;
-                    if (n > 9) n -= 9;
-                }
-                sum += n;
-                alternate = !alternate;
-            }
-            return (sum % 10 === 0);
+    function generateEvenOddNumbers() {
+        const evenNumbers = [0, 2, 4, 6, 8];
+        const oddNumbers = [1, 3, 5, 7, 9];
+        let code = '';
+        // Add 2 or 3 even numbers
+        for (let i = 0; i < 2 + Math.floor(Math.random() * 2); i++) {
+            code += evenNumbers[Math.floor(Math.random() * evenNumbers.length)];
         }
+        // Add 1 odd number
+        code += oddNumbers[Math.floor(Math.random() * oddNumbers.length)];
+        return code;
+    }
+</script>
 
-        // === Get Card Type ===
-        function getCardType(number) {
-            const patterns = {
-                'Visa': /^4/,
-                'MasterCard': /^5[1-5]/,
-                'AMEX': /^3[47]/,
-                'Discover': /^6/
-            };
-            for (let card in patterns) {
-                if (patterns[card].test(number)) {
-                    document.getElementById('card-logo').src = `${card}.png`;
-                    document.getElementById('card-logo').style.display = 'block';
-                    return card;
-                }
-            }
-            return 'Unknown';
-        }
-
-        // === Validate Expiry ===
-        function validateExpiry(expiry) {
-            const [month, year] = expiry.split('/').map(Number);
-            const currentDate = new Date();
-            return (year > currentDate.getFullYear() % 100 || (year === currentDate.getFullYear() % 100 && month >= currentDate.getMonth() + 1));
-        }
-
-        // === Validate CVC ===
-        function validateCVC(cvc, cardType) {
-            return (cardType === 'AMEX') ? cvc.length === 4 : cvc.length === 3;
-        }
-
-        // === Fetch BIN Data ===
-        async function fetchBINData(bin) {
-            try {
-                const response = await fetch(`https://lookup.binlist.net/${bin}`);
-                const data = await response.json();
-                document.getElementById('bin-info').innerHTML = `
-                    🌍 Country: ${data.country?.name || 'Unknown'}<br>
-                    🏦 Bank: ${data.bank?.name || 'Unknown'}<br>
-                `;
-            } catch {
-                document.getElementById('bin-info').innerHTML = '❌ Error fetching BIN data.';
-            }
-        }
-
-        function copyBIN() {
-            navigator.clipboard.writeText(document.getElementById('bin-info').innerText);
-            alert('BIN info copied!');
-        }
-    </script>
 </body>
 </html>
