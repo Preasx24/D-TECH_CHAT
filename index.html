@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payload Inspector</title>
+    <title>Payload Sender</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -52,8 +52,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>Payload Inspector</h1>
-        <p>Send your payload to inspect it in real-time:</p>
+        <h1>Payload Sender</h1>
+        <p>Enter your payload below to send it:</p>
         <textarea id="payloadInput" placeholder="Enter your payload data here..."></textarea>
         <button onclick="sendPayload()">Send Payload</button>
 
@@ -63,41 +63,28 @@
     </div>
 
     <script>
-        // Function to send the payload
         async function sendPayload() {
             const payloadInput = document.getElementById('payloadInput').value;
             const output = document.getElementById('output');
             output.innerHTML = 'Sending payload...';
 
-            // Your RequestBin endpoint (Pipedream)
-            const requestBinEndpoint = 'https://eok3n9hz21p09th.m.pipedream.net';
+            // The target URL (Replace with your desired endpoint)
+            const targetURL = 'https://example.com/api';  
 
-            // Optional: Use CORS proxy to bypass CORS issues if needed
-            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
-            const endpointWithProxy = corsProxy + requestBinEndpoint;
-
-            // Prepare the payload (using the text input data)
-            const headers = {
-                "Content-Type": "application/json",
-                "X-Custom-Header": "Your-Header-Here", // Add any custom headers if needed
-                "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 13; Nokia C22 Build/TP1A.220624.014)"
-            };
-
-            // Log the payload to the console for inspection
-            console.log('Sending Payload:', JSON.stringify({ payload: payloadInput }));
-
+            // Sending a POST request with the payload (like curl does)
             try {
-                const response = await fetch(endpointWithProxy, {
-                    method: 'POST', // Send a POST request with payload
-                    headers: headers,
-                    body: JSON.stringify({ payload: payloadInput })
+                const response = await fetch(targetURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded', // or 'application/json' based on the payload
+                    },
+                    body: `data=${encodeURIComponent(payloadInput)}`  // Sending data as URL-encoded format
                 });
 
-                // Check the status code of the response
+                // Check the response status and display it
                 if (response.ok) {
-                    output.innerHTML = 'Payload sent successfully!';
-                    const data = await response.json();
-                    output.innerHTML = `<pre>Status Code: ${response.status} OK</pre><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    const result = await response.json();  // assuming JSON response
+                    output.innerHTML = `<pre>Status Code: ${response.status} OK</pre><pre>${JSON.stringify(result, null, 2)}</pre>`;
                 } else {
                     output.innerHTML = `Failed to send payload. Status Code: ${response.status}`;
                 }
@@ -105,28 +92,6 @@
                 output.innerHTML = 'Error sending payload: ' + error.message;
             }
         }
-
-        // Function to fetch results from the endpoint and display status code
-        async function fetchResults() {
-            const requestBinEndpoint = 'https://eok3n9hz21p09th.m.pipedream.net'; // Your endpoint
-            const output = document.getElementById('output');
-            output.innerHTML = 'Fetching data...';
-
-            try {
-                const response = await fetch(requestBinEndpoint); // Send a GET request to the endpoint
-                if (response.ok) {
-                    const data = await response.json();
-                    output.innerHTML = `<pre>Status Code: ${response.status} OK</pre><pre>${JSON.stringify(data, null, 2)}</pre>`;
-                } else {
-                    output.innerHTML = `Failed to fetch results. Status Code: ${response.status}`;
-                }
-            } catch (error) {
-                output.innerHTML = 'Error fetching data: ' + error.message;
-            }
-        }
-
-        // Fetching data periodically from the endpoint (every 5 seconds)
-        setInterval(fetchResults, 5000);
     </script>
 </body>
 </html>
