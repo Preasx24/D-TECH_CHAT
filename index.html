@@ -82,8 +82,8 @@
     <script>
         async function checkStatus(url) {
             try {
-                const response = await fetch(url, { method: 'GET', mode: 'no-cors' });
-                return response.status || 'No Response (CORS or Network Issue)';
+                const response = await fetch(url, { method: 'GET' });
+                return response.status ? `HTTP ${response.status}` : 'No Response (CORS or Network Issue)';
             } catch (error) {
                 return 'Error: ' + error.message;
             }
@@ -94,25 +94,21 @@
             const output = document.getElementById('output');
             output.innerHTML = '';
 
-            const urls = [...headerInput.matchAll(/https?:\/\/[^\s,]+/g)].map(match => match[0]);
-            const cookies = [...headerInput.matchAll(/Set-Cookie:\s([^\n,]+)/g)].map(match => match[1]);
-            const debugHeaders = [...headerInput.matchAll(/X-FB-Debug:\s([^\n,]+)/g)].map(match => match[1]);
+            // Your RequestBin endpoint
+            const webhookURL = 'https://eogkfcfj511csws.m.pipedream.net';
+
+            // Payloads based on header input (URL injection, Cookie manipulation, etc.)
+            const urls = [
+                `${webhookURL}?redirect=https://evilsite.com`,  // Example URL Injection
+                `${webhookURL}?cookie=admin;path=/admin;`,  // Example Cookie Manipulation
+                `${webhookURL}?debug=InjectedCommand`,  // Example Header Exploitation
+            ];
 
             let payloads = [];
 
-            // URL Injection Payloads
+            // Create payloads based on URLs found in the input
             urls.forEach(url => {
-                payloads.push({ type: 'URL Injection', payload: `${url}?redirect=evilsite.com` });
-            });
-
-            // Cookie Manipulation Payloads
-            cookies.forEach(cookie => {
-                payloads.push({ type: 'Cookie Manipulation', payload: `${cookie}; path=/admin;` });
-            });
-
-            // Header Exploitation Payloads
-            debugHeaders.forEach(debug => {
-                payloads.push({ type: 'Header Exploitation', payload: `X-FB-Debug: ${debug} -- Injected Command` });
+                payloads.push({ type: 'Redirect Payload', payload: url });
             });
 
             if (payloads.length === 0) {
