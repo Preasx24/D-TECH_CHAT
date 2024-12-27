@@ -68,34 +68,40 @@
             const output = document.getElementById('output');
             output.innerHTML = 'Sending payload...';
 
-            // Your RequestBin endpoint
+            // Your RequestBin endpoint (Pipedream)
             const requestBinEndpoint = 'https://eok3n9hz21p09th.m.pipedream.net';
 
-            // Send the payload to the RequestBin endpoint (POST request)
+            // Prepare the payload (using the text input data)
+            const headers = {
+                "Content-Type": "application/json",
+                "X-Custom-Header": "Your-Header-Here", // Add any custom headers if needed
+                "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 13; Nokia C22 Build/TP1A.220624.014)"
+            };
+
+            // Sending a GET request with custom headers
             try {
                 const response = await fetch(requestBinEndpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    method: 'GET', // Use GET as per the example you gave
+                    headers: headers,
                     body: JSON.stringify({ payload: payloadInput })
                 });
 
-                // Check the status of the request
+                // Check the status code of the response
                 if (response.ok) {
                     output.innerHTML = 'Payload sent successfully!';
-                    // Retrieve the results from the RequestBin (this part assumes your RequestBin shows the data)
                     const data = await response.json();
-                    output.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    output.innerHTML = `<pre>Status Code: ${response.status} OK</pre><pre>${JSON.stringify(data, null, 2)}</pre>`;
                 } else {
-                    output.innerHTML = 'Failed to send payload.';
+                    output.innerHTML = `Failed to send payload. Status Code: ${response.status}`;
                 }
             } catch (error) {
                 output.innerHTML = 'Error sending payload: ' + error.message;
             }
         }
 
-        // Function to fetch the results from RequestBin
+        // Function to fetch results from Pipedream endpoint and display status code
         async function fetchResults() {
-            const requestBinEndpoint = 'https://eok3n9hz21p09th.m.pipedream.net'; // Your RequestBin endpoint
+            const requestBinEndpoint = 'https://eok3n9hz21p09th.m.pipedream.net'; // Your endpoint
             const output = document.getElementById('output');
             output.innerHTML = 'Fetching data...';
 
@@ -103,17 +109,17 @@
                 const response = await fetch(requestBinEndpoint);
                 if (response.ok) {
                     const data = await response.json();
-                    output.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    output.innerHTML = `<pre>Status Code: ${response.status} OK</pre><pre>${JSON.stringify(data, null, 2)}</pre>`;
                 } else {
-                    output.innerHTML = 'Failed to fetch results.';
+                    output.innerHTML = `Failed to fetch results. Status Code: ${response.status}`;
                 }
             } catch (error) {
                 output.innerHTML = 'Error fetching data: ' + error.message;
             }
         }
 
-        // You can call fetchResults() to periodically retrieve the payload data from your RequestBin
-        setInterval(fetchResults, 5000); // Fetch data every 5 seconds
+        // Fetching data periodically from the endpoint
+        setInterval(fetchResults, 5000); // Fetch results every 5 seconds
     </script>
 </body>
 </html>
