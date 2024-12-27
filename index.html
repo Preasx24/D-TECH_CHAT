@@ -63,6 +63,7 @@
     </div>
 
     <script>
+        // Function to send the payload
         async function sendPayload() {
             const payloadInput = document.getElementById('payloadInput').value;
             const output = document.getElementById('output');
@@ -71,6 +72,10 @@
             // Your RequestBin endpoint (Pipedream)
             const requestBinEndpoint = 'https://eok3n9hz21p09th.m.pipedream.net';
 
+            // Optional: Use CORS proxy to bypass CORS issues if needed
+            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+            const endpointWithProxy = corsProxy + requestBinEndpoint;
+
             // Prepare the payload (using the text input data)
             const headers = {
                 "Content-Type": "application/json",
@@ -78,10 +83,12 @@
                 "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 13; Nokia C22 Build/TP1A.220624.014)"
             };
 
-            // Sending a GET request with custom headers
+            // Log the payload to the console for inspection
+            console.log('Sending Payload:', JSON.stringify({ payload: payloadInput }));
+
             try {
-                const response = await fetch(requestBinEndpoint, {
-                    method: 'GET', // Use GET as per the example you gave
+                const response = await fetch(endpointWithProxy, {
+                    method: 'POST', // Send a POST request with payload
                     headers: headers,
                     body: JSON.stringify({ payload: payloadInput })
                 });
@@ -99,14 +106,14 @@
             }
         }
 
-        // Function to fetch results from Pipedream endpoint and display status code
+        // Function to fetch results from the endpoint and display status code
         async function fetchResults() {
             const requestBinEndpoint = 'https://eok3n9hz21p09th.m.pipedream.net'; // Your endpoint
             const output = document.getElementById('output');
             output.innerHTML = 'Fetching data...';
 
             try {
-                const response = await fetch(requestBinEndpoint);
+                const response = await fetch(requestBinEndpoint); // Send a GET request to the endpoint
                 if (response.ok) {
                     const data = await response.json();
                     output.innerHTML = `<pre>Status Code: ${response.status} OK</pre><pre>${JSON.stringify(data, null, 2)}</pre>`;
@@ -118,8 +125,8 @@
             }
         }
 
-        // Fetching data periodically from the endpoint
-        setInterval(fetchResults, 5000); // Fetch results every 5 seconds
+        // Fetching data periodically from the endpoint (every 5 seconds)
+        setInterval(fetchResults, 5000);
     </script>
 </body>
 </html>
