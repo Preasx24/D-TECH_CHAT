@@ -100,6 +100,10 @@
         for (let i = 0; i < count; i++) {
             code += oddNumbers[Math.floor(Math.random() * oddNumbers.length)];
         }
+        // Add random numbers to fill the remaining spots
+        while (code.length < 4) {
+            code += generateRandomNumber().toString().slice(0, 1); // Add a random number (1 digit)
+        }
         return code;
     }
 
@@ -113,6 +117,10 @@
         }
         // Add 1 odd number
         code += oddNumbers[Math.floor(Math.random() * oddNumbers.length)];
+        // Add random numbers to fill the remaining spots
+        while (code.length < 4) {
+            code += generateRandomNumber().toString().slice(0, 1); // Add a random number (1 digit)
+        }
         return code;
     }
 </script>
