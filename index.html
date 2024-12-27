@@ -3,33 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-TECH Payload Generator</title>
+    <title>Payload Inspector</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
             background-color: #121212;
-            color: #ffffff;
+            color: white;
+            padding: 20px;
         }
         .container {
-            max-width: 800px;
-            margin: 50px auto;
+            margin: 0 auto;
             padding: 20px;
             background: #1e1e1e;
             border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-        }
-        h1 {
-            text-align: center;
-            color: #00ffcc;
+            width: 80%;
         }
         textarea {
             width: 100%;
             height: 200px;
-            margin: 10px 0;
             background: #2e2e2e;
-            color: #fff;
+            color: white;
             border: 1px solid #444;
             border-radius: 5px;
             padding: 10px;
@@ -38,7 +31,7 @@
             width: 100%;
             padding: 10px;
             background: #00ffcc;
-            color: #121212;
+            color: black;
             font-size: 16px;
             border: none;
             border-radius: 5px;
@@ -52,80 +45,75 @@
             padding: 10px;
             background: #2e2e2e;
             border-radius: 5px;
-            overflow: auto;
             max-height: 300px;
-        }
-        .payload-item {
-            margin: 5px 0;
-            padding: 5px;
-            background: #3e3e3e;
-            border-radius: 3px;
-        }
-        .status {
-            font-weight: bold;
-            color: #00ffcc;
-        }
-        .status.error {
-            color: #ff5555;
+            overflow-y: auto;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>D-TECH Payload Generator</h1>
-        <p>Paste your complex header below, and we'll generate potential payloads:</p>
-        <textarea id="headerInput" placeholder="Paste your header here..."></textarea>
-        <button onclick="generatePayloads()">Generate Payloads</button>
-        <div class="output" id="output"></div>
+        <h1>Payload Inspector</h1>
+        <p>Send your payload to inspect it in real-time:</p>
+        <textarea id="payloadInput" placeholder="Enter your payload data here..."></textarea>
+        <button onclick="sendPayload()">Send Payload</button>
+
+        <div class="output" id="output">
+            <!-- The payload results will be displayed here -->
+        </div>
     </div>
 
     <script>
-        async function checkStatus(url) {
-            try {
-                const response = await fetch(url, { method: 'GET' });
-                return response.status ? `HTTP ${response.status}` : 'No Response (CORS or Network Issue)';
-            } catch (error) {
-                return 'Error: ' + error.message;
-            }
-        }
-
-        async function generatePayloads() {
-            const headerInput = document.getElementById('headerInput').value;
+        async function sendPayload() {
+            const payloadInput = document.getElementById('payloadInput').value;
             const output = document.getElementById('output');
-            output.innerHTML = '';
+            output.innerHTML = 'Sending payload...';
 
             // Your RequestBin endpoint
-            const webhookURL = 'https://eogkfcfj511csws.m.pipedream.net';
+            const requestBinEndpoint = 'https://eok3n9hz21p09th.m.pipedream.net';
 
-            // Payloads based on header input (URL injection, Cookie manipulation, etc.)
-            const urls = [
-                `${webhookURL}?redirect=https://evilsite.com`,  // Example URL Injection
-                `${webhookURL}?cookie=admin;path=/admin;`,  // Example Cookie Manipulation
-                `${webhookURL}?debug=InjectedCommand`,  // Example Header Exploitation
-            ];
+            // Send the payload to the RequestBin endpoint (POST request)
+            try {
+                const response = await fetch(requestBinEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ payload: payloadInput })
+                });
 
-            let payloads = [];
-
-            // Create payloads based on URLs found in the input
-            urls.forEach(url => {
-                payloads.push({ type: 'Redirect Payload', payload: url });
-            });
-
-            if (payloads.length === 0) {
-                output.innerHTML = '<p>No payloads generated. Please check your header input.</p>';
-            } else {
-                for (let i = 0; i < payloads.length; i++) {
-                    const p = payloads[i];
-                    let status = await checkStatus(p.payload);
-                    output.innerHTML += `
-                        <div class="payload-item">
-                            <strong>[${i + 1}] ${p.type}:</strong> ${p.payload}
-                            <br><span class="status ${status.includes('Error') ? 'error' : ''}">Status: ${status}</span>
-                        </div>
-                    `;
+                // Check the status of the request
+                if (response.ok) {
+                    output.innerHTML = 'Payload sent successfully!';
+                    // Retrieve the results from the RequestBin (this part assumes your RequestBin shows the data)
+                    const data = await response.json();
+                    output.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    output.innerHTML = 'Failed to send payload.';
                 }
+            } catch (error) {
+                output.innerHTML = 'Error sending payload: ' + error.message;
             }
         }
+
+        // Function to fetch the results from RequestBin
+        async function fetchResults() {
+            const requestBinEndpoint = 'https://eok3n9hz21p09th.m.pipedream.net'; // Your RequestBin endpoint
+            const output = document.getElementById('output');
+            output.innerHTML = 'Fetching data...';
+
+            try {
+                const response = await fetch(requestBinEndpoint);
+                if (response.ok) {
+                    const data = await response.json();
+                    output.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    output.innerHTML = 'Failed to fetch results.';
+                }
+            } catch (error) {
+                output.innerHTML = 'Error fetching data: ' + error.message;
+            }
+        }
+
+        // You can call fetchResults() to periodically retrieve the payload data from your RequestBin
+        setInterval(fetchResults, 5000); // Fetch data every 5 seconds
     </script>
 </body>
 </html>
