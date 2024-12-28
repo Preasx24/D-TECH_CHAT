@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-TECH Host Checker V2</title>
+    <title>D-TECH Host Checker V3</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -58,7 +58,7 @@
     </style>
 </head>
 <body>
-    <h1>D-TECH Host Checker V2</h1>
+    <h1>D-TECH Host Checker V3</h1>
     <p>Enter a host or SNI below to check its status and details:</p>
     <input type="text" id="hostInput" placeholder="Enter host (e.g., example.com)">
     <br>
@@ -78,24 +78,28 @@
             resultDiv.innerHTML = "<p>Checking host... Please wait.</p>";
 
             try {
-                const startTime = performance.now();
-                const response = await fetch(`https://${host}`, { method: 'HEAD', mode: 'no-cors' });
-                const endTime = performance.now();
-                const responseTime = (endTime - startTime).toFixed(2);
+                // Use a proxy API to check the host
+                const response = await fetch(`https://api.hackertarget.com/httpheaders/?q=${host}`);
+                const data = await response.text();
 
-                const ip = await resolveIP(host);
-                const sslInfo = await checkSSL(host);
+                if (response.ok) {
+                    const statusCode = data.match(/HTTP\/[\d.]+\s(\d+)/)?.[1] || 'N/A';
+                    const ip = await resolveIP(host);
+                    const sslInfo = await checkSSL(host);
 
-                resultDiv.innerHTML = `
-                    <p class='active'>[ACTIVE] ${host} ✓</p>
-                    <div class='info'>
-                        <strong>Response Time:</strong> ${responseTime} ms<br>
-                        <strong>IP Address:</strong> ${ip || 'N/A'}<br>
-                        <strong>SSL Valid Until:</strong> ${sslInfo || 'N/A'}<br>
-                    </div>
-                `;
+                    resultDiv.innerHTML = `
+                        <p class='active'>[ACTIVE] ${host} ✓</p>
+                        <div class='info'>
+                            <strong>Status Code:</strong> ${statusCode}<br>
+                            <strong>IP Address:</strong> ${ip || 'N/A'}<br>
+                            <strong>SSL Valid Until:</strong> ${sslInfo || 'N/A'}<br>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<p class='inactive'>[INACTIVE] ${host} ✗ (Failed to fetch data)</p>`;
+                }
             } catch (error) {
-                resultDiv.innerHTML = `<p class='inactive'>[INACTIVE] ${host} ✗</p>`;
+                resultDiv.innerHTML = `<p class='inactive'>[INACTIVE] ${host} ✗ (Error: ${error.message})</p>`;
             }
         }
 
