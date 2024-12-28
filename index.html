@@ -61,7 +61,7 @@
 </head>
 <body>
     <h1>D-TECH Host Checker V4</h1>
-    <p>Enter a host or SNI below to check its status and details:</p>
+    <p>Enter a host or SNI below to check its status:</p>
     <input type="text" id="hostInput" placeholder="Enter host (e.g., example.com)">
     <br>
     <button onclick="checkHost()">Check Host</button>
@@ -82,23 +82,12 @@
             try {
                 const start = performance.now(); // Start time for response time calculation
 
-                // Fetching server headers and other info using CORS proxy
-                const response = await fetchWithCustomHeaders(`https://cors-anywhere.herokuapp.com/https://${host}`, { method: 'HEAD' });
+                // Fetching server headers using a CORS proxy
+                const response = await fetch(`https://cors-anywhere.herokuapp.com/https://${host}`, { method: 'HEAD' });
+
                 if (!response.ok) throw new Error(`Status Code: ${response.status}`);
 
                 const headers = response.headers;
-
-                // Fetch geolocation
-                const geoData = await getGeolocation(host);
-
-                // Get server type from headers
-                const serverType = headers.get('Server') || 'Unknown';
-
-                // Get SSL certificate expiry (checking the "Strict-Transport-Security" header)
-                const sslExpiry = await checkSSL(host);
-
-                // Get DNS records (A, CNAME, MX, TXT)
-                const dnsRecords = await getDNSRecords(host);
 
                 const end = performance.now(); // End time for response time calculation
                 const responseTime = (end - start).toFixed(2); // Response time in milliseconds
@@ -107,66 +96,12 @@
                     <p class='active'>[ACTIVE] ${host} ✓</p>
                     <div class='info'>
                         <strong>Status Code:</strong> ${response.status} <br>
-                        <strong>Server:</strong> ${serverType} <br>
+                        <strong>Server:</strong> ${headers.get('Server') || 'Unknown'} <br>
                         <strong>Response Time:</strong> ${responseTime} ms <br>
-                        <strong>Geolocation:</strong> ${geoData.country}, ${geoData.city} <br>
-                        <strong>SSL Expiry:</strong> ${sslExpiry} <br>
-                        <strong>DNS Records:</strong> ${dnsRecords}
                     </div>
                 `;
             } catch (error) {
                 resultDiv.innerHTML = `<p class='inactive'>[INACTIVE] ${host} ✗ (Error: ${error.message})</p>`;
-            }
-        }
-
-        async function fetchWithCustomHeaders(url, options) {
-            const headers = new Headers();
-            headers.append("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
-
-            const newOptions = {
-                ...options,
-                headers: headers
-            };
-
-            return await fetch(url, newOptions);
-        }
-
-        async function getGeolocation(host) {
-            try {
-                const response = await fetch(`https://cors-anywhere.herokuapp.com/http://ip-api.com/json/${host}`);
-                const data = await response.json();
-                return {
-                    country: data.country || 'N/A',
-                    city: data.city || 'N/A'
-                };
-            } catch (error) {
-                return { country: 'N/A', city: 'N/A' };
-            }
-        }
-
-        async function checkSSL(host) {
-            try {
-                const response = await fetch(`https://cors-anywhere.herokuapp.com/https://api.ssllabs.com/api/v3/analyze?host=${host}`);
-                const data = await response.json();
-                if (data && data.endpoints && data.endpoints[0]) {
-                    const expiryDate = new Date(data.endpoints[0].details.notAfter);
-                    return `Expires on: ${expiryDate.toLocaleDateString()}`;
-                } else {
-                    return 'SSL data not available';
-                }
-            } catch (error) {
-                return 'Error fetching SSL data';
-            }
-        }
-
-        async function getDNSRecords(host) {
-            try {
-                const response = await fetch(`https://cors-anywhere.herokuapp.com/https://api.hackertarget.com/dnslookup/?q=${host}`);
-                const data = await response.text();
-                if (data.includes("See /corsdemo")) throw new Error("DNS lookup failed");
-                return data.split('\n').join('<br>'); // Display DNS records
-            } catch (error) {
-                return 'Error fetching DNS records';
             }
         }
     </script>
