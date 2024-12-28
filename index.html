@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-TECH Host Checker V4</title>
+    <title>D-TECH Checker V4</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -84,6 +84,8 @@
 
                 // Fetching server headers and other info using CORS proxy
                 const response = await fetch(`https://cors-anywhere.herokuapp.com/https://${host}`, { method: 'HEAD' });
+                if (!response.ok) throw new Error(`Status Code: ${response.status}`);
+
                 const headers = response.headers;
 
                 // Fetch geolocation
@@ -149,6 +151,7 @@
             try {
                 const response = await fetch(`https://cors-anywhere.herokuapp.com/https://api.hackertarget.com/dnslookup/?q=${host}`);
                 const data = await response.text();
+                if (data.includes("See /corsdemo")) throw new Error("DNS lookup failed");
                 return data.split('\n').join('<br>'); // Display DNS records
             } catch (error) {
                 return 'Error fetching DNS records';
