@@ -3,147 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-TECH Host Checker V3</title>
+    <title>D-TECH Web Tools</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #00ffcc;
-            text-align: center;
+            background-color: #0e0e10;
+            color: #fff;
             margin: 0;
             padding: 0;
+            text-align: center;
+        }
+        header {
+            background: #1f1f24;
+            padding: 20px;
         }
         h1 {
+            margin: 0;
+        }
+        .container {
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 600px;
+            background: #1f1f24;
+            border-radius: 10px;
+        }
+        select, input, button {
+            margin: 10px 0;
+            padding: 10px;
+            width: 90%;
+            max-width: 400px;
+        }
+        #results {
             margin-top: 20px;
-            font-size: 36px;
-            color: #00ffcc;
-        }
-        p {
-            font-size: 18px;
-            color: #aaa;
-        }
-        input[type="text"] {
-            width: 70%;
+            text-align: left;
+            white-space: pre-wrap;
+            background: #2c2c34;
             padding: 15px;
-            margin: 20px 0;
-            border: 2px solid #00ffcc;
             border-radius: 8px;
-            background-color: #1e1e1e;
-            color: #fff;
-            font-size: 16px;
-        }
-        input[type="text"]:focus {
-            border-color: #009988;
-            outline: none;
+            overflow-y: auto;
+            max-height: 300px;
         }
         button {
-            padding: 15px 30px;
+            background: #4caf50;
+            color: #fff;
             border: none;
-            border-radius: 8px;
-            background-color: #00ffcc;
-            color: #121212;
-            font-weight: bold;
-            font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #009988;
-        }
-        #result {
-            margin-top: 30px;
-            text-align: left;
-            display: inline-block;
-            background-color: #1e1e1e;
-            padding: 25px;
-            border-radius: 10px;
-            width: 80%;
-            max-width: 800px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-        }
-        .active {
-            color: #00ff00;
-            font-weight: bold;
-            font-size: 18px;
-        }
-        .inactive {
-            color: #ff4444;
-            font-weight: bold;
-            font-size: 18px;
-        }
-        .info {
-            margin-top: 15px;
-            font-size: 16px;
-            line-height: 1.6;
-        }
-        .info strong {
-            color: #00ffcc;
+            background: #388e3c;
         }
     </style>
 </head>
 <body>
-    <h1>D-TECH Host Checker V3</h1>
-    <p>Enter a host or SNI below to check its status and details:</p>
-    <input type="text" id="hostInput" placeholder="Enter host (e.g., example.com)">
-    <br>
-    <button onclick="checkHost()">Check Host</button>
-    <div id="result"></div>
+    <header>
+        <h1>👾 D-TECH Web Tools 👾</h1>
+        <p>Choose a tool and enter a website to analyze</p>
+    </header>
+    <div class="container">
+        <select id="tool">
+            <option value="whois">Whois Lookup</option>
+            <option value="dns">DNS Lookup</option>
+            <option value="geoip">GeoIP Lookup</option>
+            <option value="subnet">Subnet Lookup</option>
+            <option value="ports">Port Scan</option>
+            <option value="links">Get Page Links</option>
+            <option value="zone">Zone Transfer</option>
+            <option value="header">Get HTTP Headers</option>
+            <option value="host">Find Host</option>
+            <option value="ip">IP Locator</option>
+            <option value="shared">Find Shared DNS Servers</option>
+            <option value="robots">Get robots.txt</option>
+        </select>
+        <input type="text" id="website" placeholder="Enter website (e.g., example.com)">
+        <button onclick="analyzeWebsite()">🔍 Analyze</button>
+        <div id="results"></div>
+    </div>
 
     <script>
-        async function checkHost() {
-            const host = document.getElementById('hostInput').value.trim();
-            const resultDiv = document.getElementById('result');
+        async function analyzeWebsite() {
+            const tool = document.getElementById('tool').value;
+            const website = document.getElementById('website').value;
+            const resultsDiv = document.getElementById('results');
 
-            if (!host) {
-                resultDiv.innerHTML = "<p class='inactive'>Please enter a valid host.</p>";
+            if (!website) {
+                resultsDiv.innerHTML = '❌ Please enter a valid website.';
                 return;
             }
 
-            resultDiv.innerHTML = "<p>Checking host... Please wait.</p>";
+            resultsDiv.innerHTML = '⏳ Processing...';
+
+            let apiUrl = '';
+            switch (tool) {
+                case 'whois': apiUrl = `https://api.hackertarget.com/whois/?q=${website}`; break;
+                case 'dns': apiUrl = `https://api.hackertarget.com/dnslookup/?q=${website}`; break;
+                case 'geoip': apiUrl = `https://api.hackertarget.com/geoip/?q=${website}`; break;
+                case 'subnet': apiUrl = `https://api.hackertarget.com/subnetcalc/?q=${website}`; break;
+                case 'ports': apiUrl = `https://api.hackertarget.com/nmap/?q=${website}`; break;
+                case 'links': apiUrl = `https://api.hackertarget.com/pagelinks/?q=${website}`; break;
+                case 'zone': apiUrl = `https://api.hackertarget.com/zonetransfer/?q=${website}`; break;
+                case 'header': apiUrl = `https://api.hackertarget.com/httpheaders/?q=${website}`; break;
+                case 'host': apiUrl = `https://api.hackertarget.com/hostsearch/?q=${website}`; break;
+                case 'ip': 
+                    try {
+                        const ipResponse = await fetch(`https://ipinfo.io/${website}/json`);
+                        const ipData = await ipResponse.json();
+                        resultsDiv.innerHTML = JSON.stringify(ipData, null, 2);
+                        return;
+                    } catch (error) {
+                        resultsDiv.innerHTML = '❌ Error fetching IP data.';
+                        return;
+                    }
+                case 'shared': apiUrl = `https://api.hackertarget.com/findshareddns/?q=${website}`; break;
+                case 'robots': apiUrl = `http://${website}/robots.txt`; break;
+            }
 
             try {
-                // Use a proxy API to check the host
-                const response = await fetch(`https://api.hackertarget.com/httpheaders/?q=${host}`);
-                const data = await response.text();
-
-                if (response.ok) {
-                    const statusCode = data.match(/HTTP\/[\d.]+\s(\d+)/)?.[1] || 'N/A';
-                    const ip = await resolveIP(host);
-                    const sslInfo = await checkSSL(host);
-
-                    resultDiv.innerHTML = `
-                        <p class='active'>[ACTIVE] ${host} ✓</p>
-                        <div class='info'>
-                            <strong>Status Code:</strong> ${statusCode}<br>
-                            <strong>IP Address:</strong> ${ip || 'N/A'}<br>
-                            <strong>SSL Valid Until:</strong> ${sslInfo || 'N/A'}<br>
-                        </div>
-                    `;
-                } else {
-                    resultDiv.innerHTML = `<p class='inactive'>[INACTIVE] ${host} ✗ (Failed to fetch data)</p>`;
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    resultsDiv.innerHTML = `❌ Error: ${response.statusText}`;
+                    return;
                 }
+                const data = await response.text();
+                resultsDiv.innerHTML = data;
             } catch (error) {
-                resultDiv.innerHTML = `<p class='inactive'>[INACTIVE] ${host} ✗ (Error: ${error.message})</p>`;
-            }
-        }
-
-        async function resolveIP(host) {
-            try {
-                const response = await fetch(`https://dns.google/resolve?name=${host}&type=A`);
-                const data = await response.json();
-                return data.Answer ? data.Answer[0].data : 'N/A';
-            } catch (error) {
-                return 'N/A';
-            }
-        }
-
-        async function checkSSL(host) {
-            try {
-                const response = await fetch(`https://${host}`, { method: 'HEAD' });
-                const cert = response.headers.get('strict-transport-security');
-                return cert ? cert : 'Valid';
-            } catch (error) {
-                return 'N/A';
+                resultsDiv.innerHTML = `❌ Error: ${error.message}`;
             }
         }
     </script>
