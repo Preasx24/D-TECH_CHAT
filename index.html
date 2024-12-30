@@ -93,12 +93,14 @@
             resultsDiv.innerHTML = '⏳ Processing...';
 
             let apiUrl = '';
+
             switch (tool) {
                 case 'whois': apiUrl = `https://api.hackertarget.com/whois/?q=${website}`; break;
                 case 'dns': apiUrl = `https://api.hackertarget.com/dnslookup/?q=${website}`; break;
                 case 'geoip': apiUrl = `https://api.hackertarget.com/geoip/?q=${website}`; break;
                 case 'subnet': apiUrl = `https://api.hackertarget.com/subnetcalc/?q=${website}`; break;
-                case 'ports': apiUrl = `https://api.hackertarget.com/nmap/?q=${website}`; break;
+                case 'ports': 
+                    return runPortScanner(website, resultsDiv);
                 case 'links': apiUrl = `https://api.hackertarget.com/pagelinks/?q=${website}`; break;
                 case 'zone': apiUrl = `https://api.hackertarget.com/zonetransfer/?q=${website}`; break;
                 case 'header': apiUrl = `https://api.hackertarget.com/httpheaders/?q=${website}`; break;
@@ -127,6 +129,32 @@
                 resultsDiv.innerHTML = data;
             } catch (error) {
                 resultsDiv.innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+
+        async function runPortScanner(website, resultsDiv) {
+            resultsDiv.innerHTML = '⏳ Scanning ports...';
+
+            const ports = [21, 22, 23, 25, 53, 80, 110, 443, 8080];
+            const openPorts = [];
+
+            for (const port of ports) {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 1000);
+
+                    await fetch(`http://${website}:${port}`, { signal: controller.signal });
+                    openPorts.push(port);
+                    clearTimeout(timeoutId);
+                } catch (error) {
+                    // Ignore errors; they indicate closed ports
+                }
+            }
+
+            if (openPorts.length > 0) {
+                resultsDiv.innerHTML = `✅ Open Ports Detected: ${openPorts.join(', ')}`;
+            } else {
+                resultsDiv.innerHTML = '🔒 No open ports detected.';
             }
         }
     </script>
