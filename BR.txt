@@ -1,0 +1,18 @@
+http://189.84.174.53:81 - Volta Redonda, RJ, Brazil
+http://189.84.174.53:83 - Volta Redonda, RJ, Brazil
+http://189.7.161.83:9000 - Bento Gonçalves, RS, Brazil
+http://45.230.116.178:9000 - Dois Irmãos, RS, Brazil
+http://168.0.126.43:8001 - Dois Irmãos, RS, Brazil
+http://179.108.39.210:80 - Ribeirão das Neves, MG, Brazil
+http://186.225.62.62:80 - Fortaleza, CE, Brazil
+http://177.52.31.193:8081 - Itápolis, SP, Brazil
+http://177.136.215.152:8000 - Nova Hartz, RS, Brazil
+http://45.234.64.52:8000 - Jussara, GO, Brazil
+http://179.108.32.215:80 - Ribeirão das Neves, MG, Brazil
+http://45.237.130.35:82 - Monte Carmelo, MG, Brazil
+http://177.36.59.165:80 - Diamantina, MG, Brazil
+http://179.108.32.142:80 - Ribeirão das Neves, MG, Brazil
+http://189.84.174.53:81 - Volta Redonda, RJ, Brazil
+http://189.84.174.53:83 - Volta Redonda, RJ, Brazil
+http://189.84.174.53:81 - Volta Redonda, RJ, Brazil
+http://189.84.174.53:83 - Volta Redonda, RJ, Brazil
