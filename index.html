@@ -3,158 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-TECH Web Tools</title>
+    <title>D-TECH CCTV IP Viewer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #0e0e10;
-            color: #fff;
+            background-color: #0d1117;
+            color: #c9d1d9;
             margin: 0;
             padding: 0;
             text-align: center;
         }
-        header {
-            background: #1f1f24;
-            padding: 20px;
-        }
         h1 {
-            margin: 0;
+            color: #58a6ff;
+            margin-top: 20px;
         }
         .container {
             margin: 20px auto;
-            padding: 20px;
             max-width: 600px;
-            background: #1f1f24;
-            border-radius: 10px;
         }
-        select, input, button {
-            margin: 10px 0;
+        select, button {
+            margin: 10px;
             padding: 10px;
-            width: 90%;
-            max-width: 400px;
+            font-size: 16px;
         }
-        #results {
+        #output {
             margin-top: 20px;
+            padding: 10px;
+            background: #161b22;
+            border-radius: 5px;
             text-align: left;
             white-space: pre-wrap;
-            background: #2c2c34;
-            padding: 15px;
-            border-radius: 8px;
-            overflow-y: auto;
+            overflow: auto;
             max-height: 300px;
-        }
-        button {
-            background: #4caf50;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #388e3c;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>👾 D-TECH Web Tools 👾</h1>
-        <p>Choose a tool and enter a website to analyze</p>
-    </header>
+    <h1>D-TECH CCTV IP Viewer</h1>
     <div class="container">
-        <select id="tool">
-            <option value="whois">Whois Lookup</option>
-            <option value="dns">DNS Lookup</option>
-            <option value="geoip">GeoIP Lookup</option>
-            <option value="subnet">Subnet Lookup</option>
-            <option value="ports">Port Scan</option>
-            <option value="links">Get Page Links</option>
-            <option value="zone">Zone Transfer</option>
-            <option value="header">Get HTTP Headers</option>
-            <option value="host">Find Host</option>
-            <option value="ip">IP Locator</option>
-            <option value="shared">Find Shared DNS Servers</option>
-            <option value="robots">Get robots.txt</option>
+        <p>Select two countries to view their CCTV IP:Ports:</p>
+        <select id="country1">
+            <option value="" disabled selected>Select Country 1</option>
+            <option value="IN">India (IN)</option>
+            <option value="FR">France (FR)</option>
+            <option value="DE">Germany (DE)</option>
+            <option value="CN">China (CN)</option>
+            <option value="BR">Brazil (BR)</option>
+            <option value="ZA">South Africa (ZA)</option>
+            <option value="US">United States (US)</option>
+            <option value="RU">Russia (RU)</option>
+            <option value="JP">Japan (JP)</option>
         </select>
-        <input type="text" id="website" placeholder="Enter website (e.g., example.com)">
-        <button onclick="analyzeWebsite()">🔍 Analyze</button>
-        <div id="results"></div>
+        
+        <select id="country2">
+            <option value="" disabled selected>Select Country 2</option>
+            <option value="IN">India (IN)</option>
+            <option value="FR">France (FR)</option>
+            <option value="DE">Germany (DE)</option>
+            <option value="CN">China (CN)</option>
+            <option value="BR">Brazil (BR)</option>
+            <option value="ZA">South Africa (ZA)</option>
+            <option value="US">United States (US)</option>
+            <option value="RU">Russia (RU)</option>
+            <option value="JP">Japan (JP)</option>
+        </select>
+        
+        <br>
+        <button onclick="fetchIPs()">Fetch IPs</button>
+        
+        <div id="output"></div>
     </div>
 
     <script>
-        async function analyzeWebsite() {
-            const tool = document.getElementById('tool').value;
-            const website = document.getElementById('website').value;
-            const resultsDiv = document.getElementById('results');
+        const countryURLs = {
+            'IN': 'https://raw.githubusercontent.com/Preasx24/D-TECH_CHAT/refs/heads/main/IN.txt',
+            'FR': 'https://raw.githubusercontent.com/Preasx24/D-TECH_CHAT/refs/heads/main/FR.txt',
+            'DE': 'https://raw.githubusercontent.com/Preasx24/D-TECH_CHAT/refs/heads/main/DE.txt',
+            'CN': 'https://raw.githubusercontent.com/Preasx24/D-TECH_CHAT/refs/heads/main/CN.txt',
+            'BR': 'https://raw.githubusercontent.com/Preasx24/D-TECH_CHAT/refs/heads/main/BR.txt',
+            'ZA': 'https://raw.githubusercontent.com/Preasx24/D-TECH_CHAT/refs/heads/main/ZA.txt',
+            'US': 'https://raw.githubusercontent.com/Preasx24/D-TECH_CHAT/refs/heads/main/US.txt',
+            'RU': 'https://raw.githubusercontent.com/Preasx24/D-TECH_CHAT/refs/heads/main/RU.txt',
+            'JP': 'https://raw.githubusercontent.com/Preasx24/D-TECH_CHAT/refs/heads/main/JP.txt'
+        };
 
-            if (!website) {
-                resultsDiv.innerHTML = '❌ Please enter a valid website.';
+        async function fetchIPs() {
+            const country1 = document.getElementById('country1').value;
+            const country2 = document.getElementById('country2').value;
+            const output = document.getElementById('output');
+            output.innerHTML = '';
+
+            if (!country1 || !country2) {
+                output.innerHTML = 'Please select two countries!';
                 return;
             }
 
-            resultsDiv.innerHTML = '⏳ Processing...';
-
-            let apiUrl = '';
-
-            switch (tool) {
-                case 'whois': apiUrl = `https://api.hackertarget.com/whois/?q=${website}`; break;
-                case 'dns': apiUrl = `https://api.hackertarget.com/dnslookup/?q=${website}`; break;
-                case 'geoip': apiUrl = `https://api.hackertarget.com/geoip/?q=${website}`; break;
-                case 'subnet': apiUrl = `https://api.hackertarget.com/subnetcalc/?q=${website}`; break;
-                case 'ports': 
-                    return runPortScanner(website, resultsDiv);
-                case 'links': apiUrl = `https://api.hackertarget.com/pagelinks/?q=${website}`; break;
-                case 'zone': apiUrl = `https://api.hackertarget.com/zonetransfer/?q=${website}`; break;
-                case 'header': apiUrl = `https://api.hackertarget.com/httpheaders/?q=${website}`; break;
-                case 'host': apiUrl = `https://api.hackertarget.com/hostsearch/?q=${website}`; break;
-                case 'ip': 
-                    try {
-                        const ipResponse = await fetch(`https://ipinfo.io/${website}/json`);
-                        const ipData = await ipResponse.json();
-                        resultsDiv.innerHTML = JSON.stringify(ipData, null, 2);
-                        return;
-                    } catch (error) {
-                        resultsDiv.innerHTML = '❌ Error fetching IP data.';
-                        return;
-                    }
-                case 'shared': apiUrl = `https://api.hackertarget.com/findshareddns/?q=${website}`; break;
-                case 'robots': apiUrl = `http://${website}/robots.txt`; break;
-            }
-
             try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    resultsDiv.innerHTML = `❌ Error: ${response.statusText}`;
-                    return;
-                }
-                const data = await response.text();
-                resultsDiv.innerHTML = data;
+                const response1 = await fetch(countryURLs[country1]);
+                const data1 = await response1.text();
+
+                const response2 = await fetch(countryURLs[country2]);
+                const data2 = await response2.text();
+
+                output.innerHTML = `<strong>${country1} IP:Ports:</strong>\n${data1}\n\n<strong>${country2} IP:Ports:</strong>\n${data2}`;
             } catch (error) {
-                resultsDiv.innerHTML = `❌ Error: ${error.message}`;
-            }
-        }
-
-        async function runPortScanner(website, resultsDiv) {
-            resultsDiv.innerHTML = '⏳ Scanning ports...';
-
-            const ports = [21, 22, 23, 25, 53, 80, 110, 443, 8080];
-            const openPorts = [];
-
-            for (const port of ports) {
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 1000);
-
-                    await fetch(`http://${website}:${port}`, { signal: controller.signal });
-                    openPorts.push(port);
-                    clearTimeout(timeoutId);
-                } catch (error) {
-                    // Ignore errors; they indicate closed ports
-                }
-            }
-
-            if (openPorts.length > 0) {
-                resultsDiv.innerHTML = `✅ Open Ports Detected: ${openPorts.join(', ')}`;
-            } else {
-                resultsDiv.innerHTML = '🔒 No open ports detected.';
+                output.innerHTML = `Failed to fetch IPs: ${error.message}`;
             }
         }
     </script>
