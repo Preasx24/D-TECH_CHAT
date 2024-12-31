@@ -1,0 +1,30 @@
+http://41.217.194.50:88 - Randburg, GP, South Africa
+http://41.217.194.50:86 - Randburg, GP, South Africa
+http://41.217.194.50:82 - Randburg, GP, South Africa
+http://154.65.13.190:8080 - Cape Town, WC, South Africa
+http://196.21.94.4:80 - Durban, KZN, South Africa
+http://196.21.92.209:80 - Durban, KZN, South Africa
+http://197.90.194.22:60001 - Boksburg, GP, South Africa
+http://41.217.194.50:83 - Randburg, GP, South Africa
+http://41.217.194.50:85 - Randburg, GP, South Africa
+http://41.217.194.50:89 - Randburg, GP, South Africa
+http://41.217.194.50:90 - Randburg, GP, South Africa
+http://41.217.194.50:84 - Randburg, GP, South Africa
+http://41.217.194.50:88 - Randburg, GP, South Africa
+http://41.217.194.50:86 - Randburg, GP, South Africa
+http://41.217.194.50:82 - Randburg, GP, South Africa
+http://154.65.13.190:8080 - Cape Town, WC, South Africa
+http://196.21.94.4:80 - Durban, KZN, South Africa
+http://196.21.92.209:80 - Durban, KZN, South Africa
+http://41.217.194.50:88 - Randburg, GP, South Africa
+http://41.217.194.50:86 - Randburg, GP, South Africa
+http://41.217.194.50:82 - Randburg, GP, South Africa
+http://154.65.13.190:8080 - Cape Town, WC, South Africa
+http://196.21.94.4:80 - Durban, KZN, South Africa
+http://196.21.92.209:80 - Durban, KZN, South Africa
+http://41.217.194.50:88 - Randburg, GP, South Africa
+http://41.217.194.50:86 - Randburg, GP, South Africa
+http://41.217.194.50:82 - Randburg, GP, South Africa
+http://154.65.13.190:8080 - Cape Town, WC, South Africa
+http://196.21.94.4:80 - Durban, KZN, South Africa
+http://196.21.92.209:80 - Durban, KZN, South Africa
