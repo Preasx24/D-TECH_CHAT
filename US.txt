@@ -1,0 +1,25 @@
+http://192.135.76.230:80 - Sunnyvale, CA, United States
+http://207.111.165.53:8090 - Huntsville, AL, United States
+http://166.157.229.200:8000 - Westmont, IL, United States
+http://73.219.243.108:85 - Boston, MA, United States
+http://162.191.81.11:81 - Chicago, IL, United States
+http://184.105.97.6:80 - Queen Creek, AZ, United States
+http://96.78.169.121:8001 - Fremont, CA, United States
+http://107.220.19.6:8080 - Brownsburg, IN, United States
+http://162.191.50.11:82 - Chicago, IL, United States
+http://162.191.50.11:81 - Chicago, IL, United States
+http://162.191.11.144:8000 - Chicago, IL, United States
+http://96.47.119.174:85 - Iron River, WI, United States
+http://96.47.119.174:82 - Iron River, WI, United States
+http://72.234.42.184:50000 - Makawao, HI, United States
+http://173.164.213.201:8083 - Oakland, CA, United States
+http://99.58.111.42:80 - Northbrook, IL, United States
+http://216.99.126.110:80 - Shallotte, NC, United States
+http://166.141.93.41:8081 - Euless, TX, United States
+http://71.249.87.61:80 - Long Beach, NY, United States
+http://146.71.4.33:80 - Sandy, OR, United States
+http://166.144.239.128:81 - Jackson, WY, United States
+http://23.114.74.201:8001 - Fresno, CA, United States
+http://166.143.28.201:8081 - New York, NY, United States
+http://108.36.119.146:8082 - Philadelphia, PA, United States
+http://67.249.183.177:8080 - Herkimer, NY, United States
