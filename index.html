@@ -19,22 +19,56 @@
         }
         .container {
             margin: 20px auto;
-            max-width: 600px;
+            max-width: 700px;
         }
         select, button {
             margin: 10px;
-            padding: 10px;
+            padding: 12px;
             font-size: 16px;
+            background-color: #21262d;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: #c9d1d9;
         }
         #output {
             margin-top: 20px;
             padding: 10px;
             background: #161b22;
-            border-radius: 5px;
+            border-radius: 8px;
             text-align: left;
             white-space: pre-wrap;
             overflow: auto;
-            max-height: 300px;
+            max-height: 500px;
+        }
+        .ip-button {
+            display: inline-block;
+            background: #58a6ff;
+            color: white;
+            padding: 10px;
+            margin: 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: calc(100% - 40px);
+            text-align: center;
+            transition: background 0.3s;
+        }
+        .ip-button:hover {
+            background: #1f76e2;
+        }
+        .country-city {
+            font-size: 18px;
+            font-weight: bold;
+            color: #58a6ff;
+            margin-top: 10px;
+        }
+        .ip-container {
+            margin-bottom: 15px;
+        }
+        .loading {
+            color: #58a6ff;
+            font-size: 18px;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -71,6 +105,7 @@
         <br>
         <button onclick="fetchIPs()">Fetch IPs</button>
         
+        <div class="loading" id="loadingMessage">Loading, please wait...</div>
         <div id="output"></div>
     </div>
 
@@ -91,10 +126,13 @@
             const country1 = document.getElementById('country1').value;
             const country2 = document.getElementById('country2').value;
             const output = document.getElementById('output');
+            const loadingMessage = document.getElementById('loadingMessage');
             output.innerHTML = '';
+            loadingMessage.style.display = 'block';
 
             if (!country1 || !country2) {
                 output.innerHTML = 'Please select two countries!';
+                loadingMessage.style.display = 'none';
                 return;
             }
 
@@ -105,10 +143,46 @@
                 const response2 = await fetch(countryURLs[country2]);
                 const data2 = await response2.text();
 
-                output.innerHTML = `<strong>${country1} IP:Ports:</strong>\n${data1}\n\n<strong>${country2} IP:Ports:</strong>\n${data2}`;
+                loadingMessage.style.display = 'none';
+                displayIPData(country1, data1);
+                displayIPData(country2, data2);
             } catch (error) {
                 output.innerHTML = `Failed to fetch IPs: ${error.message}`;
+                loadingMessage.style.display = 'none';
             }
+        }
+
+        function displayIPData(country, data) {
+            const output = document.getElementById('output');
+            const lines = data.split('\n');
+            const countryName = country.toUpperCase();
+
+            lines.forEach((line, index) => {
+                const ipInfo = line.split(' - ');
+                if (ipInfo.length === 2) {
+                    const [ipPort, location] = ipInfo;
+                    const countryCityDiv = document.createElement('div');
+                    countryCityDiv.classList.add('ip-container');
+
+                    const countryCityHeader = document.createElement('div');
+                    countryCityHeader.classList.add('country-city');
+                    countryCityHeader.innerHTML = `${countryName} - ${location}`;
+
+                    const ipButton = document.createElement('button');
+                    ipButton.classList.add('ip-button');
+                    ipButton.textContent = ipPort;
+                    ipButton.onclick = () => window.open(ipPort, '_blank');
+
+                    countryCityDiv.appendChild(countryCityHeader);
+                    countryCityDiv.appendChild(ipButton);
+                    output.appendChild(countryCityDiv);
+
+                    // Add delay between IP displays
+                    setTimeout(() => {
+                        ipButton.style.display = 'inline-block';
+                    }, index * 200);
+                }
+            });
         }
     </script>
 </body>
