@@ -1,0 +1,30 @@
+http://212.26.225.116:80 - Ryazan, RYA, Russia
+http://83.239.123.252:80 - Cherkessk, KC, Russia
+http://217.76.38.238:80 - Chekhov, MOS, Russia
+http://217.76.38.237:80 - Chekhov, MOS, Russia
+http://212.26.235.210:80 - Ryazan, RYA, Russia
+http://91.199.196.151:80 - Moscow, MOW, Russia
+http://85.202.233.150:81 - Moscow, MOW, Russia
+http://78.110.157.166:1024 - Vladikavkaz, SE, Russia
+http://78.110.157.166:91 - Vladikavkaz, SE, Russia
+http://78.110.157.166:5000 - Vladikavkaz, SE, Russia
+http://91.108.45.201:80 - St Petersburg, SPE, Russia
+http://46.146.208.178:81 - Perm, PER, Russia
+http://91.247.124.105:8081 - Simferopol, 43, Ukraine
+http://109.197.197.128:8083 - Ulyanovsk, ULY, Russia
+http://91.203.177.39:85 - Smolensk, SMO, Russia
+http://176.62.89.111:81 - Omsk, OMS, Russia
+http://109.202.162.108:81 - St Petersburg, SPE, Russia
+http://176.119.241.11:8001 - Krasnokamensk, ZAB, Russia
+http://176.62.68.134:80 - Omsk, OMS, Russia
+http://91.244.114.179:81 - Biysk, ALT, Russia
+http://78.110.157.166:8001 - Vladikavkaz, SE, Russia
+http://94.231.131.81:80 - Samara, SAM, Russia
+http://188.170.242.23:85 - Moscow, MOW, Russia
+http://78.36.19.87:80 - Murmansk, MUR, Russia
+http://77.239.252.174:8080 - St Petersburg, SPE, Russia
+http://78.110.154.63:8080 - Vladikavkaz, SE, Russia
+http://78.110.157.166:8081 - Vladikavkaz, SE, Russia
+http://78.110.157.166:6004 - Vladikavkaz, SE, Russia
+http://78.110.157.166:3000 - Vladikavkaz, SE, Russia
+http://83.172.9.83:8080 - Tomsk, TOM, Russia
