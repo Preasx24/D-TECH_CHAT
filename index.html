@@ -96,6 +96,14 @@
         <div id="output"></div>
     </div>
 
+    <!-- PopAds Script -->
+    <script type="text/javascript" data-cfasync="false">
+    /*<![CDATA[/* */
+    (function(){var b=window,n="b76527a5c53827910401af2fe2b13921",g=[["siteId",160-244+152+46+5161161],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],t=["d3d3LmNkbjRhZHMuY29tL3JzdHJpbmcubWluLmNzcw==","ZDNnNW92Zm5nanc5YncuY2xvdWRmcm9udC5uZXQvVnlIL3Jib290c3RyYXAtbWF0ZXJpYWwtZGF0ZXRpbWVpa2VyLm1pbi5qc3A="],f=-1,i,q,j=function(){clearTimeout(q);f++;if(t[f]&&!(1761206581000<(new Date).getTime()&&1<f)){i=b.document.createElement("script");i.type="text/javascript";i.async=!0;var o=b.document.getElementsByTagName("script")[0];i.src="https://"+atob(t[f]);i.crossOrigin="anonymous";i.onerror=j;i.onload=function(){clearTimeout(q);b[n.slice(0,16)+n.slice(0,16)]||j()};q=setTimeout(j,5E3);o.parentNode.insertBefore(i,o)}};if(!b[n]){try{Object.freeze(b[n]=g)}catch(e){}j()}})();
+    /*]]>/* */
+    </script>
+    <!-- End of PopAds Script -->
+
     <script>
         const countryURLs = {
             'IN': 'https://raw.githubusercontent.com/Preasx24/D-TECH_CHAT/refs/heads/main/IN.txt',
@@ -122,16 +130,22 @@
                 return;
             }
 
-            try {
-                const response = await fetch(countryURLs[country]);
-                const data = await response.text();
+            // Open the pop-up ad before fetching IPs
+            openPopUpAd();
 
-                loadingMessage.style.display = 'none';
-                displayIPData(country, data);
-            } catch (error) {
-                output.innerHTML = `Failed to fetch IPs: ${error.message}`;
-                loadingMessage.style.display = 'none';
-            }
+            // Wait for the user to interact with the ad (in this case, simulate a delay)
+            setTimeout(async () => {
+                try {
+                    const response = await fetch(countryURLs[country]);
+                    const data = await response.text();
+
+                    loadingMessage.style.display = 'none';
+                    displayIPData(country, data);
+                } catch (error) {
+                    output.innerHTML = `Failed to fetch IPs: ${error.message}`;
+                    loadingMessage.style.display = 'none';
+                }
+            }, 5000); // Simulate a delay of 5 seconds to give time for the pop-up ad
         }
 
         function displayIPData(country, data) {
@@ -165,6 +179,13 @@
                     }, index * 200);
                 }
             });
+        }
+
+        // Function to open the pop-up ad
+        function openPopUpAd() {
+            const popUpWindow = window.open('', '_blank');
+            popUpWindow.document.write('<html><head><title>Ad</title></head><body><h1>Pop-Up Ad</h1><p>Ad Content Here</p></body></html>');
+            popUpWindow.document.close();
         }
     </script>
 </body>
