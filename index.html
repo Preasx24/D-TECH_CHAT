@@ -75,22 +75,9 @@
 <body>
     <h1>D-TECH CCTV IP Viewer</h1>
     <div class="container">
-        <p>Select two countries to view their CCTV IP:Ports:</p>
-        <select id="country1">
-            <option value="" disabled selected>Select Country 1</option>
-            <option value="IN">India (IN)</option>
-            <option value="FR">France (FR)</option>
-            <option value="DE">Germany (DE)</option>
-            <option value="CN">China (CN)</option>
-            <option value="BR">Brazil (BR)</option>
-            <option value="ZA">South Africa (ZA)</option>
-            <option value="US">United States (US)</option>
-            <option value="RU">Russia (RU)</option>
-            <option value="JP">Japan (JP)</option>
-        </select>
-        
-        <select id="country2">
-            <option value="" disabled selected>Select Country 2</option>
+        <p>Select a country to view the CCTV IPs:</p>
+        <select id="country">
+            <option value="" disabled selected>Select Country</option>
             <option value="IN">India (IN)</option>
             <option value="FR">France (FR)</option>
             <option value="DE">Germany (DE)</option>
@@ -123,29 +110,24 @@
         };
 
         async function fetchIPs() {
-            const country1 = document.getElementById('country1').value;
-            const country2 = document.getElementById('country2').value;
+            const country = document.getElementById('country').value;
             const output = document.getElementById('output');
             const loadingMessage = document.getElementById('loadingMessage');
             output.innerHTML = '';
             loadingMessage.style.display = 'block';
 
-            if (!country1 || !country2) {
-                output.innerHTML = 'Please select two countries!';
+            if (!country) {
+                output.innerHTML = 'Please select a country!';
                 loadingMessage.style.display = 'none';
                 return;
             }
 
             try {
-                const response1 = await fetch(countryURLs[country1]);
-                const data1 = await response1.text();
-
-                const response2 = await fetch(countryURLs[country2]);
-                const data2 = await response2.text();
+                const response = await fetch(countryURLs[country]);
+                const data = await response.text();
 
                 loadingMessage.style.display = 'none';
-                displayIPData(country1, data1);
-                displayIPData(country2, data2);
+                displayIPData(country, data);
             } catch (error) {
                 output.innerHTML = `Failed to fetch IPs: ${error.message}`;
                 loadingMessage.style.display = 'none';
@@ -170,7 +152,7 @@
 
                     const ipButton = document.createElement('button');
                     ipButton.classList.add('ip-button');
-                    ipButton.textContent = ipPort;
+                    ipButton.textContent = 'View CCTV Footage';
                     ipButton.onclick = () => window.open(ipPort, '_blank');
 
                     countryCityDiv.appendChild(countryCityHeader);
