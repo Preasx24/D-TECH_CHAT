@@ -23,12 +23,23 @@
         }
         .element {
             position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 10px;
             background-color: lightblue;
             border: 2px solid #ccc;
             cursor: move;
             user-select: none;
             box-sizing: border-box;
+        }
+        .bar {
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .element img {
             max-width: 100px;
@@ -41,8 +52,8 @@
             background-color: rgba(255, 255, 255, 0.9);
             padding: 10px;
             border: 1px solid #ccc;
-            z-index: 10;
             display: none;
+            z-index: 10;
         }
         #doneBtn {
             position: fixed;
@@ -53,9 +64,6 @@
             padding: 10px;
             border: none;
             cursor: pointer;
-        }
-        .element-options {
-            margin-top: 10px;
         }
         .input-field {
             margin: 5px 0;
@@ -80,10 +88,14 @@
     let selectedElement = null;
     const canvas = document.getElementById('canvas');
     const options = document.getElementById('options');
-
+    
+    // Show options on canvas click
     canvas.addEventListener('click', (e) => {
-        options.style.left = `${e.clientX + 20}px`;
-        options.style.top = `${e.clientY + 20}px`;
+        const x = e.clientX;
+        const y = e.clientY;
+        
+        options.style.left = `${x + 20}px`;
+        options.style.top = `${y + 20}px`;
         options.style.display = 'block';
     });
 
@@ -96,36 +108,52 @@
     function addElement(type) {
         const element = document.createElement('div');
         element.classList.add('element');
-        element.contentEditable = type !== 'logo' && type !== 'button';
-
+        const bar = document.createElement('div');
+        bar.classList.add('bar');
+        
         switch (type) {
             case 'header':
-                element.innerHTML = "<h2>Click to edit header</h2>";
+                bar.innerHTML = "<h2>Click to edit header</h2>";
+                bar.contentEditable = true;
                 break;
             case 'logo':
-                element.innerHTML = "<img src='https://via.placeholder.com/100' alt='Logo' />";
+                const logoUrl = prompt("Enter Google Drive Image Link:");
+                if (logoUrl) {
+                    bar.innerHTML = `<img src="${logoUrl}" alt="Logo" />`;
+                }
                 break;
             case 'text':
-                element.innerHTML = "Click to edit text";
+                bar.innerHTML = "Click to edit text";
+                bar.contentEditable = true;
                 break;
             case 'button':
-                element.innerHTML = "<button>Click Me</button>";
+                const buttonText = prompt("Enter Button Text:");
+                const buttonLink = prompt("Enter Button Link (Optional):");
+                bar.innerHTML = `<button onclick="window.open('${buttonLink}', '_blank')">${buttonText || 'Click Me'}</button>`;
                 break;
         }
 
-        element.style.left = `${options.offsetLeft - canvas.offsetLeft}px`;
-        element.style.top = `${options.offsetTop - canvas.offsetTop}px`;
-
-        addDragFunctionality(element);
-        createElementOptionsPanel(element);
+        bar.style.backgroundColor = "#fff";
+        bar.style.width = "100%";
+        bar.style.height = "100%";
+        
+        element.appendChild(bar);
+        centerElement(element);
+        makeDraggable(element);
+        customizeElementOptions(element, bar);
 
         canvas.appendChild(element);
         options.style.display = 'none';
     }
 
-    function addDragFunctionality(element) {
-        let offsetX, offsetY;
+    function centerElement(element) {
+        element.style.display = "flex";
+        element.style.justifyContent = "center";
+        element.style.alignItems = "center";
+    }
 
+    function makeDraggable(element) {
+        let offsetX, offsetY;
         element.addEventListener('mousedown', (e) => {
             selectedElement = element;
             offsetX = e.clientX - element.offsetLeft;
@@ -147,78 +175,51 @@
         });
     }
 
-    function createElementOptionsPanel(element) {
+    function customizeElementOptions(element, bar) {
         const panel = document.createElement('div');
         panel.classList.add('element-options');
         panel.style.position = 'absolute';
         panel.style.left = `${element.offsetLeft + 20}px`;
         panel.style.top = `${element.offsetTop + 20}px`;
 
-        // Width
-        const widthField = createInputField('Width', 'number', element.offsetWidth, (e) => {
-            element.style.width = `${e.target.value}px`;
+        const widthField = createInput('number', 'Width', (value) => {
+            element.style.width = `${value}px`;
+        });
+        
+        const heightField = createInput('number', 'Height', (value) => {
+            element.style.height = `${value}px`;
         });
 
-        // Height
-        const heightField = createInputField('Height', 'number', element.offsetHeight, (e) => {
-            element.style.height = `${e.target.value}px`;
+        const bgBarColor = createInput('color', 'Bar Color', (value) => {
+            bar.style.backgroundColor = value;
         });
 
-        // Background Color
-        const colorField = createInputField('Color', 'color', '#ADD8E6', (e) => {
-            element.style.backgroundColor = e.target.value;
+        const fontSizeField = createInput('number', 'Font Size', (value) => {
+            bar.style.fontSize = `${value}px`;
         });
 
-        // Font Size
-        const fontSizeField = createInputField('Font Size', 'number', '', (e) => {
-            element.style.fontSize = `${e.target.value}px`;
-        });
+        panel.appendChild(widthField);
+        panel.appendChild(heightField);
+        panel.appendChild(bgBarColor);
+        panel.appendChild(fontSizeField);
 
-        // Font Family
-        const fontFamilyField = document.createElement('select');
-        ['Arial', 'Verdana', 'Tahoma', 'Georgia', 'Times New Roman'].forEach(font => {
-            const option = document.createElement('option');
-            option.value = font;
-            option.textContent = font;
-            fontFamilyField.appendChild(option);
-        });
-        fontFamilyField.addEventListener('change', (e) => {
-            element.style.fontFamily = e.target.value;
-        });
-
-        // Position X
-        const posXField = createInputField('Position X', 'number', element.offsetLeft, (e) => {
-            element.style.left = `${e.target.value}px`;
-        });
-
-        // Position Y
-        const posYField = createInputField('Position Y', 'number', element.offsetTop, (e) => {
-            element.style.top = `${e.target.value}px`;
-        });
-
-        panel.append(widthField, heightField, colorField, fontSizeField, fontFamilyField, posXField, posYField);
         document.body.appendChild(panel);
     }
 
-    function createInputField(label, type, value, callback) {
+    function createInput(type, placeholder, callback) {
         const input = document.createElement('input');
-        input.classList.add('input-field');
         input.type = type;
-        input.placeholder = label;
-        input.value = value;
-        input.addEventListener('input', callback);
+        input.placeholder = placeholder;
+        input.classList.add('input-field');
+        input.addEventListener('input', (e) => callback(e.target.value));
         return input;
     }
 
     document.getElementById('doneBtn').addEventListener('click', () => {
         let htmlContent = '';
-        const elements = document.querySelectorAll('.element');
-
-        elements.forEach(element => {
-            const style = `position: absolute; left: ${element.offsetLeft}px; top: ${element.offsetTop}px; width: ${element.offsetWidth}px; height: ${element.offsetHeight}px; background-color: ${element.style.backgroundColor}; font-size: ${element.style.fontSize}; font-family: ${element.style.fontFamily};`;
-            htmlContent += `<div style="${style}">${element.innerHTML}</div>\n`;
+        document.querySelectorAll('.element').forEach(element => {
+            htmlContent += element.outerHTML + '\n';
         });
-
         const htmlCode = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Custom Design</title></head><body>${htmlContent}</body></html>`;
         prompt("Copy your HTML code:", htmlCode);
     });
