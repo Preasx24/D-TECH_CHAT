@@ -3,83 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Stream Feed</title>
+    <title>Interactive HTML Creator</title>
     <style>
-        body {
+        body, html {
             margin: 0;
             padding: 0;
-            background-color: #000;
-            color: #fff;
-            overflow-x: hidden;
+            height: 100%;
+            overflow: hidden;
             font-family: Arial, sans-serif;
         }
-
-        .video-container {
+        #canvas {
+            width: 100%;
+            height: 100%;
+            background-color: #f4f4f4;
+            position: relative;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            width: 100%;
-            height: 100vh; /* Full screen for each video */
-            overflow: hidden;
+            align-items: center;
         }
-
-        iframe {
-            width: 100%;
-            height: 100vh; /* Full screen for each video */
+        .element {
+            position: absolute;
+            padding: 10px;
+            background-color: lightblue;
+            border: 2px solid #ccc;
+            cursor: move;
+        }
+        .element img {
+            max-width: 100px;
+            max-height: 100px;
+        }
+        #options {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border: 1px solid #ccc;
+            display: none;
+            z-index: 10;
+        }
+        #doneBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
             border: none;
-        }
-
-        /* To ensure that only one video is visible at a time */
-        .video-container iframe {
-            display: block;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <div class="video-container" id="videoFeed">
-        <!-- Video feed will load here dynamically -->
-    </div>
+<div id="canvas"></div>
 
-    <script>
-        // Video links from YouTube Shorts
-        const videoLinks = [
-            "https://www.youtube.com/embed/XL0o11abW88", // YouTube video 1
-            "https://www.youtube.com/embed/yCOV9svDpno", // YouTube video 2
-            "https://www.youtube.com/embed/2xVZlUFZLFk", // YouTube video 3
-            "https://www.youtube.com/embed/hxqZ9GZmovM"  // YouTube video 4
-        ];
+<div id="options">
+    <button onclick="addElement('header')">Add Header</button>
+    <button onclick="addElement('logo')">Add Logo</button>
+    <button onclick="addElement('text')">Add Text</button>
+    <button onclick="addElement('button')">Add Button</button>
+</div>
 
-        const videoFeed = document.getElementById("videoFeed");
+<button id="doneBtn">Done</button>
 
-        // Function to dynamically load videos
-        function loadVideos() {
-            videoLinks.forEach((url, index) => {
-                const iframe = document.createElement('iframe');
-                iframe.src = url;
-                iframe.allowFullscreen = true;
-                iframe.classList.add('video-' + index);  // Add class for each iframe
-                videoFeed.appendChild(iframe);
-            });
+<script>
+    let selectedElement = null;
+    const canvas = document.getElementById('canvas');
+    const options = document.getElementById('options');
+    
+    // Show options when user clicks on the canvas
+    canvas.addEventListener('click', (e) => {
+        const x = e.clientX;
+        const y = e.clientY;
+        
+        // Show the options near the click position
+        options.style.left = `${x + 20}px`;
+        options.style.top = `${y + 20}px`;
+        options.style.display = 'block';
+    });
+
+    // Hide options when clicking anywhere outside
+    window.addEventListener('click', (e) => {
+        if (!options.contains(e.target) && e.target !== canvas) {
+            options.style.display = 'none';
         }
+    });
 
-        loadVideos();
+    // Add element to the canvas
+    function addElement(type) {
+        const element = document.createElement('div');
+        element.classList.add('element');
+        
+        switch (type) {
+            case 'header':
+                element.innerHTML = "<h2>Click to edit header</h2>";
+                element.contentEditable = true;
+                break;
+            case 'logo':
+                element.innerHTML = "<img src='https://via.placeholder.com/100' alt='Logo' />";
+                break;
+            case 'text':
+                element.innerHTML = "Click to edit text";
+                element.contentEditable = true;
+                break;
+            case 'button':
+                element.innerHTML = "<button>Click Me</button>";
+                break;
+        }
+        
+        // Position the element at the click position
+        element.style.left = `${options.offsetLeft - canvas.offsetLeft}px`;
+        element.style.top = `${options.offsetTop - canvas.offsetTop}px`;
+        
+        // Make it draggable
+        element.addEventListener('mousedown', (e) => {
+            selectedElement = element;
+            const offsetX = e.clientX - element.offsetLeft;
+            const offsetY = e.clientY - element.offsetTop;
 
-        // Infinite scroll to load more videos when the user scrolls down
-        let currentVideo = 0;
+            const moveElement = (moveEvent) => {
+                selectedElement.style.left = `${moveEvent.clientX - offsetX}px`;
+                selectedElement.style.top = `${moveEvent.clientY - offsetY}px`;
+            };
 
-        window.onscroll = () => {
-            if (window.innerHeight + window.scrollY >= document.body.scrollHeight) {
-                // Only show the next video when scrolled down
-                currentVideo++;
-                if (currentVideo < videoLinks.length) {
-                    const nextVideo = document.querySelector('.video-' + currentVideo);
-                    nextVideo.scrollIntoView({ behavior: 'smooth' });
-                }
-            }
-        };
-    </script>
+            const stopMove = () => {
+                document.removeEventListener('mousemove', moveElement);
+                document.removeEventListener('mouseup', stopMove);
+                selectedElement = null;
+            };
+
+            document.addEventListener('mousemove', moveElement);
+            document.addEventListener('mouseup', stopMove);
+        });
+
+        canvas.appendChild(element);
+        options.style.display = 'none'; // Hide options after adding an element
+    }
+
+    // Get the HTML code of the design
+    document.getElementById('doneBtn').addEventListener('click', () => {
+        const htmlContent = document.getElementById('canvas').innerHTML;
+        const htmlCode = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Custom Design</title></head><body>${htmlContent}</body></html>`;
+        prompt("Copy your HTML code:", htmlCode);
+    });
+</script>
 
 </body>
 </html>
