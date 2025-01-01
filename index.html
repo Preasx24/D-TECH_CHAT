@@ -38,11 +38,11 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.9);
             padding: 10px;
             border: 1px solid #ccc;
-            display: none;
             z-index: 10;
+            display: none;
         }
         #doneBtn {
             position: fixed;
@@ -59,12 +59,6 @@
         }
         .input-field {
             margin: 5px 0;
-        }
-        .section {
-            position: relative;
-            margin: 20px 0;
-            padding: 20px;
-            border: 2px dashed #ccc;
         }
     </style>
 </head>
@@ -86,54 +80,50 @@
     let selectedElement = null;
     const canvas = document.getElementById('canvas');
     const options = document.getElementById('options');
-    
-    // Show options when user clicks on the canvas
+
     canvas.addEventListener('click', (e) => {
-        const x = e.clientX;
-        const y = e.clientY;
-        
-        // Show the options near the click position
-        options.style.left = `${x + 20}px`;
-        options.style.top = `${y + 20}px`;
+        options.style.left = `${e.clientX + 20}px`;
+        options.style.top = `${e.clientY + 20}px`;
         options.style.display = 'block';
     });
 
-    // Hide options when clicking anywhere outside
     window.addEventListener('click', (e) => {
         if (!options.contains(e.target) && e.target !== canvas) {
             options.style.display = 'none';
         }
     });
 
-    // Add element to the canvas
     function addElement(type) {
         const element = document.createElement('div');
         element.classList.add('element');
-        
-        const optionsPanel = createElementOptionsPanel(element);
+        element.contentEditable = type !== 'logo' && type !== 'button';
 
         switch (type) {
             case 'header':
                 element.innerHTML = "<h2>Click to edit header</h2>";
-                element.contentEditable = true;
                 break;
             case 'logo':
                 element.innerHTML = "<img src='https://via.placeholder.com/100' alt='Logo' />";
                 break;
             case 'text':
                 element.innerHTML = "Click to edit text";
-                element.contentEditable = true;
                 break;
             case 'button':
                 element.innerHTML = "<button>Click Me</button>";
                 break;
         }
 
-        // Position the element at the click position
         element.style.left = `${options.offsetLeft - canvas.offsetLeft}px`;
         element.style.top = `${options.offsetTop - canvas.offsetTop}px`;
-        
-        // Make it draggable on tap and hold
+
+        addDragFunctionality(element);
+        createElementOptionsPanel(element);
+
+        canvas.appendChild(element);
+        options.style.display = 'none';
+    }
+
+    function addDragFunctionality(element) {
         let offsetX, offsetY;
 
         element.addEventListener('mousedown', (e) => {
@@ -155,14 +145,8 @@
             document.addEventListener('mousemove', moveElement);
             document.addEventListener('mouseup', stopMove);
         });
-
-        // Add the new element to the canvas
-        canvas.appendChild(element);
-        optionsPanel.style.display = 'block'; // Show the options panel for the selected element
-        options.style.display = 'none'; // Hide options after adding an element
     }
 
-    // Create an options panel for an element with various customization options
     function createElementOptionsPanel(element) {
         const panel = document.createElement('div');
         panel.classList.add('element-options');
@@ -170,43 +154,29 @@
         panel.style.left = `${element.offsetLeft + 20}px`;
         panel.style.top = `${element.offsetTop + 20}px`;
 
-        const widthField = document.createElement('input');
-        widthField.classList.add('input-field');
-        widthField.type = 'number';
-        widthField.placeholder = 'Width';
-        widthField.value = element.offsetWidth;
-        widthField.addEventListener('input', (e) => {
+        // Width
+        const widthField = createInputField('Width', 'number', element.offsetWidth, (e) => {
             element.style.width = `${e.target.value}px`;
         });
 
-        const heightField = document.createElement('input');
-        heightField.classList.add('input-field');
-        heightField.type = 'number';
-        heightField.placeholder = 'Height';
-        heightField.value = element.offsetHeight;
-        heightField.addEventListener('input', (e) => {
+        // Height
+        const heightField = createInputField('Height', 'number', element.offsetHeight, (e) => {
             element.style.height = `${e.target.value}px`;
         });
 
-        const colorPicker = document.createElement('input');
-        colorPicker.classList.add('input-field');
-        colorPicker.type = 'color';
-        colorPicker.value = "#ADD8E6"; // Default light blue
-        colorPicker.addEventListener('input', (e) => {
+        // Background Color
+        const colorField = createInputField('Color', 'color', '#ADD8E6', (e) => {
             element.style.backgroundColor = e.target.value;
         });
 
-        const fontSizeField = document.createElement('input');
-        fontSizeField.classList.add('input-field');
-        fontSizeField.type = 'number';
-        fontSizeField.placeholder = 'Font Size';
-        fontSizeField.addEventListener('input', (e) => {
+        // Font Size
+        const fontSizeField = createInputField('Font Size', 'number', '', (e) => {
             element.style.fontSize = `${e.target.value}px`;
         });
 
+        // Font Family
         const fontFamilyField = document.createElement('select');
-        fontFamilyField.classList.add('input-field');
-        ['Arial', 'Verdana', 'Tahoma', 'Georgia', 'Times New Roman'].forEach((font) => {
+        ['Arial', 'Verdana', 'Tahoma', 'Georgia', 'Times New Roman'].forEach(font => {
             const option = document.createElement('option');
             option.value = font;
             option.textContent = font;
@@ -216,47 +186,37 @@
             element.style.fontFamily = e.target.value;
         });
 
-        panel.appendChild(widthField);
-        panel.appendChild(heightField);
-        panel.appendChild(colorPicker);
-        panel.appendChild(fontSizeField);
-        panel.appendChild(fontFamilyField);
+        // Position X
+        const posXField = createInputField('Position X', 'number', element.offsetLeft, (e) => {
+            element.style.left = `${e.target.value}px`;
+        });
 
+        // Position Y
+        const posYField = createInputField('Position Y', 'number', element.offsetTop, (e) => {
+            element.style.top = `${e.target.value}px`;
+        });
+
+        panel.append(widthField, heightField, colorField, fontSizeField, fontFamilyField, posXField, posYField);
         document.body.appendChild(panel);
-
-        return panel;
     }
 
-    // Add section to the canvas
-    function addSection() {
-        const section = document.createElement('div');
-        section.classList.add('section');
-        section.innerHTML = "<h3>Click to edit section title</h3>";
-        section.contentEditable = true;
-
-        const optionsPanel = createElementOptionsPanel(section);
-
-        // Position the section at the click position
-        section.style.left = `${options.offsetLeft - canvas.offsetLeft}px`;
-        section.style.top = `${options.offsetTop - canvas.offsetTop}px`;
-
-        // Add the new section to the canvas
-        canvas.appendChild(section);
-        optionsPanel.style.display = 'block'; // Show the options panel for the selected section
-        options.style.display = 'none'; // Hide options after adding an element
+    function createInputField(label, type, value, callback) {
+        const input = document.createElement('input');
+        input.classList.add('input-field');
+        input.type = type;
+        input.placeholder = label;
+        input.value = value;
+        input.addEventListener('input', callback);
+        return input;
     }
 
-    // Get the HTML code of the design with correct positioning
     document.getElementById('doneBtn').addEventListener('click', () => {
         let htmlContent = '';
         const elements = document.querySelectorAll('.element');
 
         elements.forEach(element => {
-            const rect = element.getBoundingClientRect();
-            const style = `position: absolute; left: ${rect.left}px; top: ${rect.top}px; width: ${rect.width}px; height: ${rect.height}px; background-color: ${element.style.backgroundColor}; font-size: ${element.style.fontSize}; font-family: ${element.style.fontFamily};`;
-            const content = element.innerHTML;
-
-            htmlContent += `<div style="${style}">${content}</div>\n`;
+            const style = `position: absolute; left: ${element.offsetLeft}px; top: ${element.offsetTop}px; width: ${element.offsetWidth}px; height: ${element.offsetHeight}px; background-color: ${element.style.backgroundColor}; font-size: ${element.style.fontSize}; font-family: ${element.style.fontFamily};`;
+            htmlContent += `<div style="${style}">${element.innerHTML}</div>\n`;
         });
 
         const htmlCode = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Custom Design</title></head><body>${htmlContent}</body></html>`;
