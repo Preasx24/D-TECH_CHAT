@@ -11,22 +11,19 @@
             padding: 0;
             background-color: #000;
             color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            overflow-x: hidden;
         }
         .video-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
+            height: 100vh; /* Full screen for each video */
+            overflow: hidden;
         }
         iframe {
             width: 100%;
-            max-width: 600px;
-            margin-bottom: 20px;
+            height: 100vh; /* Full screen for each video */
             border: none;
         }
     </style>
