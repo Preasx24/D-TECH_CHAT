@@ -23,23 +23,18 @@
         }
         .element {
             position: absolute;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 10px;
             background-color: lightblue;
             border: 2px solid #ccc;
             cursor: move;
             user-select: none;
             box-sizing: border-box;
+            text-align: center;
         }
         .bar {
             padding: 5px;
             margin: 5px 0;
-            border: 1px solid #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            border-radius: 5px;
         }
         .element img {
             max-width: 100px;
@@ -52,8 +47,11 @@
             background-color: rgba(255, 255, 255, 0.9);
             padding: 10px;
             border: 1px solid #ccc;
-            display: none;
             z-index: 10;
+            display: none;
+        }
+        .input-field {
+            margin: 5px 0;
         }
         #doneBtn {
             position: fixed;
@@ -64,9 +62,6 @@
             padding: 10px;
             border: none;
             cursor: pointer;
-        }
-        .input-field {
-            margin: 5px 0;
         }
     </style>
 </head>
@@ -88,14 +83,10 @@
     let selectedElement = null;
     const canvas = document.getElementById('canvas');
     const options = document.getElementById('options');
-    
-    // Show options on canvas click
+
     canvas.addEventListener('click', (e) => {
-        const x = e.clientX;
-        const y = e.clientY;
-        
-        options.style.left = `${x + 20}px`;
-        options.style.top = `${y + 20}px`;
+        options.style.left = `${e.clientX + 20}px`;
+        options.style.top = `${e.clientY + 20}px`;
         options.style.display = 'block';
     });
 
@@ -108,52 +99,40 @@
     function addElement(type) {
         const element = document.createElement('div');
         element.classList.add('element');
-        const bar = document.createElement('div');
-        bar.classList.add('bar');
-        
+        element.contentEditable = type !== 'logo' && type !== 'button';
+
         switch (type) {
             case 'header':
-                bar.innerHTML = "<h2>Click to edit header</h2>";
-                bar.contentEditable = true;
+                element.innerHTML = "<h2>Click to edit header</h2>";
                 break;
             case 'logo':
-                const logoUrl = prompt("Enter Google Drive Image Link:");
-                if (logoUrl) {
-                    bar.innerHTML = `<img src="${logoUrl}" alt="Logo" />`;
-                }
+                const logoURL = prompt("Enter Google Drive link for the logo:");
+                element.innerHTML = `<img src="${logoURL}" alt="Logo" />`;
                 break;
             case 'text':
-                bar.innerHTML = "Click to edit text";
-                bar.contentEditable = true;
+                element.innerHTML = "Click to edit text";
                 break;
             case 'button':
-                const buttonText = prompt("Enter Button Text:");
-                const buttonLink = prompt("Enter Button Link (Optional):");
-                bar.innerHTML = `<button onclick="window.open('${buttonLink}', '_blank')">${buttonText || 'Click Me'}</button>`;
+                const buttonText = prompt("Enter button text:", "Click Me");
+                element.innerHTML = `<button>${buttonText}</button>`;
                 break;
         }
 
-        bar.style.backgroundColor = "#fff";
-        bar.style.width = "100%";
-        bar.style.height = "100%";
-        
-        element.appendChild(bar);
-        centerElement(element);
-        makeDraggable(element);
-        customizeElementOptions(element, bar);
+        // Center alignment
+        element.style.left = '50%';
+        element.style.top = '50%';
+        element.style.transform = 'translate(-50%, -50%)';
+
+        addDragFunctionality(element);
+        createElementOptionsPanel(element);
 
         canvas.appendChild(element);
         options.style.display = 'none';
     }
 
-    function centerElement(element) {
-        element.style.display = "flex";
-        element.style.justifyContent = "center";
-        element.style.alignItems = "center";
-    }
-
-    function makeDraggable(element) {
+    function addDragFunctionality(element) {
         let offsetX, offsetY;
+
         element.addEventListener('mousedown', (e) => {
             selectedElement = element;
             offsetX = e.clientX - element.offsetLeft;
@@ -175,51 +154,65 @@
         });
     }
 
-    function customizeElementOptions(element, bar) {
+    function createElementOptionsPanel(element) {
         const panel = document.createElement('div');
         panel.classList.add('element-options');
         panel.style.position = 'absolute';
         panel.style.left = `${element.offsetLeft + 20}px`;
         panel.style.top = `${element.offsetTop + 20}px`;
 
-        const widthField = createInput('number', 'Width', (value) => {
-            element.style.width = `${value}px`;
-        });
-        
-        const heightField = createInput('number', 'Height', (value) => {
-            element.style.height = `${value}px`;
+        // Width
+        const widthField = createInputField('Width', 'number', element.offsetWidth, (e) => {
+            element.style.width = `${e.target.value}px`;
         });
 
-        const bgBarColor = createInput('color', 'Bar Color', (value) => {
-            bar.style.backgroundColor = value;
+        // Height
+        const heightField = createInputField('Height', 'number', element.offsetHeight, (e) => {
+            element.style.height = `${e.target.value}px`;
         });
 
-        const fontSizeField = createInput('number', 'Font Size', (value) => {
-            bar.style.fontSize = `${value}px`;
+        // Background Color
+        const bgField = createInputField('Bar Background', 'color', '#ADD8E6', (e) => {
+            element.style.backgroundColor = e.target.value;
         });
 
-        panel.appendChild(widthField);
-        panel.appendChild(heightField);
-        panel.appendChild(bgBarColor);
-        panel.appendChild(fontSizeField);
+        // Font Size
+        const fontSizeField = createInputField('Font Size', 'number', '', (e) => {
+            element.style.fontSize = `${e.target.value}px`;
+        });
 
+        // Position X
+        const posXField = createInputField('Position X', 'number', element.offsetLeft, (e) => {
+            element.style.left = `${e.target.value}px`;
+        });
+
+        // Position Y
+        const posYField = createInputField('Position Y', 'number', element.offsetTop, (e) => {
+            element.style.top = `${e.target.value}px`;
+        });
+
+        panel.append(widthField, heightField, bgField, fontSizeField, posXField, posYField);
         document.body.appendChild(panel);
     }
 
-    function createInput(type, placeholder, callback) {
+    function createInputField(label, type, value, callback) {
         const input = document.createElement('input');
-        input.type = type;
-        input.placeholder = placeholder;
         input.classList.add('input-field');
-        input.addEventListener('input', (e) => callback(e.target.value));
+        input.type = type;
+        input.placeholder = label;
+        input.value = value;
+        input.addEventListener('input', callback);
         return input;
     }
 
     document.getElementById('doneBtn').addEventListener('click', () => {
         let htmlContent = '';
-        document.querySelectorAll('.element').forEach(element => {
-            htmlContent += element.outerHTML + '\n';
+        const elements = document.querySelectorAll('.element');
+
+        elements.forEach(element => {
+            htmlContent += `<div style="position: absolute; left: ${element.offsetLeft}px; top: ${element.offsetTop}px; background-color: ${element.style.backgroundColor};">${element.innerHTML}</div>\n`;
         });
+
         const htmlCode = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Custom Design</title></head><body>${htmlContent}</body></html>`;
         prompt("Copy your HTML code:", htmlCode);
     });
