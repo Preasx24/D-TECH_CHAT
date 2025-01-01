@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive HTML Creator</title>
+    <title>Advanced Interactive HTML Creator</title>
     <style>
         body, html {
             margin: 0;
@@ -28,6 +28,7 @@
             border: 2px solid #ccc;
             cursor: move;
             user-select: none;
+            box-sizing: border-box;
         }
         .element img {
             max-width: 100px;
@@ -52,6 +53,12 @@
             padding: 10px;
             border: none;
             cursor: pointer;
+        }
+        .element-options {
+            margin-top: 10px;
+        }
+        .input-field {
+            margin: 5px 0;
         }
     </style>
 </head>
@@ -96,6 +103,8 @@
         const element = document.createElement('div');
         element.classList.add('element');
         
+        const optionsPanel = createElementOptionsPanel(element);
+
         switch (type) {
             case 'header':
                 element.innerHTML = "<h2>Click to edit header</h2>";
@@ -142,7 +151,73 @@
 
         // Add the new element to the canvas
         canvas.appendChild(element);
+        optionsPanel.style.display = 'block'; // Show the options panel for the selected element
         options.style.display = 'none'; // Hide options after adding an element
+    }
+
+    // Create an options panel for an element with various customization options
+    function createElementOptionsPanel(element) {
+        const panel = document.createElement('div');
+        panel.classList.add('element-options');
+        panel.style.position = 'absolute';
+        panel.style.left = `${element.offsetLeft + 20}px`;
+        panel.style.top = `${element.offsetTop + 20}px`;
+
+        const widthField = document.createElement('input');
+        widthField.classList.add('input-field');
+        widthField.type = 'number';
+        widthField.placeholder = 'Width';
+        widthField.value = element.offsetWidth;
+        widthField.addEventListener('input', (e) => {
+            element.style.width = `${e.target.value}px`;
+        });
+
+        const heightField = document.createElement('input');
+        heightField.classList.add('input-field');
+        heightField.type = 'number';
+        heightField.placeholder = 'Height';
+        heightField.value = element.offsetHeight;
+        heightField.addEventListener('input', (e) => {
+            element.style.height = `${e.target.value}px`;
+        });
+
+        const colorPicker = document.createElement('input');
+        colorPicker.classList.add('input-field');
+        colorPicker.type = 'color';
+        colorPicker.value = "#ADD8E6"; // Default light blue
+        colorPicker.addEventListener('input', (e) => {
+            element.style.backgroundColor = e.target.value;
+        });
+
+        const fontSizeField = document.createElement('input');
+        fontSizeField.classList.add('input-field');
+        fontSizeField.type = 'number';
+        fontSizeField.placeholder = 'Font Size';
+        fontSizeField.addEventListener('input', (e) => {
+            element.style.fontSize = `${e.target.value}px`;
+        });
+
+        const fontFamilyField = document.createElement('select');
+        fontFamilyField.classList.add('input-field');
+        ['Arial', 'Verdana', 'Tahoma', 'Georgia', 'Times New Roman'].forEach((font) => {
+            const option = document.createElement('option');
+            option.value = font;
+            option.textContent = font;
+            fontFamilyField.appendChild(option);
+        });
+        fontFamilyField.addEventListener('change', (e) => {
+            element.style.fontFamily = e.target.value;
+        });
+
+        panel.appendChild(widthField);
+        panel.appendChild(heightField);
+        panel.appendChild(colorPicker);
+        panel.appendChild(fontSizeField);
+        panel.appendChild(fontFamilyField);
+
+        document.body.appendChild(panel);
+
+        return panel;
     }
 
     // Get the HTML code of the design with correct positioning
@@ -152,7 +227,7 @@
 
         elements.forEach(element => {
             const rect = element.getBoundingClientRect();
-            const style = `position: absolute; left: ${rect.left}px; top: ${rect.top}px;`;
+            const style = `position: absolute; left: ${rect.left}px; top: ${rect.top}px; width: ${rect.width}px; height: ${rect.height}px; background-color: ${element.style.backgroundColor}; font-size: ${element.style.fontSize}; font-family: ${element.style.fontFamily};`;
             const content = element.innerHTML;
 
             htmlContent += `<div style="${style}">${content}</div>\n`;
