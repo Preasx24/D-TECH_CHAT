@@ -6,25 +6,33 @@
     <title>Video Stream Feed</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #000;
             color: #fff;
             overflow-x: hidden;
+            font-family: Arial, sans-serif;
         }
+
         .video-container {
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             width: 100%;
             height: 100vh; /* Full screen for each video */
             overflow: hidden;
         }
+
         iframe {
             width: 100%;
             height: 100vh; /* Full screen for each video */
             border: none;
+        }
+
+        /* To ensure that only one video is visible at a time */
+        .video-container iframe {
+            display: block;
         }
     </style>
 </head>
@@ -47,10 +55,11 @@
 
         // Function to dynamically load videos
         function loadVideos() {
-            videoLinks.forEach(url => {
+            videoLinks.forEach((url, index) => {
                 const iframe = document.createElement('iframe');
                 iframe.src = url;
                 iframe.allowFullscreen = true;
+                iframe.classList.add('video-' + index);  // Add class for each iframe
                 videoFeed.appendChild(iframe);
             });
         }
@@ -58,10 +67,16 @@
         loadVideos();
 
         // Infinite scroll to load more videos when the user scrolls down
+        let currentVideo = 0;
+
         window.onscroll = () => {
             if (window.innerHeight + window.scrollY >= document.body.scrollHeight) {
-                // Add more videos when scrolled to the bottom
-                loadVideos();
+                // Only show the next video when scrolled down
+                currentVideo++;
+                if (currentVideo < videoLinks.length) {
+                    const nextVideo = document.querySelector('.video-' + currentVideo);
+                    nextVideo.scrollIntoView({ behavior: 'smooth' });
+                }
             }
         };
     </script>
