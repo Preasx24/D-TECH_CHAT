@@ -60,6 +60,12 @@
         .input-field {
             margin: 5px 0;
         }
+        .section {
+            position: relative;
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px dashed #ccc;
+        }
     </style>
 </head>
 <body>
@@ -71,6 +77,7 @@
     <button onclick="addElement('logo')">Add Logo</button>
     <button onclick="addElement('text')">Add Text</button>
     <button onclick="addElement('button')">Add Button</button>
+    <button onclick="addSection()">Add Section</button>
 </div>
 
 <button id="doneBtn">Done</button>
@@ -218,6 +225,25 @@
         document.body.appendChild(panel);
 
         return panel;
+    }
+
+    // Add section to the canvas
+    function addSection() {
+        const section = document.createElement('div');
+        section.classList.add('section');
+        section.innerHTML = "<h3>Click to edit section title</h3>";
+        section.contentEditable = true;
+
+        const optionsPanel = createElementOptionsPanel(section);
+
+        // Position the section at the click position
+        section.style.left = `${options.offsetLeft - canvas.offsetLeft}px`;
+        section.style.top = `${options.offsetTop - canvas.offsetTop}px`;
+
+        // Add the new section to the canvas
+        canvas.appendChild(section);
+        optionsPanel.style.display = 'block'; // Show the options panel for the selected section
+        options.style.display = 'none'; // Hide options after adding an element
     }
 
     // Get the HTML code of the design with correct positioning
