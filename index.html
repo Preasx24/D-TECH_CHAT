@@ -37,9 +37,8 @@
             border-radius: 5px;
         }
         .element img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+            max-width: 100px;
+            max-height: 100px;
         }
         #options {
             position: fixed;
@@ -97,11 +96,6 @@
         }
     });
 
-    function convertDriveLink(link) {
-        const match = link.match(/\/d\/(.*?)\//);
-        return match ? `https://drive.google.com/uc?id=${match[1]}` : link;
-    }
-
     function addElement(type) {
         const element = document.createElement('div');
         element.classList.add('element');
@@ -113,10 +107,15 @@
                 break;
             case 'logo':
                 const logoURL = prompt("Enter Google Drive link for the logo:");
-                const directURL = convertDriveLink(logoURL);
-                element.innerHTML = `<img src="${directURL}" alt="Logo" />`;
-                element.style.width = '150px';
-                element.style.height = '150px';
+                if (logoURL) {
+                    // Convert the Google Drive URL to a direct image URL
+                    if (logoURL.includes("drive.google.com")) {
+                        const fileId = logoURL.split("/d/")[1].split("/")[0];
+                        element.innerHTML = `<img src="https://drive.google.com/uc?id=${fileId}" alt="Logo" />`;
+                    } else {
+                        element.innerHTML = `<img src="${logoURL}" alt="Logo" />`;
+                    }
+                }
                 break;
             case 'text':
                 element.innerHTML = "Click to edit text";
@@ -127,6 +126,7 @@
                 break;
         }
 
+        // Center alignment
         element.style.left = '50%';
         element.style.top = '50%';
         element.style.transform = 'translate(-50%, -50%)';
@@ -169,23 +169,37 @@
         panel.style.left = `${element.offsetLeft + 20}px`;
         panel.style.top = `${element.offsetTop + 20}px`;
 
+        // Width
         const widthField = createInputField('Width', 'number', element.offsetWidth, (e) => {
             element.style.width = `${e.target.value}px`;
         });
 
+        // Height
         const heightField = createInputField('Height', 'number', element.offsetHeight, (e) => {
             element.style.height = `${e.target.value}px`;
         });
 
+        // Background Color
         const bgField = createInputField('Bar Background', 'color', '#ADD8E6', (e) => {
             element.style.backgroundColor = e.target.value;
         });
 
+        // Font Size
         const fontSizeField = createInputField('Font Size', 'number', '', (e) => {
             element.style.fontSize = `${e.target.value}px`;
         });
 
-        panel.append(widthField, heightField, bgField, fontSizeField);
+        // Position X
+        const posXField = createInputField('Position X', 'number', element.offsetLeft, (e) => {
+            element.style.left = `${e.target.value}px`;
+        });
+
+        // Position Y
+        const posYField = createInputField('Position Y', 'number', element.offsetTop, (e) => {
+            element.style.top = `${e.target.value}px`;
+        });
+
+        panel.append(widthField, heightField, bgField, fontSizeField, posXField, posYField);
         document.body.appendChild(panel);
     }
 
