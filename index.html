@@ -27,6 +27,7 @@
             background-color: lightblue;
             border: 2px solid #ccc;
             cursor: move;
+            user-select: none;
         }
         .element img {
             max-width: 100px;
@@ -111,16 +112,18 @@
                 element.innerHTML = "<button>Click Me</button>";
                 break;
         }
-        
+
         // Position the element at the click position
         element.style.left = `${options.offsetLeft - canvas.offsetLeft}px`;
         element.style.top = `${options.offsetTop - canvas.offsetTop}px`;
         
-        // Make it draggable
+        // Make it draggable on tap and hold
+        let offsetX, offsetY;
+
         element.addEventListener('mousedown', (e) => {
             selectedElement = element;
-            const offsetX = e.clientX - element.offsetLeft;
-            const offsetY = e.clientY - element.offsetTop;
+            offsetX = e.clientX - element.offsetLeft;
+            offsetY = e.clientY - element.offsetTop;
 
             const moveElement = (moveEvent) => {
                 selectedElement.style.left = `${moveEvent.clientX - offsetX}px`;
@@ -137,13 +140,24 @@
             document.addEventListener('mouseup', stopMove);
         });
 
+        // Add the new element to the canvas
         canvas.appendChild(element);
         options.style.display = 'none'; // Hide options after adding an element
     }
 
-    // Get the HTML code of the design
+    // Get the HTML code of the design with correct positioning
     document.getElementById('doneBtn').addEventListener('click', () => {
-        const htmlContent = document.getElementById('canvas').innerHTML;
+        let htmlContent = '';
+        const elements = document.querySelectorAll('.element');
+
+        elements.forEach(element => {
+            const rect = element.getBoundingClientRect();
+            const style = `position: absolute; left: ${rect.left}px; top: ${rect.top}px;`;
+            const content = element.innerHTML;
+
+            htmlContent += `<div style="${style}">${content}</div>\n`;
+        });
+
         const htmlCode = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Custom Design</title></head><body>${htmlContent}</body></html>`;
         prompt("Copy your HTML code:", htmlCode);
     });
