@@ -3,110 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-TECH Voucher System</title>
+    <title>Your Website</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #0d1117;
-            color: #c9d1d9;
-            text-align: center;
             margin: 0;
             padding: 0;
         }
-        .container {
-            margin-top: 50px;
+
+        .menu-container {
+            position: relative;
         }
-        button {
-            background-color: #1f6feb;
-            color: white;
-            padding: 10px 20px;
-            margin-top: 20px;
-            border: none;
+
+        .menu-toggle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
             cursor: pointer;
+            z-index: 10;
         }
-        button:disabled {
-            background-color: #444;
-            cursor: not-allowed;
+
+        .menu-toggle .bar {
+            display: block;
+            width: 30px;
+            height: 4px;
+            margin: 5px 0;
+            background-color: #333;
         }
-        #voucher {
-            margin-top: 30px;
-            font-size: 1.2em;
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background-color: #111;
+            transition: 0.3s;
+            padding-top: 60px;
+            color: white;
         }
-        #instructions {
-            margin-top: 20px;
-            font-size: 1em;
-            color: #9ca3af;
+
+        .side-menu a {
+            display: block;
+            padding: 15px;
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+        }
+
+        .side-menu a:hover {
+            background-color: #575757;
+        }
+
+        .side-menu.open {
+            left: 0;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>D-TECH Voucher System</h1>
-        <p id="instructions">Tap anywhere on the screen repeatedly. A popup ad will appear. Let it fully display before returning.</p>
-        <button id="voucherButton" disabled>Claim Voucher</button>
-        <div id="voucher"></div>
+
+    <!-- Sliding Menu Structure -->
+    <div class="menu-container">
+        <!-- Hamburger Icon -->
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
+        <!-- Sliding Side Menu -->
+        <div class="side-menu" id="sideMenu">
+            <a href="#">Home</a>
+            <a href="#">About</a>
+            <a href="#">Services</a>
+            <a href="#">Contact</a>
+        </div>
     </div>
 
     <script>
-        let vouchers = [];
-        let usedVouchers = [];
-        let adViewed = false;
-        let focusLost = false;
-
-        // Fetch Vouchers from GitHub
-        async function fetchVouchers() {
-            try {
-                const response = await fetch('https://raw.githubusercontent.com/Preasx24/D-TECH_CHAT/refs/heads/main/voucher.txt');
-                const text = await response.text();
-                vouchers = text.split('\n').filter(v => v.trim() !== '');
-            } catch (error) {
-                console.error('Failed to fetch vouchers:', error);
-            }
+        function toggleMenu() {
+            const sideMenu = document.getElementById('sideMenu');
+            sideMenu.classList.toggle('open');
         }
-
-        // Detect focus loss (user switches tab or interacts with popup)
-        window.addEventListener('blur', () => {
-            focusLost = true;
-        });
-
-        window.addEventListener('focus', () => {
-            if (focusLost) {
-                adViewed = true;
-                document.getElementById('voucherButton').disabled = false;
-                document.getElementById('instructions').innerText = 'Ad detected! You can now claim your voucher.';
-            }
-        });
-
-        // Track taps to ensure ad triggers
-        document.body.addEventListener('click', () => {
-            if (!adViewed) {
-                document.getElementById('instructions').innerText = 'Keep tapping until the popup ad appears!';
-            }
-        });
-
-        // Claim Voucher
-        document.getElementById('voucherButton').addEventListener('click', () => {
-            if (!adViewed) {
-                alert('Please interact with the popup ad fully before claiming your voucher!');
-                return;
-            }
-
-            const availableVouchers = vouchers.filter(v => !usedVouchers.includes(v));
-            if (availableVouchers.length === 0) {
-                document.getElementById('voucher').innerText = 'No more vouchers available.';
-                return;
-            }
-
-            const randomIndex = Math.floor(Math.random() * availableVouchers.length);
-            const selectedVoucher = availableVouchers[randomIndex];
-            usedVouchers.push(selectedVoucher);
-
-            document.getElementById('voucher').innerText = `Your Voucher: ${selectedVoucher}`;
-            document.getElementById('voucherButton').disabled = true;
-        });
-
-        // Initial Voucher Fetch
-        fetchVouchers();
     </script>
+
 </body>
 </html>
