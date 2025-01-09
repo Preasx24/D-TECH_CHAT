@@ -57,6 +57,23 @@
             margin-right: auto;
         }
 
+        /* ARISE Text */
+        .arise-text {
+            font-size: 2.5em;
+            color: #00d9ff;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+            text-shadow: 0 0 10px #00d9ff, 0 0 20px #00d9ff;
+            opacity: 0;
+            animation: ariseAnim 2s forwards;
+        }
+
+        @keyframes ariseAnim {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
         footer {
             text-align: center;
             background-color: #2c3e50;
@@ -163,7 +180,6 @@
             0% { transform: translateY(-50px); opacity: 0; }
             100% { transform: translateY(0); opacity: 1; }
         }
-
     </style>
 </head>
 <body>
@@ -177,6 +193,7 @@
     <img src="dtech-logo.png" alt="D-TECH Logo">
     <h1>Welcome to D-TECH Headquarters</h1>
     <p>Explore our tools, projects, and cutting-edge resources. Whether you're looking to test your skills or explore new digital frontiers, D-TECH provides the resources and community for your growth.</p>
+    <h2 class="arise-text">ARISE: Join the D-TECH Revolution</h2>
 </header>
 
 <!-- Sliding Side Menu -->
