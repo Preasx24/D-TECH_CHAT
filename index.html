@@ -3,30 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VAST Ad Example</title>
+  <title>HilltopAds VAST Ad Example</title>
   <link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet">
   <script src="https://vjs.zencdn.net/7.11.4/video.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-ads@6.9.0/dist/videojs.ads.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/videojs-ima@1.11.0/dist/videojs.ima.min.js"></script>
 </head>
 <body>
-  <h1>VAST Ad Integration</h1>
+  <h1>HilltopAds VAST Ad Integration</h1>
 
   <!-- Video Player -->
-  <video id="my-video" class="video-js vjs-default-skin" controls width="640" height="360"></video>
+  <video id="video-player" class="video-js vjs-default-skin" controls width="640" height="360"></video>
 
   <script>
-    // Initialize the video player
-    var player = videojs('my-video');
+    var player = videojs('video-player');
 
-    // Add Google IMA plugin for VAST ad handling
+    // Configure the IMA plugin with the HilltopAds VAST URL
     player.ima({
-      adTagUrl: 'https://miserablenobody.com/dam/F/zZd.GTNqv-Z/GQUh/ReAmT9wulZYUUlSk/PFT/YcwzM/TYUf5zN-jjAUtlNTjHAnxPNjTlkv2WMQQW'
+      adTagUrl: 'https://miserablenobody.com/dzm.FYzpdOGkN/vRZBGSUD/_eqmU9RuKZMU_lTkkPlTnYwwAMGTgU_5oNAjRAst/N/j/AVxqNsT/k/2YMNQh'
     });
-    
-    // Play video on load
+
     player.ready(function() {
-      player.play();
+      player.ima.requestAds(); // Load and display the ad
     });
   </script>
 </body>
