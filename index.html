@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Search - FMA</title>
+    <title>Music Search - TheAudioDB</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -32,26 +32,27 @@
     </style>
 </head>
 <body>
-    <h1>Search for Free Music - FMA</h1>
-    <input type="text" id="search" placeholder="Enter song or artist">
-    <button onclick="searchFMA()">Search</button>
+    <h1>Search for Music - TheAudioDB</h1>
+    <input type="text" id="search" placeholder="Enter artist or song">
+    <button onclick="searchMusic()">Search</button>
     <div class="results" id="results"></div>
 
     <script>
-        async function searchFMA() {
+        async function searchMusic() {
             const query = document.getElementById('search').value;
-            const apiUrl = `https://freemusicarchive.org/api/trackSearch?q=${encodeURIComponent(query)}&limit=10&fields=track_title,artist_name,track_url`;
+            const apiUrl = `https://www.theaudiodb.com/api/v1/json/1/search.php?s=${encodeURIComponent(query)}`;
             const response = await fetch(apiUrl);
             const data = await response.json();
 
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '';
-            if (data.dataset) {
-                data.dataset.forEach(track => {
+            if (data.artists) {
+                data.artists.forEach(artist => {
                     resultsDiv.innerHTML += `
                         <div>
-                            <h3>${track.track_title} - ${track.artist_name}</h3>
-                            <a href="${track.track_url}" target="_blank">Download</a>
+                            <h2>${artist.strArtist}</h2>
+                            <p>${artist.strBiographyEN || 'Biography not available.'}</p>
+                            <img src="${artist.strArtistThumb || '#'}" alt="Artist Image" style="max-width:300px;">
                         </div>
                         <hr>
                     `;
