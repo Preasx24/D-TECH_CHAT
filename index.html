@@ -3,64 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Search - TheAudioDB</title>
+    <title>NASA Astronomy Picture of the Day</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #1e1e2f;
-            color: white;
+            background-color: #000;
+            color: #fff;
             text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        #apod-container {
             padding: 20px;
         }
-        input, button {
-            margin: 10px;
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        h1 {
+            font-size: 2em;
+        }
+        p {
+            font-size: 1.2em;
             padding: 10px;
-            font-size: 16px;
-        }
-        button {
-            background-color: #00ffcc;
-            border: none;
-            color: #1e1e2f;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #00cc99;
-        }
-        .results {
-            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Search for Music - TheAudioDB</h1>
-    <input type="text" id="search" placeholder="Enter artist or song">
-    <button onclick="searchMusic()">Search</button>
-    <div class="results" id="results"></div>
+
+    <div id="apod-container">
+        <h1>NASA Astronomy Picture of the Day</h1>
+        <div id="apod-image"></div>
+        <p id="apod-description"></p>
+    </div>
 
     <script>
-        async function searchMusic() {
-            const query = document.getElementById('search').value;
-            const apiUrl = `https://www.theaudiodb.com/api/v1/json/1/search.php?s=${encodeURIComponent(query)}`;
-            const response = await fetch(apiUrl);
-            const data = await response.json();
+        // Your NASA API Key (replace with your API key from NASA)
+        const apiKey = 'MHUzOHkn2szNcsx1xcew0WgYy21XlD3kSLyVU6UD'; // Your provided API key
+        const apiUrl = `https://api.nasa.gov/planetary/apod?api_key=${apiKey}`;
 
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = '';
-            if (data.artists) {
-                data.artists.forEach(artist => {
-                    resultsDiv.innerHTML += `
-                        <div>
-                            <h2>${artist.strArtist}</h2>
-                            <p>${artist.strBiographyEN || 'Biography not available.'}</p>
-                            <img src="${artist.strArtistThumb || '#'}" alt="Artist Image" style="max-width:300px;">
-                        </div>
-                        <hr>
-                    `;
-                });
-            } else {
-                resultsDiv.innerHTML = '<p>No results found.</p>';
-            }
-        }
+        // Fetch data from the NASA API
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                // Display the Astronomy Picture of the Day (APOD)
+                const apodImage = data.url;
+                const apodDescription = data.explanation;
+
+                // Set the image and description on the page
+                const imageElement = document.createElement('img');
+                imageElement.src = apodImage;
+                imageElement.alt = 'Astronomy Picture of the Day';
+
+                // Append the image to the apod-image div
+                document.getElementById('apod-image').appendChild(imageElement);
+                document.getElementById('apod-description').innerText = apodDescription;
+            })
+            .catch(error => {
+                console.error('Error fetching NASA API data:', error);
+            });
     </script>
+
 </body>
 </html>
