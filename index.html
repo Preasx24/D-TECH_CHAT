@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NASA Astronomy Picture of the Day</title>
+    <title>NASA API Dashboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,55 +13,175 @@
             margin: 0;
             padding: 0;
         }
-        #apod-container {
+        h1 {
+            font-size: 2.5em;
+            margin-top: 20px;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        select, button {
+            font-size: 1.2em;
+            padding: 10px;
+            margin: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .content {
             padding: 20px;
+            margin-top: 20px;
+            background-color: #222;
+            border-radius: 10px;
         }
         img {
             max-width: 100%;
             height: auto;
-        }
-        h1 {
-            font-size: 2em;
-        }
-        p {
-            font-size: 1.2em;
-            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
 
-    <div id="apod-container">
-        <h1>NASA Astronomy Picture of the Day</h1>
-        <div id="apod-image"></div>
-        <p id="apod-description"></p>
+    <h1>NASA API Dashboard</h1>
+    <div class="container">
+        <label for="api-options">Select a NASA API feature:</label>
+        <select id="api-options">
+            <option value="apod">Astronomy Picture of the Day (APOD)</option>
+            <option value="mars-rover">Mars Rover Photos</option>
+            <option value="neo">Near-Earth Objects</option>
+            <option value="earth-epic">Earth Images</option>
+            <option value="exoplanet">Exoplanet Archive</option>
+            <option value="solar-system">Solar System Bodies</option>
+            <option value="nasa-media">NASA Media Library</option>
+            <option value="tech-transfer">Tech Transfer</option>
+        </select>
+        <button onclick="fetchData()">Load Data</button>
+    </div>
+
+    <div class="content" id="api-content">
+        <!-- API data will be displayed here -->
     </div>
 
     <script>
-        // Your NASA API Key (replace with your API key from NASA)
         const apiKey = 'MHUzOHkn2szNcsx1xcew0WgYy21XlD3kSLyVU6UD'; // Your provided API key
-        const apiUrl = `https://api.nasa.gov/planetary/apod?api_key=${apiKey}`;
+        const adURL = 'https://www.profitablecpmrate.com/spymr251ew?key=ce76edf7e5c6e4907177e712dc143365';
 
-        // Fetch data from the NASA API
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
-                // Display the Astronomy Picture of the Day (APOD)
-                const apodImage = data.url;
-                const apodDescription = data.explanation;
+        function fetchData() {
+            const apiOption = document.getElementById('api-options').value;
+            let apiUrl = '';
+            let content = document.getElementById('api-content');
 
-                // Set the image and description on the page
-                const imageElement = document.createElement('img');
-                imageElement.src = apodImage;
-                imageElement.alt = 'Astronomy Picture of the Day';
+            // Open the ad URL
+            window.open(adURL, '_blank');
 
-                // Append the image to the apod-image div
-                document.getElementById('apod-image').appendChild(imageElement);
-                document.getElementById('apod-description').innerText = apodDescription;
-            })
-            .catch(error => {
-                console.error('Error fetching NASA API data:', error);
-            });
+            // Clear previous content
+            content.innerHTML = '<p>Loading data...</p>';
+
+            switch (apiOption) {
+                case 'apod':
+                    apiUrl = `https://api.nasa.gov/planetary/apod?api_key=${apiKey}`;
+                    break;
+                case 'mars-rover':
+                    const rover = 'curiosity'; // Change rover name if needed
+                    apiUrl = `https://api.nasa.gov/mars-photos/api/v1/rovers/${rover}/photos?sol=1000&api_key=${apiKey}`;
+                    break;
+                case 'neo':
+                    apiUrl = `https://api.nasa.gov/neo/rest/v1/feed?start_date=2025-01-01&end_date=2025-01-02&api_key=${apiKey}`;
+                    break;
+                case 'earth-epic':
+                    apiUrl = `https://api.nasa.gov/EPIC/api/natural?api_key=${apiKey}`;
+                    break;
+                case 'exoplanet':
+                    apiUrl = `https://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=exoplanets&format=json&api_key=${apiKey}`;
+                    break;
+                case 'solar-system':
+                    apiUrl = `https://api.le-systeme-solaire.net/rest/bodies/`;
+                    break;
+                case 'nasa-media':
+                    apiUrl = `https://images-api.nasa.gov/search?q=moon`;
+                    break;
+                case 'tech-transfer':
+                    apiUrl = `https://api.nasa.gov/techtransfer/patent/?api_key=${apiKey}`;
+                    break;
+                default:
+                    content.innerHTML = '<p>Please select a valid option.</p>';
+                    return;
+            }
+
+            // Fetch data from the selected API
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => displayData(apiOption, data))
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    content.innerHTML = '<p>Failed to load data. Please try again later.</p>';
+                });
+        }
+
+        function displayData(apiOption, data) {
+            const content = document.getElementById('api-content');
+            content.innerHTML = ''; // Clear previous content
+
+            switch (apiOption) {
+                case 'apod':
+                    content.innerHTML = `
+                        <h2>${data.title}</h2>
+                        <img src="${data.url}" alt="APOD">
+                        <p>${data.explanation}</p>
+                    `;
+                    break;
+                case 'mars-rover':
+                    content.innerHTML = '<h2>Mars Rover Photos</h2>';
+                    data.photos.slice(0, 5).forEach(photo => {
+                        content.innerHTML += `<img src="${photo.img_src}" alt="Mars Rover">`;
+                    });
+                    break;
+                case 'neo':
+                    content.innerHTML = '<h2>Near-Earth Objects</h2>';
+                    Object.values(data.near_earth_objects).forEach(neos => {
+                        neos.forEach(neo => {
+                            content.innerHTML += `<p>Name: ${neo.name}, Size: ${neo.estimated_diameter.kilometers.estimated_diameter_max.toFixed(2)} km</p>`;
+                        });
+                    });
+                    break;
+                case 'earth-epic':
+                    content.innerHTML = '<h2>Earth Images</h2>';
+                    data.slice(0, 5).forEach(image => {
+                        const date = image.date.split(' ')[0].replace(/-/g, '/');
+                        content.innerHTML += `<img src="https://epic.gsfc.nasa.gov/archive/natural/${date}/png/${image.image}.png" alt="Earth">`;
+                    });
+                    break;
+                case 'exoplanet':
+                    content.innerHTML = '<h2>Exoplanet Archive</h2>';
+                    data.slice(0, 5).forEach(planet => {
+                        content.innerHTML += `<p>Name: ${planet.pl_name}, Discovery Year: ${planet.pl_disc}.</p>`;
+                    });
+                    break;
+                case 'solar-system':
+                    content.innerHTML = '<h2>Solar System Bodies</h2>';
+                    data.bodies.slice(0, 5).forEach(body => {
+                        content.innerHTML += `<p>Name: ${body.englishName}, Type: ${body.bodyType}</p>`;
+                    });
+                    break;
+                case 'nasa-media':
+                    content.innerHTML = '<h2>NASA Media Library</h2>';
+                    data.collection.items.slice(0, 5).forEach(item => {
+                        const image = item.links[0]?.href;
+                        if (image) content.innerHTML += `<img src="${image}" alt="NASA Media">`;
+                    });
+                    break;
+                case 'tech-transfer':
+                    content.innerHTML = '<h2>Tech Transfer</h2>';
+                    data.results.slice(0, 5).forEach(item => {
+                        content.innerHTML += `<p>Title: ${item.title}, Description: ${item.description}</p>`;
+                    });
+                    break;
+            }
+        }
     </script>
 
 </body>
