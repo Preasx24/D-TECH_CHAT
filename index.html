@@ -1,31 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HilltopAds VAST Ad Example</title>
-  <link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet">
-  <script src="https://vjs.zencdn.net/7.11.4/video.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-ads@6.9.0/dist/videojs.ads.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/videojs-ima@1.11.0/dist/videojs.ima.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Search - FMA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e2f;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #00ffcc;
+            border: none;
+            color: #1e1e2f;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #00cc99;
+        }
+        .results {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-  <h1>HilltopAds VAST Ad Integration</h1>
+    <h1>Search for Free Music - FMA</h1>
+    <input type="text" id="search" placeholder="Enter song or artist">
+    <button onclick="searchFMA()">Search</button>
+    <div class="results" id="results"></div>
 
-  <!-- Video Player -->
-  <video id="video-player" class="video-js vjs-default-skin" controls width="640" height="360"></video>
+    <script>
+        async function searchFMA() {
+            const query = document.getElementById('search').value;
+            const apiUrl = `https://freemusicarchive.org/api/trackSearch?q=${encodeURIComponent(query)}&limit=10&fields=track_title,artist_name,track_url`;
+            const response = await fetch(apiUrl);
+            const data = await response.json();
 
-  <script>
-    var player = videojs('video-player');
-
-    // Configure the IMA plugin with the HilltopAds VAST URL
-    player.ima({
-      adTagUrl: 'https://miserablenobody.com/dzm.FYzpdOGkN/vRZBGSUD/_eqmU9RuKZMU_lTkkPlTnYwwAMGTgU_5oNAjRAst/N/j/AVxqNsT/k/2YMNQh'
-    });
-
-    player.ready(function() {
-      player.ima.requestAds(); // Load and display the ad
-    });
-  </script>
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+            if (data.dataset) {
+                data.dataset.forEach(track => {
+                    resultsDiv.innerHTML += `
+                        <div>
+                            <h3>${track.track_title} - ${track.artist_name}</h3>
+                            <a href="${track.track_url}" target="_blank">Download</a>
+                        </div>
+                        <hr>
+                    `;
+                });
+            } else {
+                resultsDiv.innerHTML = '<p>No results found.</p>';
+            }
+        }
+    </script>
 </body>
 </html>
