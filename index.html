@@ -3,36 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parallax Effect</title>
+    <title>Futuristic Glowing Text</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-        .parallax {
-            position: relative;
-            background: url('your-image.jpg') no-repeat center center fixed;
-            background-size: cover;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             height: 100vh;
-            width: 100%;
-            z-index: -1;
+            margin: 0;
         }
-        .content {
-            position: relative;
-            z-index: 1;
-            padding: 20px;
+        h1 {
+            font-size: 3em;
             color: white;
-            font-size: 2em;
-            text-align: center;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.7), 0 0 10px rgba(0, 255, 255, 0.6), 0 0 15px rgba(0, 255, 255, 0.5);
+            animation: glow 1.5s infinite alternate;
+        }
+        @keyframes glow {
+            0% {
+                text-shadow: 0 0 5px rgba(0, 255, 255, 0.7), 0 0 10px rgba(0, 255, 255, 0.6), 0 0 15px rgba(0, 255, 255, 0.5);
+            }
+            100% {
+                text-shadow: 0 0 20px rgba(0, 255, 255, 1), 0 0 30px rgba(0, 255, 255, 0.8), 0 0 40px rgba(0, 255, 255, 0.7);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="parallax"></div>
-    <div class="content">
-        <h1>Welcome to My Futuristic Site!</h1>
-        <p>Scroll to see the parallax effect in action.</p>
-    </div>
+    <h1>Futuristic Glowing Text</h1>
 </body>
 </html>
