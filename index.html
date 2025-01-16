@@ -5,35 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Free Accounts</title>
     <script>
-        let countdown = 8; // Countdown time in seconds
-        let countdownActive = false;
+        const WAIT_TIME = 8; // Countdown time in seconds
 
         function showAdButton() {
             // Show the ad button and instructions
             document.getElementById('ad-instructions').style.display = 'block';
             document.getElementById('get-acc-btn').style.display = 'none';
-        }
 
-        function startCountdown() {
-            countdownActive = true;
-
-            // Start the countdown
-            const interval = setInterval(() => {
-                if (countdown <= 0) {
-                    clearInterval(interval);
-                    countdownActive = false;
-                } else {
-                    countdown -= 1;
-                }
-            }, 1000);
+            // Store the time the ad button was clicked
+            localStorage.setItem('adClickedTime', Date.now());
         }
 
         function checkCountdown() {
-            if (countdownActive && countdown > 0) {
-                alert(`You didn't wait for 8 seconds. Please try again.`);
+            // Retrieve the time the ad button was clicked
+            const adClickedTime = localStorage.getItem('adClickedTime');
+
+            if (!adClickedTime) {
+                alert('You need to click the ad button first!');
+                return;
+            }
+
+            // Calculate the elapsed time since the ad button was clicked
+            const elapsedTime = (Date.now() - adClickedTime) / 1000;
+
+            if (elapsedTime < WAIT_TIME) {
+                alert(`You didn't wait for ${WAIT_TIME} seconds. Please try again.`);
             } else {
                 document.getElementById('account-info').style.display = 'block';
                 document.getElementById('ad-instructions').style.display = 'none';
+
+                // Clear the stored data
+                localStorage.removeItem('adClickedTime');
             }
         }
     </script>
@@ -51,7 +53,7 @@
     <div id="ad-instructions" style="display: none; margin-top: 20px;">
         <p>Click the button below to view an ad. Wait **8 seconds** or until the ad fully displays before returning here.</p>
         <button 
-            onclick="startCountdown(); window.open('https://example-ad-url.com', '_blank');" 
+            onclick="window.open('https://example-ad-url.com', '_blank');" 
             style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
             View Ad
         </button>
