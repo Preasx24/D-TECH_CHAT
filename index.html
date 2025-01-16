@@ -3,69 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Maze Game</title>
-    <style>
-        body { margin: 0; overflow: hidden; }
-        canvas { display: block; }
-    </style>
+    <title>Free Accounts</title>
+    <script>
+        let countdown = 8; // Countdown time in seconds
+        let countdownActive = false;
+
+        function showAdButton() {
+            // Show the ad button and instructions
+            document.getElementById('ad-instructions').style.display = 'block';
+            document.getElementById('get-acc-btn').style.display = 'none';
+        }
+
+        function startCountdown() {
+            countdownActive = true;
+
+            // Start the countdown
+            const interval = setInterval(() => {
+                if (countdown <= 0) {
+                    clearInterval(interval);
+                    countdownActive = false;
+                } else {
+                    countdown -= 1;
+                }
+            }, 1000);
+        }
+
+        function checkCountdown() {
+            if (countdownActive && countdown > 0) {
+                alert(`You didn't wait for 8 seconds. Please try again.`);
+            } else {
+                document.getElementById('account-info').style.display = 'block';
+                document.getElementById('ad-instructions').style.display = 'none';
+            }
+        }
+    </script>
 </head>
-<body>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
-    // Scene Setup
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-
-    // Create Maze Walls
-    const wallGeometry = new THREE.BoxGeometry(1, 10, 1);
-    const wallMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    const walls = [];
-    for (let i = 0; i < 10; i++) {
-        let wall = new THREE.Mesh(wallGeometry, wallMaterial);
-        wall.position.set(i * 3, 5, 0);
-        scene.add(wall);
-        walls.push(wall);
-    }
-
-    // Camera Position
-    camera.position.z = 15;
-
-    // Player Controls (simple WASD)
-    let moveForward = false;
-    let moveBackward = false;
-    let moveLeft = false;
-    let moveRight = false;
+<body style="font-family: Arial, sans-serif; text-align: center; margin: 20px;">
+    <h1>Get Your Free Account</h1>
+    <p>Click the button below to support us by viewing an ad. Please follow the instructions carefully to unlock your account.</p>
     
-    window.addEventListener('keydown', (event) => {
-        if (event.key === 'w') moveForward = true;
-        if (event.key === 's') moveBackward = true;
-        if (event.key === 'a') moveLeft = true;
-        if (event.key === 'd') moveRight = true;
-    });
-    
-    window.addEventListener('keyup', (event) => {
-        if (event.key === 'w') moveForward = false;
-        if (event.key === 's') moveBackward = false;
-        if (event.key === 'a') moveLeft = false;
-        if (event.key === 'd') moveRight = false;
-    });
+    <!-- Get Account Button -->
+    <button id="get-acc-btn" onclick="showAdButton()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+        Get Free Account
+    </button>
 
-    // Game Loop
-    const animate = function () {
-        requestAnimationFrame(animate);
-        
-        if (moveForward) camera.position.z -= 0.1;
-        if (moveBackward) camera.position.z += 0.1;
-        if (moveLeft) camera.position.x -= 0.1;
-        if (moveRight) camera.position.x += 0.1;
+    <!-- Ad Button and Instructions -->
+    <div id="ad-instructions" style="display: none; margin-top: 20px;">
+        <p>Click the button below to view an ad. Wait **8 seconds** or until the ad fully displays before returning here.</p>
+        <button 
+            onclick="startCountdown(); window.open('https://example-ad-url.com', '_blank');" 
+            style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+            View Ad
+        </button>
+        <p>After viewing the ad, return here and click the button below:</p>
+        <button onclick="checkCountdown()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+            I've Viewed the Ad
+        </button>
+    </div>
 
-        renderer.render(scene, camera);
-    };
-
-    animate();
-</script>
+    <!-- Account Information -->
+    <div id="account-info" style="display: none; margin-top: 20px;">
+        <h2>Your Free Account:</h2>
+        <p>Username: free_user</p>
+        <p>Password: free_pass123</p>
+    </div>
 </body>
 </html>
