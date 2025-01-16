@@ -6,18 +6,33 @@
     <title>Free Accounts</title>
     <script>
         const WAIT_TIME = 8; // Countdown time in seconds
+        const AD_URL = "https://www.profitablecpmrate.com/spymr251ew?key=ce76edf7e5c6e4907177e712dc143365";
+        const ACC_URL = "https://raw.githubusercontent.com/Preasx24/...../refs/heads/main/ACC.txt";
+        let accounts = [];
+        let usedAccounts = [];
+
+        async function fetchAccounts() {
+            try {
+                const response = await fetch(ACC_URL);
+                const text = await response.text();
+                accounts = text.trim().split("\n");
+            } catch (error) {
+                alert("Failed to fetch accounts. Please try again later.");
+                console.error(error);
+            }
+        }
 
         function showAdButton() {
-            // Show the ad button and instructions
             document.getElementById('ad-instructions').style.display = 'block';
             document.getElementById('get-acc-btn').style.display = 'none';
-
-            // Store the time the ad button was clicked
             localStorage.setItem('adClickedTime', Date.now());
         }
 
+        function startCountdown() {
+            window.open(AD_URL, '_blank');
+        }
+
         function checkCountdown() {
-            // Retrieve the time the ad button was clicked
             const adClickedTime = localStorage.getItem('adClickedTime');
 
             if (!adClickedTime) {
@@ -25,49 +40,88 @@
                 return;
             }
 
-            // Calculate the elapsed time since the ad button was clicked
             const elapsedTime = (Date.now() - adClickedTime) / 1000;
 
             if (elapsedTime < WAIT_TIME) {
                 alert(`You didn't wait for ${WAIT_TIME} seconds. Please try again.`);
             } else {
-                document.getElementById('account-info').style.display = 'block';
+                revealAccount();
                 document.getElementById('ad-instructions').style.display = 'none';
-
-                // Clear the stored data
-                localStorage.removeItem('adClickedTime');
             }
         }
+
+        function revealAccount() {
+            if (accounts.length === 0) {
+                alert("No more accounts available. Please try again later.");
+                return;
+            }
+
+            let accountIndex;
+            do {
+                accountIndex = Math.floor(Math.random() * accounts.length);
+            } while (usedAccounts.includes(accountIndex));
+
+            usedAccounts.push(accountIndex);
+
+            const account = accounts[accountIndex];
+            document.getElementById('account-info').innerHTML = `
+                <h2>Your Free Account:</h2>
+                <p>${account}</p>
+            `;
+            document.getElementById('account-info').style.display = 'block';
+        }
+
+        window.onload = fetchAccounts;
     </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        #ad-instructions {
+            display: none;
+            margin-top: 20px;
+        }
+        #account-info {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
 </head>
-<body style="font-family: Arial, sans-serif; text-align: center; margin: 20px;">
+<body>
     <h1>Get Your Free Account</h1>
-    <p>Click the button below to support us by viewing an ad. Please follow the instructions carefully to unlock your account.</p>
-    
+    <p>Support us by viewing an ad! Follow these steps to unlock your account:</p>
+    <ol style="text-align: left; display: inline-block; margin: auto;">
+        <li>Click "Get Free Account" to start.</li>
+        <li>Click "View Ad" and wait for the ad to fully display (at least 8 seconds).</li>
+        <li>Return here and click "I've Viewed the Ad" to unlock your account.</li>
+    </ol>
+
     <!-- Get Account Button -->
-    <button id="get-acc-btn" onclick="showAdButton()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+    <button id="get-acc-btn" onclick="showAdButton()">
         Get Free Account
     </button>
 
     <!-- Ad Button and Instructions -->
-    <div id="ad-instructions" style="display: none; margin-top: 20px;">
-        <p>Click the button below to view an ad. Wait **8 seconds** or until the ad fully displays before returning here.</p>
-        <button 
-            onclick="window.open('https://example-ad-url.com', '_blank');" 
-            style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+    <div id="ad-instructions">
+        <p>Click the button below to view the ad. Wait **8 seconds** or until the ad fully displays before returning.</p>
+        <button onclick="startCountdown()">
             View Ad
         </button>
         <p>After viewing the ad, return here and click the button below:</p>
-        <button onclick="checkCountdown()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+        <button onclick="checkCountdown()">
             I've Viewed the Ad
         </button>
     </div>
 
     <!-- Account Information -->
-    <div id="account-info" style="display: none; margin-top: 20px;">
-        <h2>Your Free Account:</h2>
-        <p>Username: free_user</p>
-        <p>Password: free_pass123</p>
-    </div>
+    <div id="account-info"></div>
 </body>
 </html>
