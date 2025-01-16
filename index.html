@@ -3,283 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-TECH Headquarters</title>
-
-    <meta name="13292425a1b3fe0734378ee93a6acfbeeea7737f" content="13292425a1b3fe0734378ee93a6acfbeeea7737f" />
-    
+    <title>3D Maze Game</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f9fa;
-            color: #333;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden; /* To hide the extra canvas area */
-        }
-
-        header {
-            text-align: center;
-            color: white;
-            padding: 50px 5%;
-            background: linear-gradient(135deg, #2c3e50, #34495e);
-            position: relative;
-            flex-shrink: 0;
-            z-index: 2; /* Ensure content stays above the canvas */
-        }
-
-        header canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        header img {
-            width: 150px;
-            height: auto;
-            filter: drop-shadow(0 0 10px #00d9ff);
-        }
-
-        header h1 {
-            margin: 20px 0;
-            font-size: 3em;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            animation: slideIn 1s ease-out;
-        }
-
-        header p {
-            font-size: 1.2em;
-            margin: 10px 0;
-            max-width: 80%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        footer {
-            text-align: center;
-            background-color: #2c3e50;
-            color: white;
-            padding: 20px 5%;
-            margin-top: 20px;
-        }
-
-        footer a {
-            color: #00d9ff;
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.3s;
-        }
-
-        footer a:hover {
-            color: #1affff;
-        }
-
-        footer .social-links a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: #00d9ff;
-        }
-
-        footer .social-links a:hover {
-            color: #1affff;
-        }
-
-        /* Hamburger Menu */
-        .menu-icon {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            cursor: pointer;
-            z-index: 1001;
-        }
-
-        .menu-icon div {
-            width: 35px;
-            height: 5px;
-            margin: 6px 0;
-            background-color: white;
-            transition: 0.4s;
-        }
-
-        /* Side Menu */
-        .side-menu {
-            position: fixed;
-            top: 0;
-            left: -250px;
-            width: 250px;
-            height: 100%;
-            background-color: #111;
-            transition: 0.3s;
-            padding-top: 60px;
-            color: white;
-            z-index: 1000;
-        }
-
-        .side-menu a {
-            display: block;
-            padding: 15px;
-            text-decoration: none;
-            color: white;
-            font-size: 18px;
-            transition: 0.2s;
-        }
-
-        .side-menu a:hover {
-            background-color: #575757;
-            transform: scale(1.05);
-        }
-
-        .side-menu.open {
-            left: 0;
-        }
-
-        /* Overlay */
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            display: none;
-        }
-
-        .menu-overlay.active {
-            display: block;
-        }
-
-        /* Mobile view adjustments */
-        @media screen and (max-width: 768px) {
-            header {
-                padding: 40px 5%;
-            }
-
-            header h1 {
-                font-size: 2em;
-            }
-
-            header p {
-                font-size: 1em;
-            }
-
-            footer {
-                padding: 20px 5%;
-            }
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-
-        @keyframes slideIn {
-            0% { transform: translateY(-50px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
     </style>
 </head>
 <body>
-
-<header>
-    <canvas id="threeCanvas"></canvas>
-    <div class="menu-icon" onclick="toggleMenu()">
-        <div></div>
-        <div></div>
-        <div></div>
-    </div>
-    <img src="dtech-logo.png" alt="D-TECH Logo">
-    <h1>Welcome to D-TECH Headquarters</h1>
-    <p>Explore our tools, projects, and cutting-edge resources. Whether you're looking to test your skills or explore new digital frontiers, D-TECH provides the resources and community for your growth.</p>
-</header>
-
-<!-- Overlay -->
-<div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
-
-<!-- Sliding Side Menu -->
-<div class="side-menu" id="sideMenu">
-    <a href="about.html">ABOUT US</a>
-    <a href="bot-updates.html">BOTS</a>
-    <a href="files.html">FILES</a>
-    <a href="youtube.html">YOUTUBE</a>
-    <a href="telegram.html">TELEGRAM</a>
-    <a href="faqs.html">FAQs</a>
-    <a href="giveaway.html">GIVEAWAYS</a>
-    <a href="host-finder.html">HOST FINDER</a>
-    <a href="etc.html">TOOLS & SERVICES</a>
-    <a href="tutorials.html">TUTORIALS</a>
-</div>
-
-<!-- Native Ads -->
-<script async="async" data-cfasync="false" src="//pl25452864.profitablecpmrate.com/17bdc3ff4d9e3bbe0f49799dd182c4c1/invoke.js"></script>
-<div id="container-17bdc3ff4d9e3bbe0f49799dd182c4c1"></div>
-
-<script src="https://cdn.jsdelivr.net/npm/three@0.131.3/build/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-    // THREE.js setup
+    // Scene Setup
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('threeCanvas') });
+    const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshBasicMaterial({ color: 0x00d9ff });
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    // Create Maze Walls
+    const wallGeometry = new THREE.BoxGeometry(1, 10, 1);
+    const wallMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const walls = [];
+    for (let i = 0; i < 10; i++) {
+        let wall = new THREE.Mesh(wallGeometry, wallMaterial);
+        wall.position.set(i * 3, 5, 0);
+        scene.add(wall);
+        walls.push(wall);
+    }
 
-    camera.position.z = 5;
+    // Camera Position
+    camera.position.z = 15;
 
-    function animate() {
+    // Player Controls (simple WASD)
+    let moveForward = false;
+    let moveBackward = false;
+    let moveLeft = false;
+    let moveRight = false;
+    
+    window.addEventListener('keydown', (event) => {
+        if (event.key === 'w') moveForward = true;
+        if (event.key === 's') moveBackward = true;
+        if (event.key === 'a') moveLeft = true;
+        if (event.key === 'd') moveRight = true;
+    });
+    
+    window.addEventListener('keyup', (event) => {
+        if (event.key === 'w') moveForward = false;
+        if (event.key === 's') moveBackward = false;
+        if (event.key === 'a') moveLeft = false;
+        if (event.key === 'd') moveRight = false;
+    });
+
+    // Game Loop
+    const animate = function () {
         requestAnimationFrame(animate);
-
-        cube.rotation.x += 0.01;
-        cube.rotation.y += 0.01;
+        
+        if (moveForward) camera.position.z -= 0.1;
+        if (moveBackward) camera.position.z += 0.1;
+        if (moveLeft) camera.position.x -= 0.1;
+        if (moveRight) camera.position.x += 0.1;
 
         renderer.render(scene, camera);
-    }
+    };
 
     animate();
-
-    // Responsive resizing
-    window.addEventListener('resize', () => {
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-    });
 </script>
-
-<footer>
-    <p>&copy; 2024 D-TECH Headquarters. All rights reserved.</p>
-    <div class="social-links">
-        <a href="https://telegram.com" target="_blank">Telegram</a>
-        <a href="https://youtube.com" target="_blank">YouTube</a>
-    </div>
-    <p><a href="terms.html">Terms and Conditions</a></p>
-</footer>
-
-<script>
-    function toggleMenu() {
-        const sideMenu = document.getElementById('sideMenu');
-        const menuOverlay = document.getElementById('menuOverlay');
-        sideMenu.classList.toggle('open');
-        menuOverlay.classList.toggle('active');
-    }
-</script>
-
 </body>
 </html>
