@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free Accounts</title>
+    <title>FREE CRUNCHYROLL PREMIUM ACCOUNTS 🌹</title>
     <script>
         const WAIT_TIME = 8; // Countdown time in seconds
         const AD_URL = "https://www.profitablecpmrate.com/spymr251ew?key=ce76edf7e5c6e4907177e712dc143365";
         const ACC_URL = "https://raw.githubusercontent.com/Preasx24/...../refs/heads/main/ACC.txt";
         let accounts = [];
-        let usedAccounts = [];
+        let usedAccounts = new Set();
 
         async function fetchAccounts() {
             try {
@@ -51,7 +51,7 @@
         }
 
         function revealAccount() {
-            if (accounts.length === 0) {
+            if (accounts.length === usedAccounts.size) {
                 alert("No more accounts available. Please try again later.");
                 return;
             }
@@ -59,14 +59,16 @@
             let accountIndex;
             do {
                 accountIndex = Math.floor(Math.random() * accounts.length);
-            } while (usedAccounts.includes(accountIndex));
+            } while (usedAccounts.has(accountIndex));
 
-            usedAccounts.push(accountIndex);
+            usedAccounts.add(accountIndex);
 
             const account = accounts[accountIndex];
             document.getElementById('account-info').innerHTML = `
-                <h2>Your Free Account:</h2>
-                <p>${account}</p>
+                <h2>Your Free Crunchyroll Premium Account:</h2>
+                <div class="account-details">
+                    ${account}
+                </div>
             `;
             document.getElementById('account-info').style.display = 'block';
         }
@@ -78,12 +80,38 @@
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .logo {
+            width: 150px;
+            margin: 20px auto;
+        }
+        h1 {
+            color: #FF6347;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .instructions {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            text-align: left;
         }
         button {
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
+            background-color: #FF6347;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
             margin: 10px;
+        }
+        button:hover {
+            background-color: #FF4500;
         }
         #ad-instructions {
             display: none;
@@ -93,32 +121,38 @@
             display: none;
             margin-top: 20px;
         }
+        .account-details {
+            background-color: #FFFAF0;
+            border: 1px solid #FF6347;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-    <h1>Get Your Free Account</h1>
-    <p>Support us by viewing an ad! Follow these steps to unlock your account:</p>
-    <ol style="text-align: left; display: inline-block; margin: auto;">
-        <li>Click "Get Free Account" to start.</li>
-        <li>Click "View Ad" and wait for the ad to fully display (at least 8 seconds).</li>
-        <li>Return here and click "I've Viewed the Ad" to unlock your account.</li>
-    </ol>
+    <!-- Logo -->
+    <img src="dtech-logo.png" alt="D-TECH Logo" class="logo">
+    <h1>FREE CRUNCHYROLL PREMIUM ACCOUNTS 🌹</h1>
+    <p>Support us by viewing an ad! Follow the steps below to unlock your account:</p>
+    
+    <div class="instructions">
+        <ol>
+            <li>Click the "Get Free Account" button to start.</li>
+            <li>Click "View Ad" and wait **8 seconds** or until the ad fully displays.</li>
+            <li>Return here and click "I've Viewed the Ad" to reveal your free account.</li>
+        </ol>
+    </div>
 
     <!-- Get Account Button -->
-    <button id="get-acc-btn" onclick="showAdButton()">
-        Get Free Account
-    </button>
+    <button id="get-acc-btn" onclick="showAdButton()">Get Free Account</button>
 
     <!-- Ad Button and Instructions -->
     <div id="ad-instructions">
-        <p>Click the button below to view the ad. Wait **8 seconds** or until the ad fully displays before returning.</p>
-        <button onclick="startCountdown()">
-            View Ad
-        </button>
+        <p>Click the button below to view the ad. Wait **8 seconds** or until the ad fully displays before returning here.</p>
+        <button onclick="startCountdown()">View Ad</button>
         <p>After viewing the ad, return here and click the button below:</p>
-        <button onclick="checkCountdown()">
-            I've Viewed the Ad
-        </button>
+        <button onclick="checkCountdown()">I've Viewed the Ad</button>
     </div>
 
     <!-- Account Information -->
