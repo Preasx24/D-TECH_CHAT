@@ -3,159 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FREE CRUNCHYROLL PREMIUM ACCOUNTS 🌹</title>
-    <script>
-        const WAIT_TIME = 8; // Countdown time in seconds
-        const AD_URL = "https://www.profitablecpmrate.com/spymr251ew?key=ce76edf7e5c6e4907177e712dc143365";
-        const ACC_URL = "https://raw.githubusercontent.com/Preasx24/...../refs/heads/main/ACC.txt";
-        let accounts = [];
-        let usedAccounts = new Set();
-
-        async function fetchAccounts() {
-            try {
-                const response = await fetch(ACC_URL);
-                const text = await response.text();
-                accounts = text.trim().split("\n");
-            } catch (error) {
-                alert("Failed to fetch accounts. Please try again later.");
-                console.error(error);
-            }
-        }
-
-        function showAdButton() {
-            document.getElementById('ad-instructions').style.display = 'block';
-            document.getElementById('get-acc-btn').style.display = 'none';
-            localStorage.setItem('adClickedTime', Date.now());
-        }
-
-        function startCountdown() {
-            window.open(AD_URL, '_blank');
-        }
-
-        function checkCountdown() {
-            const adClickedTime = localStorage.getItem('adClickedTime');
-
-            if (!adClickedTime) {
-                alert('You need to click the ad button first!');
-                return;
-            }
-
-            const elapsedTime = (Date.now() - adClickedTime) / 1000;
-
-            if (elapsedTime < WAIT_TIME) {
-                alert(`You didn't wait for ${WAIT_TIME} seconds. Please try again.`);
-            } else {
-                revealAccount();
-                document.getElementById('ad-instructions').style.display = 'none';
-            }
-        }
-
-        function revealAccount() {
-            if (accounts.length === usedAccounts.size) {
-                alert("No more accounts available. Please try again later.");
-                return;
-            }
-
-            let accountIndex;
-            do {
-                accountIndex = Math.floor(Math.random() * accounts.length);
-            } while (usedAccounts.has(accountIndex));
-
-            usedAccounts.add(accountIndex);
-
-            const account = accounts[accountIndex];
-            document.getElementById('account-info').innerHTML = `
-                <h2>Your Free Crunchyroll Premium Account:</h2>
-                <div class="account-details">
-                    ${account}
-                </div>
-            `;
-            document.getElementById('account-info').style.display = 'block';
-        }
-
-        window.onload = fetchAccounts;
-    </script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-        .logo {
-            width: 150px;
-            margin: 20px auto;
-        }
-        h1 {
-            color: #FF6347;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-        .instructions {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-            text-align: left;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #FF6347;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            margin: 10px;
-        }
-        button:hover {
-            background-color: #FF4500;
-        }
-        #ad-instructions {
-            display: none;
-            margin-top: 20px;
-        }
-        #account-info {
-            display: none;
-            margin-top: 20px;
-        }
-        .account-details {
-            background-color: #FFFAF0;
-            border: 1px solid #FF6347;
-            padding: 15px;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-    </style>
+    <title>D-TECH Resource Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/3.2.7/tailwind.min.css">
 </head>
-<body>
-    <!-- Logo -->
-    <img src="dtech-logo.png" alt="D-TECH Logo" class="logo">
-    <h1>FREE CRUNCHYROLL PREMIUM ACCOUNTS 🌹</h1>
-    <p>Support us by viewing an ad! Follow the steps below to unlock your account:</p>
-    
-    <div class="instructions">
-        <ol>
-            <li>Click the "Get Free Account" button to start.</li>
-            <li>Click "View Ad" and wait **8 seconds** or until the ad fully displays.</li>
-            <li>Return here and click "I've Viewed the Ad" to reveal your free account.</li>
-        </ol>
-    </div>
+<body class="bg-gray-900 text-white font-sans">
+    <!-- Header -->
+    <header class="bg-gray-800 py-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">D-TECH Resource Hub</h1>
+            <nav>
+                <a href="#scripts" class="mx-2 text-gray-300 hover:text-white">Scripts</a>
+                <a href="#configs" class="mx-2 text-gray-300 hover:text-white">Configs</a>
+                <a href="#combos" class="mx-2 text-gray-300 hover:text-white">Combos</a>
+                <a href="#guides" class="mx-2 text-gray-300 hover:text-white">Guides</a>
+                <a href="#wallpapers" class="mx-2 text-gray-300 hover:text-white">Wallpapers</a>
+            </nav>
+        </div>
+    </header>
 
-    <!-- Get Account Button -->
-    <button id="get-acc-btn" onclick="showAdButton()">Get Free Account</button>
+    <!-- Main Content -->
+    <main class="container mx-auto my-6">
+        <!-- Search Bar -->
+        <div class="mb-6">
+            <input 
+                type="text" 
+                id="searchBar" 
+                class="w-full p-3 rounded-lg bg-gray-700 text-white" 
+                placeholder="Search for resources..."
+                onkeyup="filterResources()"
+            />
+        </div>
 
-    <!-- Ad Button and Instructions -->
-    <div id="ad-instructions">
-        <p>Click the button below to view the ad. Wait **8 seconds** or until the ad fully displays before returning here.</p>
-        <button onclick="startCountdown()">View Ad</button>
-        <p>After viewing the ad, return here and click the button below:</p>
-        <button onclick="checkCountdown()">I've Viewed the Ad</button>
-    </div>
+        <!-- Scripts Section -->
+        <section id="scripts" class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Scripts</h2>
+            <div id="scriptsList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Example Script -->
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-lg font-bold">Python Script: Netflix Checker</h3>
+                    <p>A powerful tool for checking Netflix accounts.</p>
+                    <a 
+                        href="resources/netflix_checker.py" 
+                        class="text-blue-400 hover:underline"
+                        download
+                    >Download</a>
+                </div>
+            </div>
+        </section>
 
-    <!-- Account Information -->
-    <div id="account-info"></div>
+        <!-- Configs Section -->
+        <section id="configs" class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Configs</h2>
+            <div id="configsList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Example Config -->
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-lg font-bold">OpenVPN Config</h3>
+                    <p>Secure VPN setup configuration.</p>
+                    <a 
+                        href="resources/openvpn_config.ovpn" 
+                        class="text-blue-400 hover:underline"
+                        download
+                    >Download</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Combos Section -->
+        <section id="combos" class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Combos & Wordlists</h2>
+            <div id="combosList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Example Combo -->
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-lg font-bold">Proxy List</h3>
+                    <p>Fast proxies for testing tools.</p>
+                    <a 
+                        href="resources/proxy_list.txt" 
+                        class="text-blue-400 hover:underline"
+                        download
+                    >Download</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Guides Section -->
+        <section id="guides" class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Guides & Tutorials</h2>
+            <div id="guidesList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Example Guide -->
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-lg font-bold">Python Basics Guide</h3>
+                    <p>Learn the fundamentals of Python programming.</p>
+                    <a 
+                        href="resources/python_basics.pdf" 
+                        class="text-blue-400 hover:underline"
+                        download
+                    >Download</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Wallpapers Section -->
+        <section id="wallpapers" class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Wallpapers</h2>
+            <div id="wallpapersList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Example Wallpaper -->
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <h3 class="text-lg font-bold">Tech-Themed Wallpaper</h3>
+                    <p>Cool D-TECH branded wallpaper.</p>
+                    <a 
+                        href="resources/tech_wallpaper.jpg" 
+                        class="text-blue-400 hover:underline"
+                        download
+                    >Download</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 py-4 text-center">
+        <p class="text-gray-400">D-TECH Resource Hub &copy; 2025. Built by Preasx24.</p>
+    </footer>
+
+    <script>
+        function filterResources() {
+            const query = document.getElementById('searchBar').value.toLowerCase();
+            const sections = ['scriptsList', 'configsList', 'combosList', 'guidesList', 'wallpapersList'];
+            
+            sections.forEach(sectionId => {
+                const items = document.getElementById(sectionId).children;
+                Array.from(items).forEach(item => {
+                    const text = item.innerText.toLowerCase();
+                    item.style.display = text.includes(query) ? '' : 'none';
+                });
+            });
+        }
+    </script>
 </body>
 </html>
