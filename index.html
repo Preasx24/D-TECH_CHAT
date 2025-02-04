@@ -1,12 +1,116 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <script>
-        window.location.replace("http://mtn-play.site.byorbit.com");
-    </script>
-    <title>Redirecting...</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D-TECH Books</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background: #0d1117;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        /* Header */
+        header {
+            background: #161b22;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        header p {
+            margin: 5px 0 0;
+            font-size: 16px;
+            color: #8b949e;
+        }
+        /* Container */
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 10px;
+            text-align: center;
+        }
+        /* Categories */
+        .category {
+            display: flex;
+            align-items: center;
+            background: #21262d;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 8px;
+            transition: 0.3s;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .category:hover {
+            background: #30363d;
+            transform: scale(1.05);
+        }
+        .category img {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+        }
+        .category a {
+            color: #58a6ff;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            flex-grow: 1;
+        }
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            background: #161b22;
+            color: #8b949e;
+        }
+    </style>
 </head>
 <body>
-    <p>If you are not redirected, <a href="http://mtn-play.site.byorbit.com">click here</a>.</p>
+
+<header>
+    <h1>D-TECH Books 📚</h1>
+    <p>Explore a world of knowledge, free and open for all</p>
+</header>
+
+<div class="container">
+    <div class="category">
+        <img src="icons/business.png" alt="Business">
+        <a href="business.html">📚 Business Studies</a>
+    </div>
+    <div class="category">
+        <img src="icons/management.png" alt="Management">
+        <a href="management.html">📘 Management</a>
+    </div>
+    <div class="category">
+        <img src="icons/university.png" alt="University Courses">
+        <a href="university_courses.html">🏫 University Courses</a>
+    </div>
+    <div class="category">
+        <img src="icons/stories.png" alt="Stories">
+        <a href="stories.html">📖 Stories & Novels</a>
+    </div>
+    <div class="category">
+        <img src="icons/manga.png" alt="Manga">
+        <a href="manga.html">🖼️ Manga</a>
+    </div>
+    <div class="category">
+        <img src="icons/poems.png" alt="Poems">
+        <a href="poems.html">📜 Poems</a>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2024 D-TECH Books | Powered by GitHub Pages</p>
+</footer>
+
 </body>
 </html>
