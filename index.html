@@ -29,40 +29,35 @@
             font-size: 16px;
             color: #8b949e;
         }
-        /* Container */
+        /* Notice */
+        .notice {
+            text-align: center;
+            background: #21262d;
+            color: #f0ad4e;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        /* Book List */
         .container {
             max-width: 800px;
             margin: 30px auto;
             padding: 10px;
             text-align: center;
         }
-        /* Categories */
-        .category {
-            display: flex;
-            align-items: center;
+        .book {
             background: #21262d;
             padding: 15px;
             margin: 10px;
             border-radius: 8px;
             transition: 0.3s;
-            cursor: pointer;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
-        .category:hover {
-            background: #30363d;
-            transform: scale(1.05);
-        }
-        .category img {
-            width: 40px;
-            height: 40px;
-            margin-right: 15px;
-        }
-        .category a {
+        .book a {
             color: #58a6ff;
             text-decoration: none;
             font-size: 18px;
             font-weight: bold;
-            flex-grow: 1;
         }
         /* Footer */
         footer {
@@ -81,30 +76,34 @@
     <p>Explore a world of knowledge, free and open for all</p>
 </header>
 
+<div class="notice">
+    ⚠️ The website is still under development. More books will be added soon!
+</div>
+
 <div class="container">
-    <div class="category">
-        <img src="icons/business.png" alt="Business">
-        <a href="business.html">📚 Business Studies</a>
+    <div class="book">
+        <p>📚 Business Studies</p>
+        <a href="https://drive.google.com/file/d/EXAMPLE_ID/view?usp=sharing" target="_blank">🔗 View Book</a>
     </div>
-    <div class="category">
-        <img src="icons/management.png" alt="Management">
-        <a href="management.html">📘 Management</a>
+    <div class="book">
+        <p>📘 Management</p>
+        <a href="https://drive.google.com/file/d/EXAMPLE_ID/view?usp=sharing" target="_blank">🔗 View Book</a>
     </div>
-    <div class="category">
-        <img src="icons/university.png" alt="University Courses">
-        <a href="university_courses.html">🏫 University Courses</a>
+    <div class="book">
+        <p>🏫 University Courses</p>
+        <a href="https://drive.google.com/file/d/EXAMPLE_ID/view?usp=sharing" target="_blank">🔗 View Book</a>
     </div>
-    <div class="category">
-        <img src="icons/stories.png" alt="Stories">
-        <a href="stories.html">📖 Stories & Novels</a>
+    <div class="book">
+        <p>📖 Stories & Novels</p>
+        <a href="https://drive.google.com/file/d/EXAMPLE_ID/view?usp=sharing" target="_blank">🔗 View Book</a>
     </div>
-    <div class="category">
-        <img src="icons/manga.png" alt="Manga">
-        <a href="manga.html">🖼️ Manga</a>
+    <div class="book">
+        <p>🖼️ Manga</p>
+        <a href="https://drive.google.com/file/d/EXAMPLE_ID/view?usp=sharing" target="_blank">🔗 View Book</a>
     </div>
-    <div class="category">
-        <img src="icons/poems.png" alt="Poems">
-        <a href="poems.html">📜 Poems</a>
+    <div class="book">
+        <p>📜 Poems</p>
+        <a href="https://drive.google.com/file/d/EXAMPLE_ID/view?usp=sharing" target="_blank">🔗 View Book</a>
     </div>
 </div>
 
