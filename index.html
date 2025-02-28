@@ -3,113 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D-TECH Books</title>
+    <title>Fast Looping Counter</title>
     <style>
-        /* General Styles */
         body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+            color: lime;
             font-family: Arial, sans-serif;
-            background: #0d1117;
-            color: #fff;
-            margin: 0;
-            padding: 0;
-        }
-        /* Header */
-        header {
-            background: #161b22;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        header h1 {
-            margin: 0;
-            font-size: 28px;
-        }
-        header p {
-            margin: 5px 0 0;
-            font-size: 16px;
-            color: #8b949e;
-        }
-        /* Notice */
-        .notice {
-            text-align: center;
-            background: #21262d;
-            color: #f0ad4e;
-            padding: 10px;
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-        /* Book List */
-        .container {
-            max-width: 800px;
-            margin: 30px auto;
-            padding: 10px;
+            font-size: 50px;
             text-align: center;
         }
-        .book {
-            background: #21262d;
-            padding: 15px;
-            margin: 10px;
-            border-radius: 8px;
-            transition: 0.3s;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-        .book a {
-            color: #58a6ff;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        /* Footer */
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 15px;
-            background: #161b22;
-            color: #8b949e;
+        #counter {
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
+    <div id="counter">0</div>
 
-<header>
-    <h1>D-TECH Books 📚</h1>
-    <p>Explore a world of knowledge, free and open for all</p>
-</header>
+    <script>
+        let counter = document.getElementById("counter");
+        let count = 0;
+        let counting = false;
+        let interval;
 
-<div class="notice">
-    ⚠️ The website is still under development. More books will be added soon!
-</div>
-
-<div class="container">
-    <div class="book">
-        <p>📚 Business Studies</p>
-        <a href="https://drive.google.com/file/d/1m8QPYj3j60gYUUBOLTH0SGDUqj70hqvR/preview?usp=sharing" target="_blank">🔗 View Book</a>
-    </div>
-    <div class="book">
-        <p>📘 Management</p>
-        <a href="https://drive.google.com/file/d/EXAMPLE_ID/view?usp=sharing" target="_blank">🔗 View Book</a>
-    </div>
-    <div class="book">
-        <p>🏫 University Courses</p>
-        <a href="https://drive.google.com/file/d/EXAMPLE_ID/view?usp=sharing" target="_blank">🔗 View Book</a>
-    </div>
-    <div class="book">
-        <p>📖 Stories & Novels</p>
-        <a href="https://drive.google.com/file/d/EXAMPLE_ID/view?usp=sharing" target="_blank">🔗 View Book</a>
-    </div>
-    <div class="book">
-        <p>🖼️ Manga</p>
-        <a href="https://drive.google.com/file/d/EXAMPLE_ID/view?usp=sharing" target="_blank">🔗 View Book</a>
-    </div>
-    <div class="book">
-        <p>📜 Poems</p>
-        <a href="https://drive.google.com/file/d/EXAMPLE_ID/view?usp=sharing" target="_blank">🔗 View Book</a>
-    </div>
-</div>
-
-<footer>
-    <p>&copy; 2024 D-TECH Books | Powered by GitHub Pages</p>
-</footer>
-
+        counter.addEventListener("click", function() {
+            if (counting) {
+                clearInterval(interval);
+                counting = false;
+            } else {
+                counting = true;
+                interval = setInterval(() => {
+                    count = (count + 1) % 101; // Reset to 0 after 100
+                    counter.textContent = count;
+                }, 30); // Adjust speed if needed
+            }
+        });
+    </script>
 </body>
 </html>
