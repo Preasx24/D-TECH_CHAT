@@ -2,67 +2,83 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>D-TECH OCR Extractor</title>
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2/dist/tesseract.min.js"></script>
+  <title>D-TECH OCR</title>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #0d0d0d;
+      font-family: sans-serif;
+      background: #0f0f0f;
       color: #00ffcc;
       text-align: center;
-      padding: 40px;
+      padding: 20px;
     }
     input, button {
       padding: 10px;
-      margin-top: 20px;
       background: #222;
       border: none;
       color: #00ffcc;
-      font-size: 16px;
-      border-radius: 8px;
+      margin: 10px;
+      border-radius: 6px;
     }
     #output {
-      margin-top: 30px;
+      margin-top: 20px;
       background: #111;
-      padding: 20px;
+      padding: 15px;
       border-radius: 10px;
       white-space: pre-wrap;
-      text-align: left;
-      max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
     }
-    h1 {
-      color: #00ffff;
+    img {
+      max-width: 100%;
+      margin-top: 20px;
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
 
-  <h1>D-TECH OCR Extractor</h1>
-  <p>Select an image with text:</p>
+  <h2>D-TECH OCR Extractor</h2>
   <input type="file" id="imageInput" accept="image/*">
   <button onclick="extractText()">Extract Text</button>
 
+  <div id="status">Waiting for image...</div>
+  <img id="preview" style="display:none;">
   <div id="output"></div>
 
   <script>
+    const status = document.getElementById('status');
+    const preview = document.getElementById('preview');
+    const output = document.getElementById('output');
+
     function extractText() {
       const file = document.getElementById('imageInput').files[0];
-      if (!file) return alert("Please select an image!");
+      if (!file) return alert("Please choose an image.");
 
-      document.getElementById('output').innerText = "Extracting text...";
+      // Preview image
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+
+      status.innerText = "Extracting text...";
+      output.innerText = "";
 
       Tesseract.recognize(
         file,
         'eng',
         {
-          logger: m => console.log(m)
+          logger: m => {
+            if (m.status === 'recognizing text') {
+              status.innerText = `Progress: ${Math.round(m.progress * 100)}%`;
+            }
+          }
         }
-      ).then(({ data: { text } }) => {
-        document.getElementById('output').innerText = text;
+      ).then(result => {
+        status.innerText = "Done!";
+        output.innerText = result.data.text.trim() || "No text found.";
       }).catch(err => {
-        document.getElementById('output').innerText = "Error: " + err.message;
+        status.innerText = "Error: " + err.message;
       });
     }
   </script>
