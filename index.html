@@ -49,7 +49,7 @@
     function convertToGrayscale(file) {
       return new Promise((resolve) => {
         const img = new Image();
-        img.src = URL.createObjectObjectURL(file);
+        img.src = URL.createObjectURL(file);  // Fixed the typo here
         img.onload = function () {
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
