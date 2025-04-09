@@ -54,33 +54,28 @@
     <pre id="output"></pre>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/webllm@latest/dist/webllm.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@huggingface/transformers@latest/dist/transformers.min.js"></script>
   <script>
-    let model;
-
-    async function initializeAI() {
-      model = await WebLLM.loadModel("https://huggingface.co/spaces/AIModel/llama-7b");
-      console.log("AI Model Loaded");
-    }
-
     async function askAI() {
       const topic = document.getElementById("topic").value;
-      if (!model) {
-        document.getElementById("output").textContent = "AI Model is loading... Please wait.";
+      if (!topic) {
+        alert("Please enter a topic!");
         return;
       }
 
+      // Load the transformer model
+      const model = await transformers.AutoModelForSeq2SeqGeneration.fromPretrained("t5-small");
+      const tokenizer = await transformers.AutoTokenizer.fromPretrained("t5-small");
+
       // Generate questions about the topic
-      const questions = await model.ask(`Generate 5 questions about ${topic}`);
-      document.getElementById("output").textContent = "Questions Generated:\n" + questions;
+      const input = `Generate questions about ${topic}`;
+      const inputIds = tokenizer.encode(input, { addSpecialTokens: true });
+      const output = await model.generate(inputIds);
 
-      // Generate answers to those questions
-      const answers = await model.ask(`Provide detailed answers to these questions: ${questions}`);
-      document.getElementById("output").textContent += "\n\nAnswers Generated:\n" + answers;
+      // Decode and display the output
+      const decoded = tokenizer.decode(output[0]);
+      document.getElementById("output").textContent = decoded;
     }
-
-    // Initialize AI model when page loads
-    window.onload = initializeAI;
   </script>
 </body>
 </html>
