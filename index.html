@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>D-TECH Multi OCR</title>
+  <title>D-TECH Multi OCR (Boosted)</title>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
   <style>
     body {
-      font-family: sans-serif;
       background: #0f0f0f;
       color: #00ffcc;
+      font-family: monospace;
       text-align: center;
       padding: 20px;
     }
@@ -17,8 +17,8 @@
       background: #222;
       border: none;
       color: #00ffcc;
-      margin: 10px;
       border-radius: 6px;
+      margin: 10px;
     }
     .result-block {
       background: #111;
@@ -39,18 +39,41 @@
 </head>
 <body>
 
-  <h2>D-TECH Multi OCR Extractor</h2>
+  <h2>D-TECH Multi OCR (Boosted)</h2>
   <input type="file" id="imageInput" accept="image/*" multiple>
   <button onclick="processAllImages()">Extract All Text</button>
-
   <div id="status">Waiting for images...</div>
   <div id="results"></div>
 
   <script>
+    function convertToGrayscale(file) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        img.onload = function () {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+          
+          // Grayscale filter
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const data = imageData.data;
+          for (let i = 0; i < data.length; i += 4) {
+            const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+            data[i] = data[i + 1] = data[i + 2] = avg > 128 ? 255 : 0; // Boost contrast
+          }
+          ctx.putImageData(imageData, 0, 0);
+          canvas.toBlob(resolve);
+        };
+      });
+    }
+
     async function processAllImages() {
       const files = document.getElementById('imageInput').files;
       if (files.length === 0) {
-        alert("Select at least one image.");
+        alert("Please select at least one image.");
         return;
       }
 
@@ -63,7 +86,7 @@
         const block = document.createElement('div');
         block.className = 'result-block';
 
-        // Preview image
+        // Show original image
         const img = document.createElement('img');
         img.src = URL.createObjectURL(file);
         block.appendChild(img);
@@ -75,13 +98,17 @@
         resultsContainer.appendChild(block);
 
         try {
-          const result = await Tesseract.recognize(file, 'eng', {
+          const processedBlob = await convertToGrayscale(file);
+          const result = await Tesseract.recognize(processedBlob, 'eng', {
             logger: m => {
               if (m.status === 'recognizing text') {
                 document.getElementById('status').innerText = `Image ${i + 1} progress: ${Math.round(m.progress * 100)}%`;
               }
             }
+          }, {
+            tessedit_pageseg_mode: '6'
           });
+
           textDiv.innerText = result.data.text.trim() || "No text found.";
         } catch (err) {
           textDiv.innerText = "Error: " + err.message;
