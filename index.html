@@ -49,20 +49,21 @@
     function convertToGrayscale(file) {
       return new Promise((resolve) => {
         const img = new Image();
-        img.src = URL.createObjectURL(file);
+        img.src = URL.createObjectObjectURL(file);
         img.onload = function () {
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
           canvas.width = img.width;
           canvas.height = img.height;
           ctx.drawImage(img, 0, 0);
-          
-          // Grayscale filter
+
+          // Grayscale and contrast boost
           const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
           const data = imageData.data;
           for (let i = 0; i < data.length; i += 4) {
             const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-            data[i] = data[i + 1] = data[i + 2] = avg > 128 ? 255 : 0; // Boost contrast
+            const boost = avg > 128 ? 255 : 0;
+            data[i] = data[i + 1] = data[i + 2] = boost;
           }
           ctx.putImageData(imageData, 0, 0);
           canvas.toBlob(resolve);
@@ -86,7 +87,7 @@
         const block = document.createElement('div');
         block.className = 'result-block';
 
-        // Show original image
+        // Display original image
         const img = document.createElement('img');
         img.src = URL.createObjectURL(file);
         block.appendChild(img);
@@ -99,15 +100,19 @@
 
         try {
           const processedBlob = await convertToGrayscale(file);
-          const result = await Tesseract.recognize(processedBlob, 'eng', {
-            logger: m => {
-              if (m.status === 'recognizing text') {
-                document.getElementById('status').innerText = `Image ${i + 1} progress: ${Math.round(m.progress * 100)}%`;
-              }
+
+          const result = await Tesseract.recognize(
+            processedBlob,
+            'eng',
+            {
+              logger: m => {
+                if (m.status === 'recognizing text') {
+                  document.getElementById('status').innerText = `Image ${i + 1} progress: ${Math.round(m.progress * 100)}%`;
+                }
+              },
+              tessedit_pageseg_mode: 6
             }
-          }, {
-            tessedit_pageseg_mode: '6'
-          });
+          );
 
           textDiv.innerText = result.data.text.trim() || "No text found.";
         } catch (err) {
