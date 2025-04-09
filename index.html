@@ -108,31 +108,74 @@
       localStorage.setItem('extractedText', extractedText); // Save the extracted text to localStorage
 
       // Generate a question
-      generateQuestion();
+      generateComplexQuestion();
     }
 
-    function generateQuestion() {
+    function generateComplexQuestion() {
       if (!extractedText) {
         alert("No text extracted!");
         return;
       }
 
-      // Simple example: Generate a question asking about the first word in the extracted text
-      const words = extractedText.split(" ");
-      const firstWord = words[0];
-      const question = `What is the first word of the extracted text?`;
-      
+      // Split the text into sentences for generating complex questions
+      const sentences = extractedText.split('. ');
+      const questionType = Math.floor(Math.random() * 3); // Randomize question type
+
+      let question = '';
+      let correctAnswer = '';
+
+      switch (questionType) {
+        case 0:
+          // Comprehension Question: Ask about the main idea
+          question = "What is the main idea of the following text?";
+          correctAnswer = sentences[0]; // Assume the first sentence contains the main idea
+          break;
+
+        case 1:
+          // Critical Thinking Question: Cause and Effect
+          question = "What is the effect of the action described in this sentence?";
+          const causeEffectSentence = sentences[Math.floor(Math.random() * sentences.length)];
+          correctAnswer = extractEffect(causeEffectSentence); // Example function to extract the effect from the sentence
+          break;
+
+        case 2:
+          // Fill in the Blank Question
+          const fillInSentence = sentences[Math.floor(Math.random() * sentences.length)];
+          const words = fillInSentence.split(" ");
+          const randomWordIndex = Math.floor(Math.random() * words.length);
+          question = `Fill in the blank: ${fillInSentence.replace(words[randomWordIndex], "______")}`;
+          correctAnswer = words[randomWordIndex];
+          break;
+
+        default:
+          question = "Could not generate a question.";
+          correctAnswer = "";
+      }
+
       document.getElementById('questionText').textContent = question;
       document.getElementById('questionSection').style.display = 'block';
+      localStorage.setItem('correctAnswer', correctAnswer); // Save the correct answer for comparison
+    }
+
+    function extractEffect(sentence) {
+      // Example simple extraction for effects (could be more advanced with NLP)
+      const effectKeywords = ['results in', 'leads to', 'causes'];
+      for (let keyword of effectKeywords) {
+        if (sentence.includes(keyword)) {
+          const parts = sentence.split(keyword);
+          return parts[1].trim();
+        }
+      }
+      return "Effect not found in the text.";
     }
 
     function checkAnswer() {
       const userAnswer = document.getElementById('userAnswer').value.trim().toLowerCase();
-      const correctAnswer = extractedText.split(" ")[0].toLowerCase(); // Correct answer: first word of extracted text
+      const correctAnswer = localStorage.getItem('correctAnswer').toLowerCase();
 
       const resultDiv = document.getElementById('answerResult');
       if (userAnswer === correctAnswer) {
-        resultDiv.textContent = "Correct! The first word is: " + correctAnswer;
+        resultDiv.textContent = "Correct! The answer is: " + correctAnswer;
         resultDiv.style.color = 'green';
       } else {
         resultDiv.textContent = "Incorrect. Try again!";
