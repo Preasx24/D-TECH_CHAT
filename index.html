@@ -50,31 +50,80 @@
   <h1>D-TECH Offline AI Q&A</h1>
   <div class="container">
     <input id="topic" type="text" placeholder="Enter a topic (e.g. Machine Learning)" />
-    <button onclick="askAI()">Generate Questions & Answers</button>
+    <button onclick="generateQuestions()">Generate Questions</button>
+    
+    <div id="questionsSection" style="display:none;">
+      <h2>Answer the Questions</h2>
+      <div id="questions"></div>
+      <button onclick="checkAnswers()">Check Answers</button>
+    </div>
+    
     <pre id="output"></pre>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@huggingface/transformers@latest/dist/transformers.min.js"></script>
   <script>
-    async function askAI() {
+    let questions = [];
+    let correctAnswers = {};
+
+    // Example of predefined correct answers
+    const predefinedAnswers = {
+      "What is machine learning?": "Machine learning is a subset of AI that allows computers to learn from data.",
+      "What are neural networks?": "Neural networks are computational models inspired by the human brain, used to identify patterns and make decisions."
+    };
+
+    async function generateQuestions() {
       const topic = document.getElementById("topic").value;
       if (!topic) {
         alert("Please enter a topic!");
         return;
       }
 
-      // Load the transformer model
-      const model = await transformers.AutoModelForSeq2SeqGeneration.fromPretrained("t5-small");
-      const tokenizer = await transformers.AutoTokenizer.fromPretrained("t5-small");
+      // Use a simple predefined set for generating questions for now
+      const generatedQuestions = [
+        `What is ${topic}?`,
+        `How does ${topic} work?`,
+        `What are the applications of ${topic}?`,
+        `What are the benefits of ${topic}?`,
+        `What are the challenges with ${topic}?`
+      ];
+      
+      questions = generatedQuestions;
+      correctAnswers = {}; // Reset correct answers
 
-      // Generate questions about the topic
-      const input = `Generate questions about ${topic}`;
-      const inputIds = tokenizer.encode(input, { addSpecialTokens: true });
-      const output = await model.generate(inputIds);
+      let questionHTML = '';
+      questions.forEach((question, index) => {
+        questionHTML += `
+          <label for="answer${index}">${question}</label><br>
+          <input type="text" id="answer${index}" placeholder="Your answer here..." /><br><br>
+        `;
+        // Predefined answers based on the question
+        correctAnswers[question] = predefinedAnswers[question] || "No correct answer defined";
+      });
 
-      // Decode and display the output
-      const decoded = tokenizer.decode(output[0]);
-      document.getElementById("output").textContent = decoded;
+      document.getElementById("questions").innerHTML = questionHTML;
+      document.getElementById("questionsSection").style.display = "block";
+      document.getElementById("output").textContent = '';
+    }
+
+    function checkAnswers() {
+      let feedback = "Your Answers:\n\n";
+      let correctCount = 0;
+
+      questions.forEach((question, index) => {
+        const userAnswer = document.getElementById(`answer${index}`).value.trim();
+        const correctAnswer = correctAnswers[question];
+        
+        if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+          feedback += `${question}\nYour answer: ${userAnswer}\nCorrect!\n\n`;
+          correctCount++;
+        } else {
+          feedback += `${question}\nYour answer: ${userAnswer}\nIncorrect. Correct answer: ${correctAnswer}\n\n`;
+        }
+      });
+
+      feedback += `\nYou got ${correctCount} out of ${questions.length} correct.`;
+      document.getElementById("output").textContent = feedback;
     }
   </script>
 </body>
