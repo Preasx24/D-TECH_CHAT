@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>D-TECH OCR</title>
+  <title>D-TECH Multi OCR</title>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
   <style>
     body {
@@ -20,66 +20,75 @@
       margin: 10px;
       border-radius: 6px;
     }
-    #output {
-      margin-top: 20px;
+    .result-block {
       background: #111;
-      padding: 15px;
-      border-radius: 10px;
-      white-space: pre-wrap;
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: 12px;
     }
-    img {
+    .result-block img {
       max-width: 100%;
-      margin-top: 20px;
-      border-radius: 10px;
+      border-radius: 8px;
+    }
+    .text-output {
+      white-space: pre-wrap;
+      margin-top: 10px;
+      text-align: left;
     }
   </style>
 </head>
 <body>
 
-  <h2>D-TECH OCR Extractor</h2>
-  <input type="file" id="imageInput" accept="image/*">
-  <button onclick="extractText()">Extract Text</button>
+  <h2>D-TECH Multi OCR Extractor</h2>
+  <input type="file" id="imageInput" accept="image/*" multiple>
+  <button onclick="processAllImages()">Extract All Text</button>
 
-  <div id="status">Waiting for image...</div>
-  <img id="preview" style="display:none;">
-  <div id="output"></div>
+  <div id="status">Waiting for images...</div>
+  <div id="results"></div>
 
   <script>
-    const status = document.getElementById('status');
-    const preview = document.getElementById('preview');
-    const output = document.getElementById('output');
+    async function processAllImages() {
+      const files = document.getElementById('imageInput').files;
+      if (files.length === 0) {
+        alert("Select at least one image.");
+        return;
+      }
 
-    function extractText() {
-      const file = document.getElementById('imageInput').files[0];
-      if (!file) return alert("Please choose an image.");
+      const resultsContainer = document.getElementById('results');
+      resultsContainer.innerHTML = "";
+      document.getElementById('status').innerText = `Processing ${files.length} image(s)...`;
 
-      // Preview image
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        preview.src = e.target.result;
-        preview.style.display = 'block';
-      };
-      reader.readAsDataURL(file);
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const block = document.createElement('div');
+        block.className = 'result-block';
 
-      status.innerText = "Extracting text...";
-      output.innerText = "";
+        // Preview image
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        block.appendChild(img);
 
-      Tesseract.recognize(
-        file,
-        'eng',
-        {
-          logger: m => {
-            if (m.status === 'recognizing text') {
-              status.innerText = `Progress: ${Math.round(m.progress * 100)}%`;
+        const textDiv = document.createElement('div');
+        textDiv.className = 'text-output';
+        textDiv.innerText = `Extracting text from image ${i + 1}...`;
+        block.appendChild(textDiv);
+        resultsContainer.appendChild(block);
+
+        try {
+          const result = await Tesseract.recognize(file, 'eng', {
+            logger: m => {
+              if (m.status === 'recognizing text') {
+                document.getElementById('status').innerText = `Image ${i + 1} progress: ${Math.round(m.progress * 100)}%`;
+              }
             }
-          }
+          });
+          textDiv.innerText = result.data.text.trim() || "No text found.";
+        } catch (err) {
+          textDiv.innerText = "Error: " + err.message;
         }
-      ).then(result => {
-        status.innerText = "Done!";
-        output.innerText = result.data.text.trim() || "No text found.";
-      }).catch(err => {
-        status.innerText = "Error: " + err.message;
-      });
+      }
+
+      document.getElementById('status').innerText = "All images processed!";
     }
   </script>
 
