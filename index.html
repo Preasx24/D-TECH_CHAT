@@ -1,129 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Extreme Distraction Counter</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: black;
-            color: lime;
-            font-family: Arial, sans-serif;
-            font-size: 50px;
-            text-align: center;
-            overflow: hidden;
-            position: relative;
-        }
-        #counter {
-            z-index: 2;
-            cursor: pointer;
-            position: relative;
-        }
-        .symbol {
-            position: absolute;
-            font-size: 30px;
-            color: red;
-            opacity: 0.8;
-            animation: moveSymbol 3s linear infinite;
-        }
-        @keyframes flashBg {
-            0% { background-color: black; }
-            25% { background-color: darkred; }
-            50% { background-color: darkblue; }
-            75% { background-color: darkgreen; }
-            100% { background-color: black; }
-        }
-        @keyframes moveSymbol {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(100vh); }
-        }
-        @keyframes shake {
-            0% { transform: translate(0, 0); }
-            25% { transform: translate(-3px, 3px); }
-            50% { transform: translate(3px, -3px); }
-            75% { transform: translate(-3px, -3px); }
-            100% { transform: translate(0, 0); }
-        }
-        .glitch {
-            position: absolute;
-            color: rgba(0, 255, 0, 0.3);
-            font-size: 20px;
-            top: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            white-space: nowrap;
-            animation: moveGlitch 2s linear infinite;
-        }
-        @keyframes moveGlitch {
-            0% { transform: translateX(-50%) translateY(0); opacity: 0.3; }
-            100% { transform: translateX(-50%) translateY(100vh); opacity: 0; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D-TECH Offline AI Q&A</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #121212;
+      color: #fff;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 50px;
+      color: #1E90FF;
+    }
+    .container {
+      width: 90%;
+      margin: 0 auto;
+      max-width: 600px;
+      padding: 20px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 2px solid #1E90FF;
+      border-radius: 5px;
+      background-color: #2C2C2C;
+      color: #fff;
+      font-size: 16px;
+    }
+    pre {
+      background-color: #333;
+      padding: 15px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin-top: 20px;
+    }
+    button {
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <div id="counter">0</div>
-    <audio id="beepSound" src="https://www.fesliyanstudios.com/play-mp3/4381" preload="auto"></audio>
-    <audio id="glitchSound" src="https://www.fesliyanstudios.com/play-mp3/4382" preload="auto"></audio>
+  <h1>D-TECH Offline AI Q&A</h1>
+  <div class="container">
+    <input id="topic" type="text" placeholder="Enter a topic (e.g. Machine Learning)" />
+    <button onclick="askAI()">Generate Questions & Answers</button>
+    <pre id="output"></pre>
+  </div>
 
-    <script>
-        let counter = document.getElementById("counter");
-        let count = 0;
-        let counting = false;
-        let interval;
-        let beepSound = document.getElementById("beepSound");
-        let glitchSound = document.getElementById("glitchSound");
+  <script src="https://cdn.jsdelivr.net/npm/webllm@latest/dist/webllm.min.js"></script>
+  <script>
+    let model;
 
-        counter.addEventListener("click", function() {
-            if (counting) {
-                clearInterval(interval);
-                counting = false;
-                document.body.style.animation = "";
-                document.body.style.removeProperty("animation");
-            } else {
-                counting = true;
-                document.body.style.animation = "flashBg 0.5s infinite, shake 0.1s infinite";
-                interval = setInterval(() => {
-                    count = (count + 1) % 251;
-                    counter.textContent = count;
-                    beepSound.currentTime = 0;
-                    beepSound.play();
-                }, 1);
-            }
-        });
+    async function initializeAI() {
+      model = await WebLLM.loadModel("https://huggingface.co/spaces/AIModel/llama-7b");
+      console.log("AI Model Loaded");
+    }
 
-        function createSymbols() {
-            let symbols = ["@", "#", "$", "%", "&", "*", "!", "?"];
-            for (let i = 0; i < 10; i++) {
-                let symbol = document.createElement("div");
-                symbol.classList.add("symbol");
-                symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-                symbol.style.left = Math.random() * 100 + "vw";
-                symbol.style.top = "-10px";
-                symbol.style.animationDuration = (Math.random() * 3 + 2) + "s";
-                document.body.appendChild(symbol);
-                setTimeout(() => symbol.remove(), 5000);
-            }
-        }
-        setInterval(createSymbols, 1000);
+    async function askAI() {
+      const topic = document.getElementById("topic").value;
+      if (!model) {
+        document.getElementById("output").textContent = "AI Model is loading... Please wait.";
+        return;
+      }
 
-        function createGlitchText() {
-            let glitchText = document.createElement("div");
-            glitchText.classList.add("glitch");
-            glitchText.textContent = "D-TECH SYSTEM ERROR 404";
-            document.body.appendChild(glitchText);
-            setTimeout(() => glitchText.remove(), 3000);
-        }
-        setInterval(createGlitchText, 2000);
+      // Generate questions about the topic
+      const questions = await model.ask(`Generate 5 questions about ${topic}`);
+      document.getElementById("output").textContent = "Questions Generated:\n" + questions;
 
-        function playGlitchSound() {
-            glitchSound.currentTime = 0;
-            glitchSound.play();
-        }
-        setInterval(playGlitchSound, Math.random() * 5000 + 3000); // Plays at random intervals
-    </script>
+      // Generate answers to those questions
+      const answers = await model.ask(`Provide detailed answers to these questions: ${questions}`);
+      document.getElementById("output").textContent += "\n\nAnswers Generated:\n" + answers;
+    }
+
+    // Initialize AI model when page loads
+    window.onload = initializeAI;
+  </script>
 </body>
 </html>
