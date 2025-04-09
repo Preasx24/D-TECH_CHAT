@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>D-TECH Multi OCR (Boosted)</title>
+  <title>D-TECH Multi OCR</title>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.5/dist/tesseract.min.js"></script>
   <style>
     body {
+      font-family: sans-serif;
       background: #0f0f0f;
       color: #00ffcc;
-      font-family: monospace;
       text-align: center;
       padding: 20px;
     }
@@ -17,8 +17,8 @@
       background: #222;
       border: none;
       color: #00ffcc;
-      border-radius: 6px;
       margin: 10px;
+      border-radius: 6px;
     }
     .result-block {
       background: #111;
@@ -35,46 +35,34 @@
       margin-top: 10px;
       text-align: left;
     }
+    #questionSection {
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
 
-  <h2>D-TECH Multi OCR (Boosted)</h2>
+  <h2>D-TECH Multi OCR Extractor</h2>
   <input type="file" id="imageInput" accept="image/*" multiple>
   <button onclick="processAllImages()">Extract All Text</button>
+
   <div id="status">Waiting for images...</div>
   <div id="results"></div>
 
-  <script>
-    function convertToGrayscale(file) {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.src = URL.createObjectURL(file);  // Fixed the typo here
-        img.onload = function () {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img, 0, 0);
+  <div id="questionSection" style="display: none;">
+    <h3>Question: <span id="questionText"></span></h3>
+    <input type="text" id="userAnswer" placeholder="Your answer">
+    <button onclick="checkAnswer()">Submit Answer</button>
+    <div id="answerResult"></div>
+  </div>
 
-          // Grayscale and contrast boost
-          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          const data = imageData.data;
-          for (let i = 0; i < data.length; i += 4) {
-            const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-            const boost = avg > 128 ? 255 : 0;
-            data[i] = data[i + 1] = data[i + 2] = boost;
-          }
-          ctx.putImageData(imageData, 0, 0);
-          canvas.toBlob(resolve);
-        };
-      });
-    }
+  <script>
+    let extractedText = '';
 
     async function processAllImages() {
       const files = document.getElementById('imageInput').files;
       if (files.length === 0) {
-        alert("Please select at least one image.");
+        alert("Select at least one image.");
         return;
       }
 
@@ -82,12 +70,14 @@
       resultsContainer.innerHTML = "";
       document.getElementById('status').innerText = `Processing ${files.length} image(s)...`;
 
+      extractedText = ""; // Reset the extracted text before processing new images
+
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const block = document.createElement('div');
         block.className = 'result-block';
 
-        // Display original image
+        // Preview image
         const img = document.createElement('img');
         img.src = URL.createObjectURL(file);
         block.appendChild(img);
@@ -99,28 +89,55 @@
         resultsContainer.appendChild(block);
 
         try {
-          const processedBlob = await convertToGrayscale(file);
-
-          const result = await Tesseract.recognize(
-            processedBlob,
-            'eng',
-            {
-              logger: m => {
-                if (m.status === 'recognizing text') {
-                  document.getElementById('status').innerText = `Image ${i + 1} progress: ${Math.round(m.progress * 100)}%`;
-                }
-              },
-              tessedit_pageseg_mode: 6
+          const result = await Tesseract.recognize(file, 'eng', {
+            logger: m => {
+              if (m.status === 'recognizing text') {
+                document.getElementById('status').innerText = `Image ${i + 1} progress: ${Math.round(m.progress * 100)}%`;
+              }
             }
-          );
-
-          textDiv.innerText = result.data.text.trim() || "No text found.";
+          });
+          const extracted = result.data.text.trim();
+          extractedText += extracted + " "; // Append the extracted text to a variable
+          textDiv.innerText = extracted || "No text found.";
         } catch (err) {
           textDiv.innerText = "Error: " + err.message;
         }
       }
 
       document.getElementById('status').innerText = "All images processed!";
+      localStorage.setItem('extractedText', extractedText); // Save the extracted text to localStorage
+
+      // Generate a question
+      generateQuestion();
+    }
+
+    function generateQuestion() {
+      if (!extractedText) {
+        alert("No text extracted!");
+        return;
+      }
+
+      // Simple example: Generate a question asking about the first word in the extracted text
+      const words = extractedText.split(" ");
+      const firstWord = words[0];
+      const question = `What is the first word of the extracted text?`;
+      
+      document.getElementById('questionText').textContent = question;
+      document.getElementById('questionSection').style.display = 'block';
+    }
+
+    function checkAnswer() {
+      const userAnswer = document.getElementById('userAnswer').value.trim().toLowerCase();
+      const correctAnswer = extractedText.split(" ")[0].toLowerCase(); // Correct answer: first word of extracted text
+
+      const resultDiv = document.getElementById('answerResult');
+      if (userAnswer === correctAnswer) {
+        resultDiv.textContent = "Correct! The first word is: " + correctAnswer;
+        resultDiv.style.color = 'green';
+      } else {
+        resultDiv.textContent = "Incorrect. Try again!";
+        resultDiv.style.color = 'red';
+      }
     }
   </script>
 
